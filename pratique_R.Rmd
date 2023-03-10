@@ -1,0 +1,3237 @@
+---
+title: "Guide pratique R"
+author: "Christophe Fouchard"
+date: "`r format(Sys.Date(),format = '%d/%m/%Y')`"
+output:
+  html_document:
+    df_print: tibble
+    fig_height: 2
+    fig_width: 3
+    fontfamily: mathpazo
+    highlight: tango
+    theme: lumen
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+  word_document:
+    toc: yes
+  pdf_document:
+    toc: yes
+editor_options:
+  chunk_output_type: console
+---
+
+<style>
+  .left {
+    text-align: left;
+  }
+  .right {
+    text-align: right;
+  }
+  .center {
+    text-align: center;
+  }
+</style>
+
+
+<style type="text/css">
+
+h1.title {
+  color: SteelBlue;
+}
+h1 { /* Header 1 */
+  color: SteelBlue;
+}
+h2 { /* Header 2 */
+  color: SteelBlack;
+}
+h3 { /* Header 3 */
+  color: SteelBlue;
+}
+h4 { /* Header 4 */
+  color: SteelBlue;
+}
+
+h5 { /* Header 5 */
+  color: SteelBlue;
+}
+</style>
+
+<style>
+.button {
+  display: inline-block;
+  border-radius: 4px;
+  background-color: SteelBlue;
+  border: none;
+  color: #FFFFFF;
+  text-align: center;
+  font-size: 16px;
+  transition: all 0.5s;
+  cursor: pointer;
+}
+
+.button span {
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  transition: 0.5s;
+}
+
+.button span:after {
+  content: '\00bb';
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  right: -20px;
+  transition: 0.5s;
+}
+
+.button:hover span {
+  padding-right: 25px;
+}
+
+.button:hover span:after {
+  opacity: 1;
+  right: 0;
+}
+
+.retour {
+  float: right;
+  }
+</style>
+
+
+***
+
+<br>
+
+# Environnement
+
+On trouvera ici l'environnement permettant de faire tourner des scripts R.
+
+## Cerise
+
+L'accès à R peut se réaliser via Cerise, la plateforme de stockage et de traitement des données.
+
+### Version de R
+
+La version de R par défaut est la 4.0.2. La version précédente (3.3.2) est toujours disponible.
+Il est recommandé d'utiliser la nouvelle version de R.
+
+Pour changer de version, aller en haut à droite et cocher la version souhaitée.
+
+<center>![](images/Cerise_version_R.png)</center>
+
+### Sessions R
+
+Il est possible d'avoir plusieurs sessions R ouvertes.
+On peut choisir la version de R utilisée au lancement de la session, en allant en haut à droite, via :
+
+<center>![](images/Cerise_ouvrir_session_R.png)</center>
+
+puis chosir la version de R à travers la fenêtre :
+
+<center>![](images/Cerise_nouvelle_session_R.png)</center>
+
+
+### Pour récupérer un chemin pour l'utiliser dans un programme R ?
+
+Dans la fenêtre de parcours des dossiers (fenêtre en bas à droite dans RStudio Server), choisir More 
+puis Set as Working Directory.
+
+```{r}
+# setwd("~/CERISE/01-Espace-de-Partage/SRISE/Pays-De-La-Loire/Partage_R")
+# ou setwd("~/CERISE/01-Espace-de-Partage/SRISE/Pays-De-La-Loire")
+# setwd("/var/data/gluster/volume0/CERISE/01-Espace-de-Partage/SRISE/Pays-De-La-Loire")
+
+```
+Le chemin peut-être aussi copié depuis la console (fenêtre en bas à gauche).
+
+### Pour se déplacer rapidement vers un autre répertoire ?
+
+Pour l'utilisateur muni de ce chemin, il convient de cliquer sur les trois petits points (fenêtre en bas à droite dans RStudio Server)
+
+Dans la fenêtre qui apparaît, on colle le chemin vers le dossier d'intérêt, par exemple
+~/CERISE/01-Espace-de-Partage/SRISE/Pays-De-La-Loire/Partage_R
+
+On clique enfin sur OK, nous voici dans le bon dossier.
+
+### Pour créer un nouveau répertoire ?
+
+Dans le cadran en bas à droite, aller dans le menu `Files`, choisir `New Folder`.
+
+
+```{r, eval=FALSE} 
+dir.create("nouveau_dossier")
+
+```
+### Pour créer un nouveau script R ?
+
+Dans le menu `File`, choisir `New File`, `R script`
+
+
+```{r, eval=FALSE} 
+# création d'un .R :
+file.create("nouveau_pgm.R")
+
+```
+
+### Pour copier un fichier ou un dossier via R
+
+```{r, eval=FALSE} 
+library(fs)
+ 
+# pour les fichiers
+# fs::file_copy("chemin/vers/le/fichier_a_copier.csv", "chemin/vers/le/dossier_cible/")
+ 
+# pour les dossiers
+# fs::dir_copy
+
+## Exemple de copie d'un dossier ou d'un fichier via R
+
+# pour les dossiers
+chemin_path <- "~/CERISE/01-Espace-de-Partage/SRISE/Pays-De-La-Loire/Partage_R/"
+entree_path1 <- "Christophe/entree"
+entree_path2 <- "Christophe/pgm"
+entree_path3 <- "Christophe/sortie"
+sortie_path1 <- "temporaire"
+
+fs::dir_copy(path=paste0(chemin_path,entree_path1),
+             new_path=paste0(chemin_path,sortie_path1))
+dir_copy(path=paste0(chemin_path,entree_path2),
+         new_path=paste0(chemin_path,sortie_path1),
+         overwrite = TRUE)
+dir_copy(path=paste0(chemin_path,entree_path3),
+         new_path=paste0(chemin_path,sortie_path1))
+
+# pour les fichiers
+# fs::file_copy("chemin/vers/le/fichier_a_copier.csv", "chemin/vers/le/dossier_cible/")
+chemin_fichier_entree <- "~/CERISE/01-Espace-de-Partage/SRISE/Pays-De-La-Loire/Partage_R/Christophe/pgm/"
+entree_fichier <- "manipulations.R"
+chemin_fichier_sortie <- "~/CERISE/01-Espace-de-Partage/SRISE/Pays-De-La-Loire/Partage_R/temporaire/pgm/"
+
+fs::file_copy(path=paste0(chemin_fichier_entree,entree_fichier),
+              new_path=paste0(chemin_fichier_sortie),
+              overwrite = TRUE)
+
+# renommer un fichier grâce à la fonction file.rename() :
+# file.rename(from = "nouveau_fichier.csv", to = "mon_fichier.csv")
+# file.rename(from = "nouveau_pgm.R", to = "nouveau_pgm_2.R")
+
+```
+### Pour transférer des fichiers entre son poste de travail et Cerise
+
+#### Pour télécharger un fichier depuis Cerise
+
+Une fois sur l'interface Rstudio de Cerise, il faut naviguer vers le dossier contenant le fichier à traiter.
+
+Pour cela, il faut utiliser le navigateur de fichier, dans la partie bas droite de l'écran.
+
+Il faut naviguer dans les dossiers jusqu'au fichier et ensuite sélectionner celui-ci pour pouvoir le télécharger, puis aller dans More > Export
+
+#### Pour téléverser un fichier vers Cerise
+
+Dans le cas d'un fichier ayant vocation à  être déposé sur Cerise, il faut utiliser le navigateur de fichier de RStudio, dans la partie bas droite de l'écran.
+
+Une fois placé dans le dossier de dépôt du fichier, choisir Upload.
+
+Puis récupérer le fichier sur son poste de travail en utilisant Parcourir, puis OK.
+
+#### Détails avec des captures d'écran
+https://orion.agriculture/confluence/pages/viewpage.action?pageId=38601956
+
+### Foire aux questions
+https://orion.agriculture/confluence/display/CER/4+-+FAQ
+
+## R Studio
+
+L’interface RStudio est composée de différents panneaux, incluant une console, un navigateur de fichiers et graphiques, l’espace de travail et l’historique des commandes.
+
+<center>![](images/interface_Rstudio.png)</center>
+
+### Faire tourner des programmes via l'environnement de développement intégré `R Studio`
+
+Exécution en interactif dans la session courante de l'utilisateur.
+
+A partir du programme ouvert dans l'IDE Rstudio, l'utilisateur exécute le programme manuellement :
+
+    Menu Code/ Run
+    Bouton Run
+    Combinaison de touche Ctrl-A suivie de Ctrl-Entrée
+
+Une fois l'exécution commencée, la console présente à l'utilisateur les informations du déroulé du programme.
+
+Dans ce mode, l'utilisateur doit attendre que le programme se termine pour à nouveau relancer un programme s'il souhaite rester dans la même session. Les objets de l'environnement d'exécution évoluent également tout au long du déroulé du programme exécuté, et les ressources de la session sont mobilisées par l'exécution courante.
+
+### Raccourcis RStudio
+
+Pour gagner du temps, il est important d'utiliser les raccourcis pour les commandes répétitives. 
+
+    # (`AltGr` + `3`) pour commenter son code
+    
+    `Ctrl` + `Shift` + `M` : insère le pipe `%>%`
+     Plusieurs verbes (ou fonctions) peuvent facilement être combinés en utilisant l'opérateur `%>%` (pipe) qui permet d'enchaîner les instructions.
+    Penser à aérer son code, notamment en revenant à la ligne, après un %>%
+     x %>% 
+      f %>% 
+        g %>% 
+          h  
+    est équivalent à h(g(f(x)))
+
+    `Alt` + `-` : insère la flèche d'assignation <- (il faut utiliser le - du pavé numérique, pas celui du 6)
+    `Alt`+ `6` (Windows) : insére l'opérateur assignation `<-`
+    `Ctrl`+`Entrée` : exécute le code sélectionné (ou la commande ou se trouve le curseur si rien n'a été sélectionné)
+    Ctrl + A : tout sélectionner
+    Ctrl + C/X/V : copier/couper/coller classique
+    Ctrl + z : annule la dernière modification
+    `Ctrl` + `F` : ouvre le formulaire de chercher/remplacer
+    `Ctrl` + `Shift` + `F` : recherche une expression dans plusieurs fichiers
+    `Ctrl` + `I` : indente automatiquement le code sélectionné (ou la commande ou se trouve le curseur si rien n'a été sélectionné)
+    Ctrl + Shift + C : bascule en commentaire le code sélectionné (ou la ligne où se trouve le curseur si rien n'a été sélectionné)
+    Tab ou Ctrl + Espace : ouvre les propositions d'autocomplétion (pour les noms de fonctions ou d'objets, et pour les chemins à l'intérieur de guillemets)
+
+    F1 : sur une fonction R, affiche l'aide de la fonction (si le package est chargé). On peut aussi utiliser ?nom_fonction (ou ??nom_fonction). La documentation de la fonction apparaîtra dans le panneau en bas à droite de RStudio.
+    F2 : sur une fonction, affiche le code de la fonction (sur une fonction personnalisée uniquement si le script contenant la définition de la fonction est ouvert)
+
+    Ctrl + ↑ : dans la console, affiche l'historique des commandes exécutées (et permet de les relancer)
+    Ctrl + L : vide la console
+    
+    `Ctrl` + `+++` : Zoom positif
+    `Ctrl` + `---` : Zoom négatif
+    
+   `Ctrl` + 'Alt' + `Shift` + `W` : ferme tous les fichiers sauf le fichier courant
+    
+    Ctrl + Alt + I : insère un chunk R (dans une syntaxe markdown uniquement)
+    
+    `Tab` : autocomplétion
+
+https://orion.agriculture/confluence/display/CER/Ergonomie+et+raccourcis+dans+RStudio
+
+https://www.book.utilitr.org/rproject.html#raccourcis-utiles-pour-l%C3%A9dition-de-code
+
+### L'espace de travail - le 'workspace'
+
+L'espace de travail (ou 'workspace') est l’environnement de la session R. Il comprend tous les objets créés durant une session de travail sous R. Par exemple, lorsqu'on importe des données, elles deviennent un objet de type data.frame et sont intégrées à l’environnement global. De même lorsqu'on crée un objet, il vient s’inclure dans l'environnement.
+
+Ces différents objets sont alors visibles dans l’onglet 'Environnement' de la fenêtre en haut à droite.
+
+Pour connaître le répertoire de travail actuel, on utilise la fonction 'getwd()'.
+
+Sous RStudio, le répertoire de travail est également affiché dans le quadrant inférieur gauche, en gris, en dessous de l'onglet 'Console'.
+
+Pour lister les objets de l'environnement courant, il faut utiliser la fonction ls().
+
+R va accumuler en mémoire un certain nombre d’objets (listes, vecteurs, fonctions…)
+Pour tous les effacer pour repartir d’une mémoire vierge (au lancement d’un script par exemple), on peut utiliser la commande 'rm(list=ls())', suivie de 'gc()'
+
+La fonction 'rm' permet d’effacer l’objet de son choix.
+
+La commande rm(list=ls()) est censée libérer la mémoire utilisée par tous les objets, mais ce qu’elle fait réellement est de détruire les pointeurs vers les morceaux de mémoire utilisés. 
+
+Le but principal de gc() est de montrer un rapport sur l’utilisation de la mémoire. Comme effet secondaire, l’appel de gc() déclenche le processus de collecte des déchets, en effaçant la mémoire. Par conséquent, comme le note la documentation gc, il est bon d’appeler gc() après qu’un objet volumineux ait été supprimé, car cette action incite R à libérer la mémoire qu’il n’utilise plus.
+
+
+```{r, eval = FALSE}
+getwd()
+
+ls()
+
+# Effacer ce qui se trouve dans l'espace de travail
+rm(list=ls())
+
+gc()
+
+```
+
+### A quoi sert le fichier ".RData" - Faut-il le conserver ?
+
+Les fichiers .RData sont des enregistrements de l'environnement de la session, avec notamment la présence de tables. En principe ce n'est pas très pertinent de l'enregistrer.
+
+Il est recommandé de configurer RStudio pour ne pas sauvegarder de `.RData` (tous les objets créés dans un projet)
+
+Menu R-studio → Tools → Global Options → General, partie Workspace → `Save workspace to .RData on exit` : mettre `Never`
+
+Il est également recommandé de désactiver la restauration automatique de ces fichiers. Pour cela il faut aller dans le menu Tools > Global Options, dans l'onglet General, partie Workspace décocher la case `Restore .RData into workspace at startup`.
+
+### Parenthèses et autres
+
+Dans RStudio, les caractères marchant par paires (parenthèses, guillemets, accolades, crochets) sont automatisés. En sélectionnant du code et en appuyant sur le caractère ouvrant correspondant, RStudio place automatiquement les caractères au début et à la fin du code sélectionné. En plaçant le curseur après un caractère de ce type (par exemple une parenthèse fermante), RStudio va surligner l'autre caractère correspondant (par exemple la parenthèse ouvrante correspondante), permettant de visualiser les paires.
+
+### Encodage
+
+Dans Tools > Global options > Code > Saving, choisir le `Default text encoding` UTF-8 pour les caractères spéciaux. Sans encoding UTF-8, les caractères spéciaux (accents...) risquent d'être formatés de manière peu compréhensible
+
+### Chemins
+***Les anti-slash windows (\\) doivent être remplacés par des slash(/). ***
+
+### Choix de l'affichage du séparateur décimal
+```{r, eval = FALSE}
+# séparateur décimal ,
+options(OutDec= ",")
+
+# options(encoding = "UTF-8",OutDec=',')
+```
+à placer en début de programme
+
+### Travailler dans des projets
+
+Il est recommandé de travailler avec les projets Rstudio, plutôt que les scripts R.
+
+- Cela permet la portabilité : le répertoire de travail par défaut d'un projet est le répertoire où est ce projet. 
+
+**Pour créer un projet : **
+- Cliquer sur *Project* en haut à droite puis *New Project*.
+_ ou bien faire `File > New Project`. 
+
+On peut créer un projet `RStudio` :
+
+1. Dans un nouveau dossier (`New Directory`) :
+    + Pour un projet tout nouveau.
+
+2. Dans un dossier existant (`Existing Directory`) :
+    + Pour organiser des codes existants sous forme de projet.
+
+La création d'un projet `RStudio` se traduit par :
+
+* un fichier `.Rproj` est créé dans le dossier principal. Ce fichier sert à deux choses :
+    + Il centralise les options du projet ;
+    + Il sert de raccourci pour ouvrir le projet.
+* le projet est chargé dans `RStudio`.
+
+Une fois que le projet est créé, le nom du projet apparaît dans la barre de projet (tout en haut à droite). 
+
+On peut accéder aux derniers projets ouverts avec le raccourci en haut à droite.
+
+### Travailler avec un projet `RStudio`
+
+Lorsqu'on ouvre un projet `RStudio` (en double-cliquant sur le fichier `.Rproj` par exemple) :
+
+* Une nouvelle session `R` est ouverte ;
+* L'historique des commandes `.Rhistory` du projet est chargé (s'il existe) dans le cadre `History` ;
+* Le répertoire de travail *working directory* est par défaut le dossier-maître du projet (le dossier dans lequel se situe le fichier `.Rproj`).
+
+Le répertoire de travail se situant à la racine du dossier créé, cela signifie que lors de l’importation, le chemin d’accès aux données sera automatiquement fixé à partir de cet endroit. De même, pour l'export, les fichiers seront également enregistrés à partir de la racine du dossier. 
+
+C'est pourquoi, il est conseillé pour chaque projet de créer une arborescence avec les répertoires 'entree', 'pgm', 'sortie'.
+
+```{r, eval = FALSE}
+library(fs)
+
+#  menu File|New Project Exemple_projet
+
+# pour créer un dossier
+# dir.create("nouveau_dossier")
+dir.create("entree")
+dir.create("pgm")
+dir.create("sortie")
+```
+On peut ensuite utiliser les chemins relatifs pour l'import et l'export.
+
+```{r, eval = FALSE}
+# Chargement du chemin
+chemin  <- "./entree/" 
+
+# sauvegarde données
+# Chargement du chemin 
+chemin_sortie <- "./sortie/"
+
+```
+### Script R - entête de section
+
+On peut utiliser quatre symboles ---- (ou #)  de suite pour créer un entête de section.
+
+Par exemple :
+```{r, eval = FALSE}
+# Chargement du fichier de données ---- 
+```
+
+Cela permet de passer rapidement d'une section à l'autre et de masquer des sections.
+
+***
+
+<br>
+
+# Les packages
+
+Les _packages_ sont des regroupements de fonctions permettant de faciliter l'écriture de scripts R.
+
+## Installation des packages
+
+### Installation standard
+
+L'installation est à réaliser _une seule fois_ pour une version de R donnée.
+
+Il est recommandé d'utiliser la fonction `install.packages` pour installer et mettre à jour les _packages_.
+
+Lors de l'ouverture d'un script, `RStudio` tente de détecter automatiquement si les _packages_ utilisés dans celui-ci sont installés. Dans le cas contraire, il affiche un bandeau en haut du script proposant d'installer les _packages_ manquants :
+`▲ _package_ --- required but is not installed. Install Don't show again`
+
+À l'ouverture, si un package est manquant, on a la mention en haut du fichier de code indiquant qu'un package (ou plusieurs) n'est pas installé.
+<center>![](images/package_manquant.png)</center>
+
+Il est préférable de ne pas installer des _packages_ en cliquant sur le bouton <kbd> Install </kbd> du bandeau. En effet, garder la trace des installations dans un script avec l'utilisation de la fonction `install.packages` permet de faciliter les réinstallations de  _packages_, lors de changements de version de R notamment.
+
+Les _packages_ `R` sont spécifiques à la version de `R` avec laquelle ils ont été installés. La principale conséquence pratique de cette caractéristique est qu'il faut réinstaller les _packages_ lors d'un changement de version de `R`. 
+
+Cette réinstallation est facilitée en utilisant un script `installation_packages.R` avec une ligne `install.packages` pour chaque _package_ utilisé.
+
+Il peut arriver qu'un programme génère une erreur parce qu'on utilise un _package_ dans une version trop ancienne. Pour mettre à jour un _package_, il suffit de le réinstaller avec `install.packages`.
+
+Des problèmes d’installation ?
+
+Ce n’est pas parce que vous avez des messages/ des warnings/ du rouge dans votre console que vous avez eu un problème d’installation.
+Les problèmes d’installation sont relativement souvent liés à un problème dans l’installation des dépendances. 
+Dans ce cas cela peut être une bonne idée d’installer la dépendance “qui coince” en premier, puis retenter l’installation du package.
+
+### Installer une version plus récente que la version compilée (le fichier binaire)
+
+L'argument `type` de `install.packages` permet de choisir une méthode alternative à la valeur par défaut, `"win.binary"`. Utiliser `type = "source"` permet par exemple de récupérer une version plus récente d'un _package_.
+```{r, eval = FALSE}
+install.packages("nom_du_package", type="source")
+```
+
+### Installer depuis un fichier
+
+Il est aussi possible d'installer un _package_ depuis une archive compressée (fichiers ".zip" pour les binaires Windows ou ".tar.gz" pour les _packages_ _source_). Pour indiquer que la source est un fichier local, il est obligatoire de spécifier `repos = NULL`.
+
+```{r, eval = FALSE}
+install.packages("chemin/en/local/package1_x.y.z.zip", repos = NULL)
+```
+
+Si le fichier est de type "source" (extension .tar.gz), Rtools peut s'avérer nécessaire.
+
+### Installation de Rtools en cas de difficulté
+
+Installer une seule fois Rtools (outils de compilation pour R) à partir de https://cran.r-project.org/bin/windows/Rtools
+Par exemple https://cran.r-project.org/bin/windows/Rtools/rtools40.html
+
+Il convient de télécharger rtools40-x86_64.exe vers `D:\user\R\packages` puis de lancer rtools40-x86_64.exe. 
+Comme répertoire d'installation, choisir `D:\user\R\rtools40`. Décocher l'ensemble des options par défaut, notamment les options qui écrivent dans le registre.
+
+Après l'installation, mettre la location des outils _make_ (bash, make, etc) dans le PATH.
+```{r, eval = FALSE}
+write('PATH="${RTOOLS40_HOME}\\usr\\bin;${PATH}"', file = "~/.Renviron", append = TRUE)
+```
+Redémarrer R et verifier que _make_ peut être trouvé, ce qui devrait montrer le chemin (path) de l'installation de Rtools.
+```{r, eval = FALSE}
+Sys.which("make")
+```
+donne "D:\\user\\R\\rtools40\\usr\\bin\\make.exe",  
+avant on avait par exemple "C:\\R\\rtools40\\usr\\bin\\make.exe" 
+
+### Installation de packages sur Cerise avec difficulté
+
+Certains packages ne peuvent s'installer sur CERISE qu'avec des versions plus anciennes (pour cause de bibliothèque système absente ou trop ancienne sur la version CentOS de CERISE).
+
+Il faut d'abord installer `remotes` :
+
+```{r, eval = FALSE}
+install.packages("remotes")
+
+# FactoMineR
+remotes::install_version("nloptr", version = "1.2.0")
+remotes::install_version("FactoMineR", version = "2.0")
+
+# sf
+remotes::install_version("sf", version = "0.9-0")
+
+#raster
+remotes::install_version("raster", version = "3.0-12")
+```
+
+## Utilisation des packages
+
+En début du code, on commence par charger le _package_ `nom_du_package` avec la commande `library(nom_du_package)`.
+Le **chargement** consiste à indiquer à `R` que l'on souhaite utiliser le _package_ dans la session courante. 
+C'est une opération qu'il faut réaliser _à chaque fois_ que l'on ouvre une session `R`.
+
+Toutefois, si on utilise la fonction du package sous la forme nom_du_package::nom_fonction, cela n'est pas nécessaire. L'utilisation de l'opérateur :: évite ainsi de charger un package peu utilisé.
+
+```{r, eval = FALSE}
+# Charger les bibliotheques necessaires
+# Packages souvent utilisés
+library(dplyr)
+library(openxlsx)
+library(janitor) # pour 'make_clean_names'
+library(tidyr) # pour pivot
+
+# Packages pouvant être utilisés
+library(forcats)  # fonction "fct_collapse"
+library(data.table)
+library(tables) ## fonction tabular
+library(kableExtra)
+library(ggplot2)
+library(rmarkdown)
+
+```
+
+Pour appliquer une fonction à un objet, la syntaxe est :
+```{r, eval = FALSE}
+nom_de_la_fonction(objet, attribut1, attribut2, ...)
+```
+Pour stocker le résultat de cette fonction dans une variable :
+```{r, eval = FALSE}
+ma_variable <- nom_de_la_fonction(objet, attribut1, attribut2, ...)
+```
+
+
+***
+
+<br>
+
+# Import / export
+
+## Importer
+
+La première étape d'une chaîne de traitement est d'accéder aux données à traiter. 
+Il convient d'indiquer dans le script de préparation des données comment le fichier est arrivé, soit en codant les instructions de téléchargement, soit en ajoutant des commentaires qui permettront plus tard de reconstituer le jeu de données utilisé. 
+
+
+- **Il est conseillé d'importer uniquement les colonnes dont on a besoin.** 
+Dans le cas où on ne sait pas quelles sont les colonnes dont on a besoin, il est conseillé de commencer par importer un petit nombre de lignes (1 000 ou 10 000) afin d’étudier les données et de choisir ensuite les colonnes à importer. 
+
+### Importer des fichiers RDS
+
+
+```{r, eval=FALSE}
+# Source : Les données sont issues du recensement agricole 2020, avec une comparaison à celui de 2010.
+# Chargement des données
+# RA2020 PDL DONNEES INDIVIDUELLES
+chemin_pdl_20 <- "S:/Fichiers source/RA 2020_déf/BASES_RA2020_data_def_15avril2022/RDS/"
+annee_ra_2020            <- 2020
+
+exploit_pdl_2020 <- readRDS(file = paste0(chemin_pdl_20,"RA2020_EXPLOITATIONS_R52_220415_modif_27juin2022.rds") ) %>% 
+  as_tibble(.name_repair = make_clean_names)
+# ident_pdl_2020 <- readRDS(file = paste0(chemin_pdl_20,"RA2020_IDENTIFICATION_R52_220415.rds") ) %>% 
+#   as_tibble(.name_repair = make_clean_names)  
+# pv_pdl_2020 <- readRDS(file = paste0(chemin_pdl_20,"RA2020_PRODVEG_R52_220415.rds") ) %>% 
+# as_tibble(.name_repair = make_clean_names)
+# cult_pdl_2020 <- readRDS(file = paste0(chemin_pdl_20,"RA2020_SURF_SAU_R52_220415.rds") ) %>% 
+#   as_tibble(.name_repair = make_clean_names)
+pa_pdl_2020 <- readRDS(file = paste0(chemin_pdl_20,"RA2020_PRODANIM_R52_220415.rds") ) %>% 
+ as_tibble(.name_repair = make_clean_names)
+# COEFPBS <- readRDS(file = paste0(chemin_pdl_20,"RA2020_COEFS_PBS17_R52_220415.rds") ) %>% 
+# as_tibble(.name_repair = make_clean_names)
+# cc_pdl_2020  <- readRDS(file = paste0(chemin_pdl_20,"RA2020_COM_CIRCOU_R52_220415.rds") ) %>% 
+# as_tibble(.name_repair = make_clean_names)
+# COMCIRCUIT <- readRDS(file = paste0(chemin_pdl_20,"RA2020_COM_CIRCUIT_R52_220415.rds") ) %>% 
+# as_tibble(.name_repair = make_clean_names)
+# div_pdl_2020  <- readRDS(file = paste0(chemin_pdl_20,"RA2020_DIVERSIF_R52_220415.rds") ) %>% 
+# as_tibble(.name_repair = make_clean_names)
+# HORTI_PEPI <- readRDS(file = paste0(chemin_pdl_20,"RA2020_HORTI_PEPI_R52_220415.rds") ) %>% 
+# as_tibble(.name_repair = make_clean_names)
+# LEGUMES <- readRDS(file = paste0(chemin_pdl_20,"RA2020_LEGUMES_R52_220415.rds") ) %>% 
+# as_tibble(.name_repair = make_clean_names)
+mo_pdl_2020 <- readRDS(file = paste0(chemin_pdl_20,"RA2020_MO_CHEF_COEXPL_R52_220415.rds") ) %>% 
+  as_tibble(.name_repair = make_clean_names)
+# MOFAM <- readRDS(file = paste0(chemin_pdl_20,"RA2020_MO_FAM_R52_220415.rds") ) %>% 
+# as_tibble(.name_repair = make_clean_names)
+# PPAM <- readRDS(file = paste0(chemin_pdl_20,"RA2020_PPAM_R52_220415.rds") ) %>% 
+# as_tibble(.name_repair = make_clean_names)
+# fichier_ra_otex_com_pdl_2020 <- readRDS(file = paste0(chemin_pdl_20,"RA2020_PBS_OTEX_COMMUNALES_220415.rds") )
+
+# RA2020 DONNEES INDIVIDUELLES France
+chemin_fr_20 <- "D:/user/RA2020/RA2020_source/RDS/"
+exploit_fr_2020 <- readRDS(file = paste0(chemin_fr_20,"RA2020_EXPLOITATIONS_220415.rds") ) %>% 
+  as_tibble(.name_repair = make_clean_names) %>% 
+  filter(siege_dep %in% c("44","49","53","72","79","") )
+# ident_fr_2020 <- readRDS(file = paste0(chemin_fr_20,"RA2020_IDENTIFICATION_220415.rds") ) %>% 
+#   as_tibble(.name_repair = make_clean_names)  
+# pv_fr_2020 <- readRDS(file = paste0(chemin_fr_20,"RA2020_PRODVEG_220415.rds") ) %>% 
+# as_tibble(.name_repair = make_clean_names)
+# cult_fr_2020 <- readRDS(file = paste0(chemin_fr_20,"RA2020_SURF_SAU_220415.rds") ) %>% 
+#   as_tibble(.name_repair = make_clean_names)
+pa_fr_2020 <- readRDS(file = paste0(chemin_fr_20,"RA2020_PRODANIM_220415.rds") ) %>% 
+ as_tibble(.name_repair = make_clean_names) 
+# COEFPBS <- readRDS(file = paste0(chemin_fr_20,"RA2020_COEFS_PBS17_220415.rds") ) %>% 
+# as_tibble(.name_repair = make_clean_names)
+# cc_fr_2020  <- readRDS(file = paste0(chemin_fr_20,"RA2020_COM_CIRCOU_220415.rds") ) %>% 
+# as_tibble(.name_repair = make_clean_names)
+# COMCIRCUIT <- readRDS(file = paste0(chemin_fr_20,"RA2020_COM_CIRCUIT_220415.rds") ) %>% 
+# as_tibble(.name_repair = make_clean_names)
+# div_fr_2020  <- readRDS(file = paste0(chemin_fr_20,"RA2020_DIVERSIF_220415.rds") ) %>% 
+# as_tibble(.name_repair = make_clean_names)
+# HORTI_PEPI <- readRDS(file = paste0(chemin_fr_20,"RA2020_HORTI_PEPI_220415.rds") ) %>% 
+# as_tibble(.name_repair = make_clean_names)
+# LEGUMES <- readRDS(file = paste0(chemin_fr_20,"RA2020_LEGUMES_220415.rds") ) %>% 
+# as_tibble(.name_repair = make_clean_names)
+# mo_fr_2020 <- readRDS(file = paste0(chemin_fr_20,"RA2020_MO_CHEF_COEXPL_220415.rds") ) %>% 
+#   as_tibble(.name_repair = make_clean_names)
+# MOFAM <- readRDS(file = paste0(chemin_fr_20,"RA2020_MO_FAM_220415.rds") ) %>% 
+# as_tibble(.name_repair = make_clean_names)
+# PPAM <- readRDS(file = paste0(chemin_fr_20,"RA2020_PPAM_220415.rds") ) %>% 
+# as_tibble(.name_repair = make_clean_names)
+# fichier_ra_otex_com_fr_2020 <- readRDS(file = paste0(chemin_fr_20,"RA2020_PBS_OTEX_COMMUNALES_220415.rds") )
+
+```
+
+### Importer des fichiers xlsx
+
+L'utilisateur souhaite importer dans `R` des données issues de tableurs (extension`xlsx`).
+
+- **Il est recommandé d'utiliser la fonction `read.xlsx()` du _package_ `openxlsx` pour importer des fichiers `xlsx`.**
+
+Voici les principaux arguments et options de `read.xlsx()` :
+
+| Argument         | Valeur par défaut     | Fonction                                                                                   |
+|------------------|-----------------------|--------------------------------------------------------------------------------------------|
+| `xlsxFile`       | Aucune                | Chemin d'accès vers un objet classeur ou une url vers un fichier `xlsx` à importer           |
+| `sheet`          | `1`                     | Onglet à importer. Soit le nom de l'onglet, soit un numéro de l'onglet |
+| `startRow`       | `1`                     | Ligne à partir de laquelle les données sont importées. Les lignes vides en haut d'un fichier sont toujours ignorées, quelle que soit la valeur de `startRow`    |
+| `colNames`       | `TRUE`                  | Si `TRUE`, la première ligne de données sera utilisée comme nom de colonnes   |
+|
+
+
+```{r, eval = FALSE}
+library(dplyr)
+library(openxlsx)
+
+# import fichiers
+chemin_entree <- "S:/ETUDES/En cours/memento_Christophe/entree/SAA/"
+fichier_entree <- "cd2022-5_SAA_2021_provisoire_resultats_LIB.xlsx"
+eff_volailles <- read.xlsx(xlsxFile=paste0(chemin_entree,fichier_entree), 
+                         sheet = "Eff. volailles",colNames = TRUE,startRow = 1) %>% 
+  as_tibble(.name_repair = make_clean_names) %>% 
+  filter(region %in% c("52  -  Pays de la Loire","98  -  Total France métropolitaine") )
+
+
+
+
+
+
+# à changer
+library(readxl)
+
+chemin <- "S:/ETUDES/En cours/memento_Christophe/entree/AgenceBio/"
+fichier_nat <- "Export Productions Bio - National.xlsx"
+fichier_dep <- "Export Productions Bio - Région - Pays de la Loire.xlsx"
+an <- "2021"
+
+agri_bio_vegetal_fr <- read_xlsx(path = paste0(chemin,fichier_nat), 
+                                      sheet = "Productions végétales", skip = 0) %>% 
+  as_tibble(.name_repair = make_clean_names) %>% 
+  filter(annee %in% c(an) & territoire %in% c("National","Pays de la Loire") )
+```
+
+https://www.book.utilitr.org/importxl.html#importer-un-fichier-xlsx-avec-le-package-openxlsx
+
+
+### Importer des fichiers xls
+
+L'utilisateur souhaite importer dans `R` des données issues de tableurs (extension type `xls`).
+
+- **Il est recommandé d'utiliser la fonction `read_xls()` du _package_ `readxl` pour importer des fichiers `xls`.** 
+
+Voici les principaux arguments et options de `read_xls()` :
+
+| Argument         | Valeur par défaut     | Fonction                                                                                   |
+|------------------|-----------------------|--------------------------------------------------------------------------------------------|
+| `path`           | Aucune                | Chemin d'accès au fichier xls à importer                                           |
+| `sheet`          | `NULL`                  | Onglet à importer Soit le nom de l'onglet, soit la position de l'onglet. Par défaut, sélectionne le premier onglet du fichier |
+| `col_names`      | `TRUE`                  | `TRUE` pour utiliser la première ligne comme noms de colonne, `FALSE` pour obtenir les noms par défaut ou un vecteur de caractères donnant un nom à chaque colonne      |
+| `col_types`      | `NULL`                  | Préciser le type des colonnes. Si `col_types = NULL`, `readxl` essaie de deviner le type des colonnes. Voir `?readxl::read_xls` pour l'usage de cette option |
+| `na`             | ""                    | Vecteur de chaînes de caractères à interpréter comme des valeurs manquantes   |
+| `skip`           | `0`                     | Nombre de lignes à ignorer avant d'importer les données |
+| `n_max`          | `Inf`                | Nombre maximum de lignes de données à lire  |
+          |
+
+
+```{r, eval = FALSE}
+library(dplyr)
+library(readxl)
+
+# Chargement du chemin #
+chemin <- "S:/ETUDES/En cours/memento_Christophe/entree/volailles_qualite/Qualite_volailles_2021/"
+fichier <- "Abattages_signes_qualite_2021_modif.xls"
+
+volailles_pdl_espece_siqo <- read_xls(path = paste0(chemin,fichier), 
+                                      sheet = "res_nouvelle_region_modif", 
+                                      skip = 9) %>% 
+  as_tibble(.name_repair = make_clean_names) %>% 
+  filter(espece %in% c("siqo","PAYS DE LA LOIRE") )
+```
+
+* **Définir le type des colonnes** : le paramètre `col_types` permet de définir explicitement le type des colonnes et d'ignorer les colonnes qu'on ne souhaite pas importer. Pour cela, on passe au paramètre `col_types` un vecteur précisant le type parmi les possibilités suivantes :  
+    * `"skip"` : ignorer la colonne (qui ne sera pas importée) ;
+    * `"guess"` : le type de la variable est devinée par rapport à ses *modalités* ;
+    * `"list"` : crée une liste ;
+    * `"logical` pour une variable booléenne, `"numeric"` pour une variable numérique, `"date"` pour une date et `"text"` pour une variable caractère.
+  
+    Le type de la variable sera appliqué aux colonnes dans l'ordre défini par le vecteur. Exemple : `c("text","text","numeric","guess","skip","logical")`. Dans le cas où on souhaite définir le même type pour toutes les colonnes, il suffit de préciser une seule fois le type attendu (exemple `col_types = "text"`).
+
+* **Gestion des `NA` ** : il est possible de préciser les valeurs qu'on souhaite considérer comme des `NA` avec le paramètre `na`. Par défaut, la valeur `""` est considérée comme `NA`.
+
+
+https://www.book.utilitr.org/importxl.html#importer-un-fichier-xls-avec-le-package-readxl
+
+
+### Importer des fichiers ods
+
+L'utilisateur souhaite importer dans `R` des données issues de tableurs (extension `ods`).
+
+- **Il est recommandé d'utiliser la fonction `read_ods` du _package_ `readODS` pour importer des fichiers `ods`.**
+
+Voici les principaux arguments et options de `read_ods()` :
+
+| Argument            | Valeur par défaut     | Fonction                                                                                   |
+|---------------------|-----------------------|--------------------------------------------------------------------------------------------|
+| `path`              | Aucune                | Le chemin du fichier `ods` à importer                                                        |
+| `sheet`             | 1                     | Onglet à importer. Soit le nom de l'onglet, soit le numéro de l'onglet (utiliser de préférence le nom de l'onglet) |
+| `col_names`         | `TRUE`                  | Indique si la première ligne de l'onglet contient les noms des variables               |
+| `col_types`         | `NULL`                  | `NULL` pour laisser `R` deviner le type des variables à partir de l'onglet ou se reporter à `readr::type_convert` pour spécifier le type des variables | 
+| `na`                | `""`                    | Vecteur donnant les chaîne de caractères interprétées comme des valeurs manquantes. Par défaut, `read_ods` convertit les cellules vides en données manquantes |
+| `skip`              | `0`                     | Le nombre de lignes du fichier de données à ignorer avant de commencer à importer les données  |
+
+```{r,  eval = FALSE}
+library(readODS)
+
+# Chargement du 3ème onglet
+mesDonnees <- readODS::read_ods(path = chemin_ods, sheet = "Sheet3", skip = 5)
+
+# Chargement du chemin 
+chemin_entree <- "S:/ETUDES/En cours/Fiche filière volailles/conjoncture volailles/2022_s1/entree/"
+fichier_entree <- "COMEXOEUFS_France.ods"
+oeufs <- read_ods(path=paste0(chemin_entree,fichier_entree), sheet = "Données",skip = 0)
+
+```
+
+### Importer des fichiers csv
+
+L'utilisateur souhaite importer dans `R` des données stockées sous forme de fichiers plats (formats `.txt`, `.csv`, `.tsv`).
+
+Le *package* `readr` propose plusieurs fonctions adaptées pour importer des fichiers plats de taille limitée (moins de 1 Go) :
+
+* `read_csv()` : lecture d'un csv délimité par des virgules, avec un point comme marqueur décimal ;
+* `read_csv2()` : lecture d'un csv séparé par des points-virgules, avec une virgule comme marqueur décimal ;
+* `read_delim()` : fonction plus générale et paramétrable, pour lire des fichiers délimités.
+
+Il faut charger le *package* `readr` pour utiliser ces fonctions :
+
+```{r, message = FALSE, warning = FALSE} 
+library(readr)
+```
+
+Source
+Cerise : https://rstudio.stats.national.agri
+Fichier "DIFFABATVOL_2021.csv", présent dans CERISE/03-Espace-de-Diffusion/060_Productions_viandes_oeufs/6030_Abattage_volailles_lapins/60304_Volailles/ABATVOL_2021
+
+```{r, eval = FALSE}
+library(dplyr)
+library(readr)
+library(janitor)
+
+# Chargement du chemin 
+chemin <- "S:/ETUDES/En cours/memento_Christophe/entree/volailles_abattage/ABATVOL_2021/"
+fichier_entree <- "DIFFABATVOL_2021.csv"
+volailles_pdl <- read_csv2(file = paste0(chemin,fichier_entree)) %>%  
+  as_tibble(.name_repair = make_clean_names) %>% 
+  filter(reg %in% c("52") ) %>%
+  mutate(siret=as.character(siret))
+
+```
+
+La fonction `read_delim()` de `readr` permet d'importer les données d'un fichier csv.
+
+`read_csv()`, `read_csv2()` et `read_tsv()` sont des implémentations pré-renseignées de `read_delim` pour lire des fichiers plats avec séparateurs (caractère délimiteur de colonne) **,** **;** et **tabulaire**.
+
+
+**Il est plus simple de sélectionner des colonnes avec `fread()` qu'avec les fonctions du *package* `readr`**. Il est donc recommandé d'utiliser `fread()` lorsque vous souhaitez sélectionner facilement les colonnes à importer.
+:::
+
+https://www.book.utilitr.org/importcsv.html
+
+
+### Importer des fichiers SPSS (.sav) 
+
+L'utilisateur souhaite importer dans `R` des données stockées sous forme de fichiers SPSS.
+
+La méthode recommandée est d'utiliser la fonction `read_spss()` du *package* `haven`.
+
+```{r, eval = FALSE}
+# Charger le package haven
+library(haven)
+# Importer un fichier SPSS
+tableau <- haven::read_spss(paste0(chemin,fichier_entree))
+
+# Importer un fichier SPSS
+fichier_entree_mensuel <- "COLLECTE_TOUS_LAITS.sav"
+laits_mensuel_1 <- haven::read_spss(paste0(chemin_entree_mensuel,fichier_entree_mensuel)) %>% 
+  as_tibble(.name_repair = make_clean_names) 
+```
+### Importer des fichiers SAS
+
+L'utilisateur souhaite importer dans `R` des données stockées sous forme de tables SAS.
+
+La méthode recommandée est d'utiliser la fonction `read_sas()` du *package* `haven`.
+
+```{r, eval = FALSE}
+# Charger le package haven
+library(haven)
+# Importer une table SAS.
+# Utilisation de la table de passage des codes communes depuis 1943
+# vers les codes communes en vigueur en 2022,
+comdepuis1943_com2022 <- read_sas("S:/ETUDES/En cours/memento_Christophe/entree/geographie/geo2022/fcodcomm.sas7bdat")
+
+```
+
+
+### Exporter des fichiers RDS
+
+```{r , eval = FALSE}
+# Chargement du chemin 
+chemin_sortie <- "S:/ETUDES/En cours/Fiche filière volailles/conjoncture volailles/2022_s1/sortie/"
+fichier_sortie_rds <- "oeufs_cot_det_2022_2021_an_mois.RDS"
+saveRDS(object = oeufs_cot_det_2022_2021_an_mois, file = paste0(chemin_sortie,fichier_sortie_rds) )
+```
+
+### Exporter des fichiers xlsx
+
+```{r , eval = FALSE}
+library(openxlsx)
+
+# export 
+# Chargement du chemin 
+chemin_sortie <- "S:/ETUDES/En cours/memento_Christophe/sortie/"
+fichier_sortie <- "abattoirs_volaille_pdl_2021.xlsx"
+write.xlsx(volailles_sum,file= paste0(chemin_sortie,fichier_sortie) )
+
+# export dans plusieurs feuilles
+chemin_sortie <- "S:/ETUDES/En cours/memento_Christophe/sortie/"
+fichier_sortie <- "agri_bio_2021.xlsx"
+# définir les noms de feuilles pour chaque tableau (data frame)
+dataset_names <- list('tab1' = agri_bio_vegetal_tab1_final, 
+                      'tab2' = agri_bio_vegetal_tab2_final,
+                      'tab3' = agri_bio_animal_tab3_final)
+
+# exporter chaque tableau vers des feuilles séparées dans le même fichier Excel
+write.xlsx(dataset_names, file= paste0(chemin_sortie,fichier_sortie) )
+
+```
+https://www.statology.org/r-export-to-excel-multiple-sheets/
+
+***
+
+<br>
+
+# Manipulation de variables (colonnes)
+
+## Exploration des variables 
+
+```{r , eval = FALSE}
+library(dplyr) # pour glimpse
+library(labelled) # pour look_for
+library(questionr) # pour describe
+
+# noms des variables
+names(exploit_2020)
+
+# liste des variables séparées par une virgule
+paste0(names(exploit_2020),collapse = ",")
+
+# nom, type et extrait des variables
+str(exploit_2020)
+str(exploit_2020,list.len=Inf)
+
+glimpse(exploit_2020)
+look_for(exploit_2020)
+describe(exploit_2020)
+
+# modalités d'une variable caractère ou numérique
+unique(exploit_2020$siege_dep)
+# modalités d'un facteur
+levels(exploit_2020$siege_reg)
+
+# 6 premières lignes
+head(volailles_pdl)
+# Les 4 premières lignes du data.frame
+head(volailles_pdl, 4)
+
+# 6 dernières lignes
+tail(volailles_pdl)
+
+```
+
+### Afficher les valeurs et manipuler les variables
+
+- Pour afficher la table, plusieurs façons : "clic" dans l'environnement Rstudio, `View(base)`, `print(base)`, `base`.
+
+- Pour accéder à une variable : fonction `pull()`
+
+Par exemple :
+```{r,  eval = FALSE}
+str(pull(base, DEP))
+```
+
+
+## Création de variables 
+
+On assigne un contenu à une variable au moyen de `<-`
+La flèche d'assignation peut être écrite avec le raccourci clavier alt + "-" (tiret du 6 ou signe 'moins' du pavé numérique).
+
+ATTENTION : un nom de variable ne peut pas commencer par un chiffre.
+```{r inter_1}
+ma_variable <- 2
+ma_variable <- "Toulouse"
+ma_variable <- c("Toulouse", "Nantes", "Strasbourg")
+ma_variable <- 1:10
+```
+`paste0()` pour concaténer des variables
+'separate()' pour séparer des variables
+
+On souhaite créer de nouvelles variables
+
+<center>![](images/mutate.png)</center>
+
+* `mutate()` : ajouter et modifier des variables
+
+La fonction `mutate()` permet de créer/modifier une variable (ou plusieurs).
+
+```{r, eval = FALSE}
+table_sortie <- mutate(table_entree,
+                        nouvelle_variable = definition_variable)
+
+# Par exemple pour créer une variable :
+base <- mutate(base, 
+               log_SUPERF = log(SUPERF),
+               code_prelevement_caract = as.character(code_prelevement))
+
+```
+
+Nb : `mutate()` permet également de modifier une variable. Dans ce cas la syntaxe est la même que ci-dessus, mais les noms d'entrée et de sortie sont les mêmes :
+
+```{r,  eval = FALSE}
+# Par exemple pour modifier une variable existante :
+base <- mutate(base, 
+               log_SUPERF = 100 * log_SUPERF,
+               code_prelevement = as.character(code_prelevement))
+
+df <- mutate(df, 
+             densite = P14_POP / SUPERF,
+             tx_natal = 1000 * NAISD15 / P14_POP,
+             tx_mort = 1000 * DECESD15 / P14_POP)
+
+# ajout d'une variable avec mutate
+agri_bio_vegetal_fr_tab1 <- agri_bio_vegetal_fr %>%   
+  filter(groupe_de_productions %in% c("Toutes productions") ) %>% 
+  select(annee,territoire,nombre_de_producteurs,surface_bio_et_en_conversion_en_ha,surface_en_conversion_en_ha,surface_bio_en_ha,
+         part_bio_de_la_sau_en_percent) %>%  
+  mutate(part_bio_sau_plus_percent = paste0(part_bio_de_la_sau_en_percent," %") )
+
+# ajout d'une variable avec une modalité déterminée
+volailles_fr <- read.xlsx(xlsxFile=paste0(chemin,fichier), 
+                           sheet = "res-France",colNames = TRUE,startRow = 1) %>% 
+  as_tibble(.name_repair = make_clean_names) %>% 
+  mutate(reg="France") %>% 
+  select(reg,espece,total_poids)
+
+# ajout d'une variable par calcul
+# passage d'ares en hectares
+sau_pbs_2010_2020 <- exploit_2010 %>% 
+  mutate(sau_tot = sau / 100, annee=annee_ra_2010) 
+# calcul solde
+oeufs <- oeufs %>%   
+            mutate(solde = Exportation_Nombre - Importation_Nombre)
+
+# on peut préciser l'emplacement de la nouvelle colonne avec .before ou .after
+groupe_produits_laitiers_2021_France <- produits_laitiers_2021_2 %>% 
+  group_by(code_produit,libellé_produit) %>% 
+  summarise(production_2020=arrondi(sum(finiqte1, na.rm = TRUE) ,digits=0),
+            production_2021=arrondi(sum(finiqte, na.rm = TRUE) ,digits=0),
+            établissements_2020=sum(nbfiniqte1, na.rm = TRUE),
+            établissements_2021=sum(nbfiniqte, na.rm = TRUE)) %>% 
+  ungroup() %>% 
+  mutate(territoire="France",.before=1)
+
+```
+
+**La fonction `mutate()` permet de créer de nouvelles colonnes ou de modifier des colonnes existantes.** Il est possible d'utiliser toutes sortes de fonctions à l'intérieur d'une étape `mutate()`. Le code suivant crée une variable `NB_EQUIP_3PLUS` qui vaut `TRUE` si le nombre d'équipement est supérieur ou égal à 3, et `FALSE` sinon. 
+
+```{r, eval=FALSE}
+bpe_ens_2018_tbl %>% 
+  mutate(NB_EQUIP_3PLUS = (NB_EQUIP >= 3))
+```
+
+Pour créer une nouvelle variable, on utilise un nom de variable qui n'existe pas encore dans la table. Pour modifier une variable qui existe déjà, on utilise directement le nom de cette variable.
+
+Voici quelques utilisations fréquentes de `mutate()` :
+ 
+| Action                                      | Code                                                                    |
+|---------------------------------------------|-------------------------------------------------------------------------|
+| Calculer une somme cumulée                  | `mutate(NB_EQUIP_CUM = cumsum(NB_EQUIP, na.rm = TRUE))`  |
+| Calculer un total                           | `mutate(NB_EQUIP_TOT = sum(NB_EQUIP, na.rm = TRUE))`                    |
+| Sommer deux variables                       | `mutate(NB_EQUIP_DOUBLE = NB_EQUIP + NB_EQUIP)`                    |
+| Extraire une sous-chaine de caractères      | `mutate(CATEGORIE_EQ = str_sub(TYPEQU, 1L, 1L))`                    |
+ 
+
+### `separate` : scinder une colonne en plusieurs
+
+Il arrive que plusieurs informations réunies en une seule colonne et qu'on souhaite les séparer. La fonction `separate` permet d'effectuer cette opération. Elle prend trois arguments principaux :
+
+- le nom de la colonne à scinder ;
+- un vecteur indiquant les noms des nouvelles variables à créer ;
+- le séparateur `sep` indique à quel endroit la variable doit être scindée. Par défaut `separate` scinde au niveau des caractères non-alphanumérique (espace, symbole, etc.). Si l'on indique un nombre entier `n`, alors la colonne est scindée après le n-ième caractère.
+
+Voici un exemple qui utilise la table des communes du Code Officiel Géographique. Dans cette table, la colonne `com` (code commune Insee) contient deux informations : le numéro du département et le numéro de la commune.
+
+```{r, eval=FALSE}
+cog_com_2019_tbl <- doremifasolData::cog_com_2019 %>% as_tibble()
+cog_com_2019_tbl
+```
+
+Voici comment on peut utiliser `separate` pour scinder `com` en deux nouvelles colonnes `code_dep` et `code_com`. La colonne `com` disparait, car par défaut `separate` supprime la colonne scindée. Si on veut la conserver, il faut ajouter l'option `remove = FALSE`.
+
+```{r, eval=FALSE}
+cog_com_2019_tbl %>% 
+  separate(com, c("code_dep", "code_com"), sep = 2)
+
+# séparation d'une variable date ("22-09-2022") en "jour","mois","annee"
+oeufs_cot_det <- oeufs_cot_det %>% 
+  separate(DATE,sep="-", into = c("jour","mois","annee"))
+```
+
+### `unite` : regrouper plusieurs colonnes en une seule
+
+La fonction `unite` permet est de réaliser l'opération inverse de `separate` : regrouper plusieurs colonnes en une seule. Elle prend trois arguments principaux :
+
+- le nom de la colonne à créer ;
+- un vecteur indiquant les noms des variables à regrouper ;
+- le séparateur `sep` qui indique quel séparateur doit être introduit entre les variables regroupées (par défaut, `unite` utilise le caractère `_`).
+
+Voici un exemple où l'on regroupe le code commune Insee et le nom officiel de la commune, avec " - " comme séparateur. Les colonnes `com` et `ncc` disparaissent, car par défaut `unite` supprime les colonnes regroupées. Si on veut les conserver, il faut ajouter l'option `remove = FALSE`.
+
+```{r, eval=FALSE}
+cog_com_2019_tbl %>% 
+  unite(code_et_nom, c("com", "ncc"), sep = " - ") 
+```
+
+### Ajout d'une colonne "numéro de ligne" 
+
+row.names
+
+```{r , eval = FALSE}
+# ajout colonne numéro de ligne
+# creation d'une variable identifiant reprenant le numéro de ligne 
+produits_laitiers <- read.xlsx(xlsxFile=paste0(chemin_entree,fichier_entree), 
+                         sheet = "produits laitiers",colNames = TRUE,startRow = 12) %>% 
+  as_tibble(.name_repair = make_clean_names) 
+
+produits_laitiers <- produits_laitiers %>% 
+  mutate(ident=row.names(produits_laitiers), .before=1)
+```
+
+## Sélectionner des variables
+
+<center>![](images/select.png)</center>
+
+* `select()` : sélectionner des variables par leur nom
+
+La fonction `select()` permet de sélectionner les variables voulues.
+
+- sélection par liste blanche
+```{r, eval=FALSE}
+table_sortie <- select(table_entree, Variable1, Variable2, ..., VariableN)
+```
+
+- sélection par liste noire (supprimer)
+```{r, eval=FALSE}
+table_sortie <- select(table_entree, -Variable1, -Variable2, ..., -VariableN)
+```
+
+Par exemple :
+```{r,  eval = FALSE}
+base_select <- select(base, CODGEO, LIBGEO, P14_POP)
+base_select <- select(base, -CODGEO)
+```
+
+select
+```{r , eval = FALSE}
+agri_bio_vegetal_tab1_final <- agri_bio_vegetal_tab1_final %>% 
+  select(c("annee","vegetal","Loire-Atlantique","Maine-et-Loire", "Mayenne","Sarthe","Vendée","Pays de la Loire","National"))
+
+agri_bio_vegetal_fr_tab1 <- agri_bio_vegetal_fr %>%   
+  filter(groupe_de_productions %in% c("Toutes productions") ) %>% 
+  select(annee,territoire,nombre_de_producteurs,surface_bio_et_en_conversion_en_ha,surface_en_conversion_en_ha,surface_bio_en_ha,
+         part_bio_de_la_sau_en_percent) %>%  
+  mutate(part_bio_sau_plus_percent = paste0(part_bio_de_la_sau_en_percent," %") )
+```
+Une sélection négative est aussi possible avec 'select(-variable_a_enlever)'.
+```{r , eval = FALSE}
+# conversion en caractère
+agri_bio_vegetal_fr_tab1_car <- agri_bio_vegetal_fr_tab1 %>% 
+  mutate(across(c(nombre_de_producteurs,surface_bio_et_en_conversion_en_ha,surface_en_conversion_en_ha,surface_bio_en_ha,
+                  part_bio_de_la_sau_en_percent), as.character ) ) %>% 
+  select(-c(part_bio_de_la_sau_en_percent) )
+```
+
+On peut aussi directement renommer une variable dans l'opération `select()`
+
+```{r , eval = FALSE}
+prelevementb <- select(prelevement, date_p = date_prelevement, code_prelevement,
+                       code_reseau, code_station)
+```
+
+`select()` possède ce qu'on appelle des [helpers](https://dplyr.tidyverse.org/reference/select.html) qui permettent de gagner du temps dans l'écriture d'une sélection. 
+
+Exemple : sélectionner toutes les variables qui commencent par "code_" : 
+
+```{r , eval = FALSE}
+prelevementb <- select(prelevement, starts_with("code_"))
+```
+
+Exemple : sélectionner les variables dont les noms sont contenus dans un vecteur de chaînes de caractères :
+
+```{r , eval = FALSE}
+mes_variables <- c("code_prelevement", "code_intervenant", "code_reseau", "date_prelevement")
+prelevementb <- select(prelevement, one_of(mes_variables))
+```
+
+**La fonction `select()` permet de sélectionner des variables par leur nom, ou par une condition sur leur nom.** 
+
+- Avec une liste de noms de variables. Le code suivant sélectionne le code commune, le type d'équipement et le nombre d'équipement dans la base permanente des équipements :
+ 
+```{r , eval = FALSE}
+  bpe_ens_2018_tbl %>% 
+    select(DEPCOM, TYPEQU, NB_EQUIP)
+```
+
+- Avec une condition logique. Par exemple, la fonction `starts_with("DEP")` permet de sélectionner toutes les variables dont le nom commence par "DEP". 
+
+```{r , eval = FALSE}
+  bpe_ens_2018_tbl %>% 
+    select(starts_with("DEP"))
+```
+    Le tableau suivant donne la liste des conditions utilisables avec `select()` :
+
+| Fonction                    | Signification |
+|-----------------------------|----------------------------------------------------------------------|
+| `select(starts_with("...")` | dont le nom commence par "..."  |
+| `select(ends_with("...")`   | dont le nom se termine par "..."  |
+| `select(contains("...")`    | contient "..."  |
+| `select(matches("...")`     | vérifie une expression régulière   |
+| `select(all_of(...))`       | sélectionne les colonnes listées dans un vecteur en paramètre |
+| `select(any_of(...))`       | identique à `all_of()`, mais sans erreur si la colonne n'existe pas |
+| `select(everything())`      | toutes les colonnes (utile pour mettre une nouvelle colonne devant les autres)      |
+
+On peut aussi indiquer une plage de colonnes (soit par les noms de variables, soit par les numeros de colonne, par exemple ci-après on pourrait indiquer 1:4 au lieu de haircolor:weight)
+
+```{r , eval = FALSE}
+data <- data  %>% 
+  select(catdata, haircolor:weight)
+```
+
+
+- On peut aussi renommer des colonnes avec la syntaxe `select(data, nouveau_nom = selection_colonne)` :
+
+```{r , eval = FALSE}
+  bpe_ens_2018_tbl %>% 
+    select(dept = DEP, depcom = DEPCOM)
+```
+
+
+## Renommer des colonnes (variables)
+
+* `rename()` : renommer des variables ;
+
+La fonction `rename()` permet de renommer une variable (ou plusieurs).
+
+```{r, eval = FALSE}
+base <- rename(base, nouveau_nom = ancien_nom)
+
+# Exemple
+base_rename <- rename(base, ZONE_EMPLOI = ZE)
+
+# renommage 2 lignes intitulés
+volailles_pdl_siqo2 <- volailles_pdl_siqo %>%   
+  rename(espece_poulets_coquelets_siqo_label_rouge=label_rouge_2,
+         espece_poulets_coquelets_siqo_aoc_aop=aoc_aop_3,       
+         espece_poulets_coquelets_siqo_agri_bio=agri_bio_4,       
+         espece_poulets_coquelets_siqo_aut_signe_off=aut_signe_off_5 
+         )
+```
+
+
+La fonction `rename()` permet de renommer des variables. La syntaxe est la suivante :  `rename(data, nouveau_nom = ancien nom)`. Voici un exemple :
+
+```{r , eval = FALSE}
+bpe_ens_2018_tbl %>% 
+  rename(code_commune = DEPCOM)
+```
+
+La fonction `rename_with()` permet de renommer un groupe de colonnes avec une fonction. La syntaxe est la suivante :  `rename_with(data, nom_fonction, selection_colonnes)`. Voici un exemple qui met en minuscules tous les noms de colonnes :
+
+```{r , eval = FALSE}
+bpe_ens_2018_tbl %>% 
+  rename_with(tolower)
+```
+## Extraire des éléments d’une chaîne de caractères
+
+La fonction `substr()` permet d’extraire une sous-chaine à partir d’une chaine de caractères. 
+
+`substr(x,start,stop)` extrait une sous-chaîne de caractères.
+
+Le premier argument est la chaine de caractères, 
+le deuxième correspond au début de sous-chaine 
+et le troisième à la fin de la sous-chaine que nous voulons extraire.
+
+```{r , eval = FALSE}
+depcom <- "44001"
+ 
+dep <- substr(depcom,1,2) 
+# La sous-chaine débute au 1er caractère et se finit au 2e
+# Ainsi on extrait "44"
+
+# Filtrer les enregistrements de la région Pays de la Loire
+bio_pdl <- bio %>% 
+  filter(substr(codecommuneinsee,1,2) %in% c('44','49','53','72','85'))
+
+# Créer une variable dep pour département
+bio_pdl <- bio %>% 
+  filter(substr(codecommuneinsee,1,2) %in% c('44','49','53','72','85')) %>% 
+  mutate(dep=substr(codecommuneinsee,1,2))
+
+# Extraire une chaîne de caractères avec `substr`  
+laits_mensuel_2 <- laits_mensuel_1 %>% 
+  mutate(dep_etab=substr(sircodpost,1,2),
+         dep_prod=substr(dep,2,3) )
+```
+
+
+```
+
+## Conversion d'une variable caractère en numérique
+
+On utilise la fonction 'as.numeric'.
+
+```{r , eval = FALSE}
+agri_bio_vegetal_fr <- agri_bio_vegetal_fr %>% 
+  mutate(across(c(surface_bio_et_en_conversion_en_ha,surface_en_conversion_en_ha,surface_bio_en_ha,
+                  part_bio_de_la_sau_en_percent), as.numeric ) ) 
+```
+En cas de lignes vides, cela crée des valeurs NA (not available) et produit un messsage d'avertissement dans la console. C'est un message non bloquant.
+   ***Warning messages:***
+   1: Problem with `mutate()` input `..1`.
+   NAs introduits lors de la conversion automatique
+   Input `..1` is `across(...)`.
+   
+On utilise la fonction 'as.numeric', combinée à 'across' pour l'appliquer à un ensemble de variables.  
+   
+```{r , eval = FALSE}
+# import fichiers
+chemin_entree <- "S:/ETUDES/En cours/memento_Christophe/entree/BAEA/"
+fichier_entree <- "baea_diff_2020_reg_52_Pays_de_la_Loire.xlsx"
+
+otex <- read.xlsx(xlsxFile=paste0(chemin_entree,fichier_entree), 
+                         sheet = "ETP - OTEX",colNames = TRUE,startRow = 7) %>% 
+  mutate(across(-c("Orientation.technico-économique.(OTEX)"), as.numeric) ) %>% 
+  rename(otex_lib="Orientation.technico-économique.(OTEX)") %>% 
+  mutate(otex_code = substr(otex_lib,1,4) )
+
+
+# type.convert pour transformer en numérique poids_produit_en_tec (caractère) qui a comme séparateur ","
+viande_volaille_tec_2021 <- read.xlsx(xlsxFile=paste0(chemin,"cd2022-5_SAA_2021_provisoire_resultats_LIB.xlsx"), 
+                         sheet = "Volailles finies produites",colNames = TRUE,startRow = 1) %>% 
+  as_tibble(.name_repair = make_clean_names) %>% 
+  filter(region %in% c("52  -  Pays de la Loire","98  -  Total France métropolitaine")  ) %>% 
+  mutate(an_2021=type.convert(poids_produit_en_tec,dec=","),
+         reg = case_when(
+           region %in% c("52  -  Pays de la Loire") ~ "pdl",
+           region %in% c("98  -  Total France métropolitaine") ~ "fm") ) %>% 
+  select(c(reg,libelle_culture,an_2021)) 
+
+```
+
+## Conversion d'une variable numérique en caractère
+
+On utilise la fonction 'as.character'.
+
+```{r , eval = FALSE}
+# conversion en caractère
+agri_bio_vegetal_fr_tab1_car <- agri_bio_vegetal_fr_tab1 %>% 
+  mutate(across(c(nombre_de_producteurs,surface_bio_et_en_conversion_en_ha,surface_en_conversion_en_ha,surface_bio_en_ha,
+                  part_bio_de_la_sau_en_percent), as.character ) ) %>% 
+  select(-c(part_bio_de_la_sau_en_percent) )
+```
+
+
+## Recodification de variables
+
+recode
+```{r , eval = FALSE}
+# ajout date en nombre
+lait_chevre3 <- lait_chevre2  %>%
+  mutate(code_mois = recode(mois,
+                            Janvier = "01",
+                            Février = "02",
+                            Mars = "03",
+                            Avril = "04",
+                            Mai = "05",
+                            Juin = "06",
+                            Juillet = "07",
+                            Août = "08",
+                            Septembre = "09",
+                            Octobre = "10",
+                            Novembre = "11",
+                            Décembre = "12"))
+
+# ajout date en lettres
+laits_mensuel_chevre_2 <- laits_mensuel_chevre_1  %>%
+  mutate(mois = recode(code_mois,
+                            "01"="Janvier",
+                            "02"="Février",
+                            "03"="Mars",
+                            "04"="Avril",
+                            "05"="Mai",
+                            "06"="Juin",
+                            "07"="Juillet",
+                            "08"="Août",
+                            "09"="Septembre",
+                            "10"="Octobre",
+                            "11"="Novembre",
+                            "12"="Décembre"))
+                            
+# otex en clair
+# recode(x, old = new)
+exploit_vaches_otex_clair <- exploit_vaches_otex %>% 
+  mutate(otex_libelle = recode(otefda_coef17,
+                               "1516"="Grandes cultures",
+                               "2829"="Maraîchage, horticulture",
+                               "3500"="Viticulture",
+                               "3900"="Fruits ou autres cultures permanentes",
+                               "4500"="Bovins lait",
+                               "4600"="Bovins viande",
+                               "4700"="Bovins mixte",
+                               "4800"="Ovins, caprins, autres herbivores",
+                               "5074"="Porcs, volailles",
+                               "6184"="Polyculture, polyélevage",
+                               "9000"="Exploitations non classées",
+                                .default = "autre"))
+                                
+# Calculer par département et statut 
+# le nombre d’exploitations ayant des vaches,
+# l’effectif de vaches et la pbs
+exploit_vaches_statut <- exploit_bovins_c %>% 
+  filter(cheptq_111000>0) %>% 
+  mutate(statut_libelle = recode(statut,
+                                 "01"="1 - Exploitant individuel",
+                                 "02"="2 - GAEC",
+                                 "03"="3 - EARL",
+                                 .default = "4 - Autres statuts"))
+
+nb_exploit_vaches_statut <- exploit_vaches_statut %>% 
+  group_by(siege_dep,statut_libelle) %>% 
+  summarise(nb_expl=n(),
+            vaches=sum(cheptq_111000),
+            pbs=sum(pbstot_coef17)) %>% 
+  ungroup() %>% 
+  arrange(siege_dep)
+
+```
+
+Avec `ifelse` :
+- `variable = ifelse(condition(x), valeur_si_oui, valeur_si_non)` permet d'affecter *valeur_si* ou  *valeur_si_non* à *variable* en fonction du fait que *x* répond à *condition*.
+Exemple : création d'une variable résultat pour savoir si les résultats de nos analyses sont bons, ou non.
+
+```{r , eval = FALSE}
+analyseb <- mutate(analyse, resultat_ok = ifelse(code_remarque %in% c(1, 2, 7, 10),
+                                                 yes = TRUE, no = FALSE))
+```
+
+qui peut se résumer, lorsque `yes = TRUE` et `no = FALSE`, à :
+```{r , eval = FALSE}
+analyseb <- mutate(analyse, resultat_ok = code_remarque %in% c(1, 2, 7, 10))
+```
+
+On peut créer une nouvelle variable, commençant par un caractère commun à plusieurs modalités, avec 'startsWith'
+
+```{r , eval = FALSE}
+# Filtrer les enregistrements concernant les pommes
+bio_pdl_pommes_yc_terre <- bio_pdl %>% 
+  mutate(libelle_ab_2 = ifelse(startsWith(libelleonab, "Pomme"), "Pommes", "hors_pommes")) %>% 
+  filter(libelle_ab_2 %in% c("Pommes"))
+
+unique(bio_pdl_pommes$bio_pdl_pommes_yc_terre)
+# [1] "Pommes de table"   "Pommes de terre (hors féculière)" "Pommes à cidre et à jus"  "Pommes (sans précision)"  
+
+bio_pdl_pommes <- bio_pdl %>% 
+  mutate(libelle_ab_2 = ifelse(startsWith(libelleonab, "Pomme"), "Pommes", libelleonab)) %>% 
+  filter(libelle_ab_2 %in% c("Pommes") & libelleonab != "Pommes de terre (hors féculière)")
+```
+
+Avec `case_when()` :
+- `case_when()` permet d'étendre la logique de `ifelse()` à des cas plus complexes.
+Les conditions mises dans un `case_when()` ne sont pas exclusives. De ce fait, il faut pouvoir déterminer l'ordre d'évaluation des conditions qui y sont posées. Cet ordre s'effectue de bas en haut, c'est à dire que la dernière condition évaluée (celle qui primera sur toutes les autres) sera la première à écrire.
+Exemple: On va ici calculer des seuils fictifs sur les analyses.
+
+```{r , eval = FALSE}
+analyseb <- mutate(analyse, classe_resultat_analyse = case_when(
+  resultat_analyse == 0     ~ "1",
+  resultat_analyse <= 0.001 ~ "2",
+  resultat_analyse <= 0.01  ~ "3",
+  resultat_analyse <= 0.1   ~ "4",
+  resultat_analyse > 0.1    ~ "5",
+  TRUE                      ~ ""
+  ))
+```
+
+
+ifelse
+```{r , eval = FALSE}
+laits_mensuel_chevre_cerise <- laits_mensuel_2 %>%
+  filter(type %in% c("CNB","CB")) %>% 
+  mutate(reg_etab = ifelse(dep_etab %in% c("44","49","53","72","85"),
+                           yes = "52", no = "99"),
+         reg_prod = ifelse(dep_prod %in% c("44","49","53","72","85"),
+                           yes = "52", no = "99"))
+
+# en fonction du numéro de ligne
+produits_laitiers_3 <- produits_laitiers_2 %>% 
+  mutate(code_produit = case_when( 
+    code_produit %in% c("062999 et 072999") ~ "062999_072999",
+    code_produit %in% c("144221, 223, 224") ~ "144221_144223_144224",
+    code_produit %in% c("188100 et 188220") ~ "188100_188220",
+    code_produit %in% c("249319 et 249325") ~ "249319_249325",
+    TRUE ~ code_produit),
+    territoire = ifelse(ident %in% 2:22,"France",territoire),
+    territoire = ifelse(ident %in% 23:45,"Pays de la Loire",territoire))
+```
+
+case_when
+```{r , eval = FALSE}
+# nomenclature animaux
+agri_bio_animal_fr_animaux <- agri_bio_animal_fr %>%   
+  mutate(animaux_2 = case_when(
+    groupe_de_productions %in% c("Vaches laitières") ~ "1_Vaches laitières",
+    groupe_de_productions %in% c("Vaches allaitantes") ~ "2_Vaches viande",
+    groupe_de_productions %in% c("Brebis viande") ~ "3_Brebis viande",
+    groupe_de_productions %in% c("Brebis laitières") ~ "4_Brebis laitières",
+    groupe_de_productions %in% c("Chèvres") ~ "5_Chèvres",
+    groupe_de_productions %in% c("Truies") ~ "6_Truies reproductrices",
+    groupe_de_productions %in% c("Poulets de chair") ~ "7_Poulets de chair",
+    groupe_de_productions %in% c("Poules pondeuses") ~ "8_Poules pondeuses",
+    TRUE ~ "autre cas - doublon")
+  )
+
+# nomenclature cultures
+agri_bio_vegetal_fr_cultures <- agri_bio_vegetal_fr %>%   
+    mutate(cultures_2 = case_when(
+    groupe_de_productions %in% c("Toutes productions") ~ "1_Surface totale",
+    sous_groupe_de_productions %in% c("Céréales") ~ "2_Céréales",
+    sous_groupe_de_productions %in% c("Oléagineux","Protéagineux") ~ "3_Oléo-protéagineux",
+    sous_groupe_de_productions %in% c("Légumes secs","Légumes frais","Plantes à parfum, aromatiques et médicinales") ~ "4_Légumes, fruits et PPAM",
+    groupe_de_productions %in% c("Fruits (yc à coque)") & sous_groupe_de_productions %in% c("Toutes") ~ "4_Légumes, fruits et PPAM",
+    sous_groupe_de_productions %in% c("Viticulture") ~ "5_Vigne",
+    sous_groupe_de_productions %in% c("Cultures fourragères","Surfaces toujours en herbe") ~ "6_Fourrage et STH",
+    groupe_de_productions %in% c("Autres surfaces") & sous_groupe_de_productions %in% c("Toutes") ~ "7_Autres",
+    TRUE ~ "autre cas - doublon")
+  )
+
+```
+
+fct_collapse pour les facteurs, autrement dit des valeurs catégorielles
+Cette fonction transforme les niveaux d’un facteur, soit pour les renommer soit pour les regrouper.
+
+```{r , eval = FALSE}
+library(forcats)  # fonction "fct_collapse"
+
+# regroupements par type de volailles
+volailles_pdl$espece_regrpt1 <- fct_collapse(volailles_pdl$libelle_espece,
+                                                "b11-poulets" =  c("Poulets (yc coquelets)","Chapons, poulardes",
+                                                # "Coqs et poules de réforme",
+                                                "Poules de réforme (filière œufs de consommation)",
+                                                "Coqs et poules de réforme (reproducteurs)"),
+                                                "c12-dindes" = c("Dindes"),
+                                                # "3-pintades" = c("Pintades (yc chaponnées)"),
+                                                "d14-canards" = c("Canards à rôtir","Canards gras"),
+                                                # "5-oies" =  c("Oies à rôtir","Oies grasses"),
+                                                # "6-petites_volailles" =  c("Pigeons","Cailles"),
+                                                "e17-lapins" = c("Lapins")  ) 
+
+```
+
+
+## Recodification de variables numériques
+
+La fonction 'cut()' sert à créer des classes : seq(0,120,5) => de 0 à 120 par paliers de 5
+         
+'right = FALSE' pour fermé à gauche, ouvert à droite [inf,sup)]
+
+```{r , eval = FALSE}
+exploitants_2010 <- fam_2010 %>% 
+  filter(famlien %in% c("10", "11", "12", "13"))  %>% 
+  mutate(nom_dossier = id_dossier,
+         annee = annee_ra_2010,
+         age = annee_ra_2010 - as.integer(famanais), 
+         tr_age_10 = cut(age, c(0, seq(40, 60, by = 10), Inf), right = FALSE ) )
+```
+
+
+## Somme des variables 
+
+On cherche à agréger des données.
+* `summarise()` : calculer une statistique à partir de données
+* `group_by()` : faire des opérations par groupe.
+
+### Globalement
+
+<center>![](images/summarise.png)</center>
+
+La fonction `summarise()` permet d'agréger des données, en appliquant une fonction sur les variables pour construire une statistique sur les observations de la table. C'est une fonction dite de “résumé”.
+
+```{r , eval=FALSE}
+summarise(table_entree, NomVariableAgregee = Fonction(NomVariableEtude))
+
+base_med <- base_extrait %>%
+  summarise(population_med = median(P14_POP, na.rm = T))
+```
+
+La fonction `summarise()` retourne un data.frame.
+
+### Selon un facteur
+
+<center>![](images/groupby.png)</center>
+
+La fonction `summarise()` couplée à `group_by()` permet de calculer des statistiques pour chaque modalité d'une variable qualitative. Avec `group_by()`, on précise les variables qui formeront des groupes, sur lesquels on appliquera une fonction :
+
+```{r, eval=FALSE}
+TableauGroupes <- group_by(table_entree, Variable1, ..., VariableN)
+summarise(TableauGroupes, NomVariableAgregee = Fonction (NomVariableEtude))
+```
+
+Par exemple, si on veut avoir la médiane de la variable P14_POP, pour chaque ZE et chaque région :
+```{r , eval=FALSE}
+base_reg_ann <- base_extrait %>% 
+  group_by(ZE, REG) %>%
+  summarise(population_med = median (P14_POP, na.rm = TRUE))
+```
+
+
+Exemples avec n, sum
+
+On peut avoir des NA car les valeurs manquantes sont absorbantes. Pour éviter cela, il convient d'ajouter 'na.rm = TRUE'
+
+'distinct' filtre les lignes du tableau pour ne conserver que les lignes distinctes, en supprimant toutes les lignes en double.
+
+```{r , eval = FALSE}
+
+# nb exploitations par dep
+nb_exploit_2020 <- exploit_2020 %>% 
+              mutate(annee=annee_ra_2020) %>% 
+              select(nom_dossier,
+                     dep_2020=siege_dep,
+                     annee) %>% 
+  group_by(annee = factor(annee, levels = c(annee_ra_2020)),dep_2020,
+           .drop = FALSE) %>% 
+  summarise(`nombre total d'exploitations` = n() )
+
+# nb exploitations par dep
+nb_exploit_2020_reg <- exploit_2020 %>% 
+  select(nom_dossier,siege_dep) %>% 
+  mutate(territoire = "Pays de la Loire",
+         nb_total_exploitations = n() ) %>% 
+  distinct(territoire,nb_total_exploitations)
+
+# nb exploitations par dep
+nb_exploit_2010_2020 <- exploit_2010 %>% 
+  mutate(annee=annee_ra_2010) %>% 
+  select(annee,
+         dep_2020=siege_dep_2020,
+         nom_dossier = id_dossier,
+  ) %>% 
+  bind_rows(exploit_2020 %>% 
+              mutate(annee=annee_ra_2020) %>% 
+              select(nom_dossier,
+                     dep_2020=siege_dep,
+                     annee)) %>% 
+  group_by(annee = factor(annee, levels = c(annee_ra_2010, annee_ra_2020)),dep_2020,
+           .drop = FALSE) %>% 
+  summarise(`nombre total d'exploitations` = n() )
+
+# somme des regroupements par type de volailles
+volailles_pdl1 <- volailles_pdl %>%   
+            group_by(reg,espece_regrpt1) %>%     
+            mutate(tec_regrpt = sum(total_poids / 1000) ) %>% 
+            ungroup()
+
+# somme des regroupements par abattoir par type de volailles
+volailles_abattoir <- volailles_pdl %>%   
+  group_by(siret,espece_regrpt1) %>%     
+  filter(espece_regrpt1 %in% c("b11-poulets","c12-dindes","d14-canards","e17-lapins"))  %>% 
+  mutate(tec_regrpt = sum(poids / 1000, na.rm = TRUE ) ) %>% 
+  filter(!is.na(tec_regrpt) & tec_regrpt != 0)  %>% 
+  select(reg,dep,siret,rsoc,espece_regrpt1,tec_regrpt) %>% 
+  distinct()
+
+volailles_abattoir_44 <- volailles_pdl %>%   
+  group_by(siret,espece_regrpt1) %>%     
+  filter(espece_regrpt1 %in% c("b11-poulets","c12-dindes","d14-canards","e17-lapins")  & dep=='44')  %>% 
+  mutate(tec_regrpt = sum(poids / 1000, na.rm = TRUE ) ) %>% 
+  filter(!is.na(tec_regrpt) & tec_regrpt != 0)  %>% 
+  select(reg,dep,siret,rsoc,espece_regrpt1,tec_regrpt) %>% 
+  distinct()
+
+# calcul somme pdl fm + evolution
+viande_volaille_sum <- viande_volaille_tec_lib %>% 
+  group_by(reg) %>%
+  summarise(an_2021 = sum(an_2021), an_2020 = sum(an_2020)) %>%
+  mutate(espece = "07_Total") %>% 
+  ungroup()
+
+viande_volaille_evol <- viande_volaille_tec_lib %>% 
+  bind_rows(viande_volaille_sum) %>% 
+  mutate(evol_2021_2020 = paste0(arrondi((((an_2021/an_2020)-1)*100),0)," %"),
+         an_2021 = (arrondi(an_2021/1000,0) )
+  ) %>% 
+  arrange(desc(reg),espece) 
+
+# moyenne
+# age moyen
+age_moyen <- exploitants_2010 %>% 
+            mutate(annee = annee_ra_2010,
+                  age = annee_ra_2010 - as.integer(famanais) ) %>%
+  bind_rows(mo_2020 %>% 
+            mutate(annee = annee_ra_2020,
+                  anais = replace(anais, which(anais == 0 | anais == 9999), NA), # il existe des valeurs nulles d'années de naissance (2 dans la Manche !)
+                  age = annee_ra_2020 - anais) ) %>% 
+  group_by(annee = factor(annee, levels = c(annee_ra_2010, annee_ra_2020)),
+           nom = "âge moyen des chefs d'exploitation et coexploitants",
+           .drop = FALSE) %>% 
+  summarise(age_moy = mean(age, na.rm = TRUE) )
+
+```
+**La fonction `summarise()` permet de calculer une ou plusieurs statistiques à partir de la table de données.** Cette fonction est souvent utilisée après la fonction `group_by()` pour calculer des statistiques par groupe, et elle conduit à une agrégation de la table en fonction des groupes définis par la fonction `group_by` (par défaut une agrégation sur l'ensemble de la table). Le code suivant calcule le nombre total d'équipements dans la BPE `sum(NB_EQUIP, na.rm = TRUE)`, et le nombre total de boulangeries `sum(NB_EQUIP * (TYPEQU == "B203"), na.rm = TRUE)`.
+
+```{r , eval = FALSE}
+bpe_ens_2018_tbl %>% 
+  summarise(
+    NB_EQUIP_TOT = sum(NB_EQUIP, na.rm = TRUE),
+    NB_BOULANGERIES_TOT = sum(NB_EQUIP * (TYPEQU == "B203"), na.rm = TRUE)
+  )
+```
+
+Il est possible d'utiliser un grand nombre de fonctions différentes avec `summarise()`. Ces fonctions peuvent être combinées entre elles, et il est possible d'en définir de nouvelles. Voici quelques fonctions courantes :
+ 
+| Fonction                          | Code           |
+|-----------------------------------|----------------|
+| Moyenne                           | `mean()`       |
+| Médiane                           | `median()`     |
+| Ecart-type                        | `sd()`         |
+| Minimum                           | `min()`        |
+| Maximum                           | `max()`        |
+| Valeur de la première valeur      | `first()`      |
+| Valeur de la première valeur      | `last()`       |
+| Nombre de lignes                  | `n()`          |
+| Nombre de valeurs distinctes      | `n_distinct()` |
+| Somme                             | `sum()`        |
+| Somme cumulée                     | `cumsum()`     |
+
+### Fonctions `mutate()` et `summarise()` 
+
+Les fonctions `mutate()` et `summarise()` calculent toutes les deux de nouvelles variables. Il arrive donc fréquemment qu'on les confonde, ou qu'on ne sache pas laquelle il faut utiliser. Comme indiqué précédemment, l'une, `mutate()`, conduit à l'ajout d'une variable supplémentaire, l'autre, `summarise()`, définit une procédure d'agrégation de la donnée. Voici une règle simple pour savoir quelle fonction utiliser :
+
+- Si vous voulez résumer une information contenue dans une table, il faut utiliser `summarise()`. Exemple : calculer le nombre total d'équipements pour chaque commune.
+
+  ```{r, eval = FALSE, warning= FALSE}
+  bpe_ens_2018_tbl %>%  
+    group_by(DEPCOM) %>% 
+    summarise(NB_EQUIP_TOT = sum(NB_EQUIP, na.rm = TRUE))
+  ```
+
+- Si vous voulez ajouter une information dans une table (en conservant toutes les autres variables), il faut utiliser `mutate()`. Exemple : ajouter dans la table `bpe_ens_2018_tbl` une colonne donnant le nombre total d'équipements pour chaque commune.
+
+  ```{r, eval = FALSE, warning= FALSE}
+  bpe_ens_2018_tbl %>%  
+  group_by(DEPCOM) %>% 
+  mutate(NB_EQUIP_TOT = sum(NB_EQUIP, na.rm = TRUE))
+  ```
+Avec 'distinct' en fin d'un traitement utilisant 'mutate', on obtient un résumé équivalent à 'summarise'.
+```{r, eval = FALSE, warning= FALSE}
+# méthode 1 nb exploitations pour la région
+nb_ha_sau_2020_reg_a <- exploit_2020 %>% 
+  select(nom_dossier,siege_dep,sau_tot) %>% 
+  summarise(sau_ha = sum(sau_tot, na.rm = TRUE) ) %>% 
+  mutate(territoire = "Pays de la Loire") 
+
+# méthode 2 nb exploitations pour la région
+nb_ha_sau_2020_reg_b <- exploit_2020 %>% 
+  select(nom_dossier,siege_dep,sau_tot) %>% 
+  mutate(territoire = "Pays de la Loire",
+         sau_ha = sum(sau_tot, na.rm = TRUE) ) %>% 
+  distinct(territoire,sau_ha)
+```
+
+### Somme avec une pondération
+
+```{r , eval = FALSE}
+# Somme dans le cas de variable pondérée
+# Utilisation de la variable coef_f Coefficient d'extrapolation des données des modules
+# Les variables collectées en échantillon uniquement sont suffixées _ech
+# mopfamfil_ech : Emploi de la main d'oeuvre familiale de manière permanente
+# mopnfamfil_ech : Emploi de la main d'oeuvre non familiale de manière permanente
+nb_exploit_2020_mop_fam_reg <- exploit_2020 %>% 
+  select(nom_dossier,siege_dep,mopfamfil_ech,mopnfamfil_ech,poids=coef_f) %>% 
+  filter(!poids == 0 & mopfamfil_ech == 1) %>% 
+  mutate(nb_exploit_mop_fam = sum(poids) ) %>% 
+ distinct(nb_exploit_mop_fam)
+
+nb_exploit_2020_mop_non_fam_reg <- exploit_2020 %>% 
+  select(nom_dossier,siege_dep,mopfamfil_ech,mopnfamfil_ech,poids=coef_f) %>% 
+  mutate(nb_exploit = n() ) %>% 
+  filter(!poids == 0) %>% 
+  mutate(nb_exploit_ech = n() ) %>%
+  filter(mopnfamfil_ech == 1) %>% 
+  mutate(nb_exploit_mop_non_fam = sum(poids) ) %>% 
+  distinct(nb_exploit,nb_exploit_ech,nb_exploit_mop_non_fam)
+```
+
+## Faire des opérations par groupe : `group_by()`
+ 
+**La fonction `group_by()` permet de définir des groupes dans la table de données pour faire des opérations par groupe.** L'utilisation de `group_by()` rend très utiles les opérations avec `summarise()`. Le code suivant groupe les données de la BPE par département `group_by(DEP)` puis calcule le nombre total d'équipements `sum(NB_EQUIP, na.rm = TRUE)` et le nombre total de boulangeries `sum(NB_EQUIP * (TYPEQU == "B203"), na.rm = TRUE)`.
+ 
+```{r , eval = FALSE}
+bpe_ens_2018_tbl %>% 
+  group_by(DEP) %>%
+  summarise(NB_EQUIP_TOT = sum(NB_EQUIP, na.rm = TRUE),
+            NB_BOULANGERIES_TOT = sum(NB_EQUIP * (TYPEQU == "B203"), na.rm = TRUE))
+```
+ 
+La fonction `group_by` peut également modifier le comportement des fonctions `filter` ou `mutate`, comme pour `summarise`. L'instruction suivante permet ainsi d'ajouter à la BPE une variable égale au nombre total de boulangeries dans le département.
+
+```{r , eval = FALSE}
+bpe_ens_2018_tbl %>% 
+  group_by(DEP) %>%
+  mutate(NB_BOULANGERIES_DEP = sum(NB_EQUIP * (TYPEQU == "B203"), na.rm = TRUE))
+```
+
+L'instruction suivante permet de ne conserver que les communes pour lesquelles le nombre d'équipements est le plus important de leur région.
+
+```{r , eval = FALSE}
+bpe_ens_2018_tbl %>% 
+  group_by(REG) %>%
+  filter(NB_EQUIP == max(NB_EQUIP))
+```
+
+Ainsi, les opérations à la suite d'un `group_by()`, comme ici `sum` et `max`, sont calculées par groupe de lignes (ici suivant la colonne `DEP`).
+
+
+On peut aussi directement renommer une variable dans l'opération `group_by()`
+
+```{r , eval = FALSE}
+# dimension économique par département
+dim_eco_dep <-  exploit_2020 %>% 
+  group_by(dep = siege_dep,
+           dim = dimeco_coef2017) %>% 
+  summarise(n_exploit = n(),
+            sau_ha = sum(sau_tot, na.rm = TRUE)) %>% 
+  ungroup()
+```
+
+::: Remarque
+
+Trois remarques sur l'utilisation de `group_by()` :
+
+- si vous ne savez pas si une table comporte des groupes, vous pouvez afficher la liste des variables de groupe avec la fonction `group_vars()` ;
+- si vous appliquez une instruction `group_by()` à une table qui comporte déjà des groupes, alors les groupes sont redéfinis ;
+- il est prudent d'appliquer la fonction `ungroup()` à vos données une fois que les opérations par groupe ont été réalisées, afin que les opérations suivantes ne soient pas effectuées par groupe par mégarde.
+:::
+
+
+Avec dplyr 1.1.0, on peut éviter d'utiliser group_by, en utilisant seulement .by :
+```{r , eval = FALSE}
+library(dplyr)
+x %>%  
+  summarise(Frequency = sum(Frequency), .by = Category)
+```
+
+## Trier un tableau selon des variables
+
+* `arrange()` : trier la table selon une ou plusieurs variables
+
+**Le verbe `arrange()` permet de trier les observations de la table selon une ou plusieurs colonnes.** Par défaut, `arrange` trie par ordre croissant. Il faut utiliser `desc(nom_de_variable)` pour trier par ordre décroissant. Le code suivant trie la BPE selon le code commune et le type d'équipement.
+
+```{r , eval = FALSE}
+bpe_ens_2018_tbl %>% 
+  arrange(DEPCOM, TYPEQU)
+```
+
+Voici quelques utilisations fréquentes de `arrange()` :
+
+| Action                                           | Code                                 |
+|--------------------------------------------------|--------------------------------------|
+| Trier sur une colonne en ordre croissant         | `arrange(NB_EQUIP)`                  |
+| Trier sur plusieurs colonnes en ordre croissant  | `arrange(DEPCOM, NB_EQUIP)`          |
+| Trier sur une colonne en ordre décroissant       | `arrange(desc(NB_EQUIP))`            |
+
+
+```{r , eval = FALSE}
+agri_bio_vegetal_fr_tab2 <- agri_bio_vegetal_fr_cultures %>% 
+  filter(cultures_2 %not_in% c("autre cas - doublon") ) %>% 
+  group_by(annee_2=annee,territoire,cultures_2) %>% 
+  summarise(surface_bio_conversion_en_ha=sum(surface_bio_et_en_conversion_en_ha, na.rm = TRUE) ) %>% 
+  arrange(desc(territoire),cultures_2)
+```
+
+Spécificité pour les vecteurs 'factor', le tri se réalise avec l'instruction levels
+```{r , eval = FALSE}
+# regroupements et pivot_wider
+volailles_sum <- rbind(volailles_dep_sum,volailles_pdl_sum) %>% 
+  pivot_wider(names_from=dep,
+              values_from =tec_regrpt) %>% 
+  mutate(espece_ordre=factor(espece,levels= c("a10-volailles",
+                                              "b11-poulets",
+                                              "c12-dindes", 
+                                              "d14-canards", 
+                                              "e17-lapins" ) ) )
+```
+
+## Changement ordre des colonnes
+
+relocate
+```{r , eval = FALSE}
+# the relocate() function to reorder columns. The default behaviour is to move the named column(s) to the first position.
+otex_regroupe <- otex_regroupe %>%
+  mutate(otex_lib_det = substr(otex_lib,8,60) ) %>%
+  relocate(otex_lib, otex_lib_det, .after = otex_code_regr )
+
+eff_volailles_evol_part <- eff_volailles_evol %>% 
+  select(-c(evo_percent,region,an_2020)) %>% 
+  pivot_wider(names_from =reg,
+              names_prefix='',
+              names_sep = "_",
+              values_from= c(an_2021,evol_2021_2020) ) %>% 
+  mutate(part_pdl_france_2021=paste0(arrondi(an_2021_pdl/an_2021_fm*100,0)," %") ) %>%
+  relocate(an_2021_pdl,evol_2021_2020_pdl,an_2021_fm,evol_2021_2020_fm,part_pdl_france_2021, .after = espece )
+
+# succession de relocate
+lait_chevre_dep_2021_donnees <- lait_chevre_dep3 %>% 
+  select(-c(reg_dep_prod,dep_libdep,producteurs_2020_old,livraisons_2020_old,lait)) %>% 
+  relocate(Code_département,Département, .before = producteurs_2010) %>% 
+  relocate(producteurs_2020,livraisons_2020,producteurs_2021,livraisons_2021, .after = livraisons_2019)
+
+```
+## Ajout de colonne Total 
+
+sum avec rowwise() au préalable
+
+```{r , eval = FALSE}
+# somme de chaque ligne
+volailles_pdl_espece_siqo_col <- volailles_pdl_espece_siqo_col %>% 
+  rowwise() %>% 
+  mutate(autres_siqo=sum(aoc_aop,aut_signe_off,aut_demarche,na.rm = TRUE),
+         total_qualite=sum(label_rouge,aoc_aop,agri_bio,aut_signe_off,aut_demarche,na.rm = TRUE))
+         
+## Pour sum en ligne, il convient d'utiliser rowwise() au préalable
+## lorqu' on veut faire un calcul par LIGNE avec des fonctions "vectorielles"
+## comme sum , mean ...
+## il faut indiquer  à R que l'on veut un calcul par ligne 
+## et non par colonne (calcul par défaut) d'où l'instruction rowwise()
+## avant le calcul 
+
+bio_pdl_poires_pommes_abconv_v2 <- bio_pdl_poires_pommes %>% 
+  rowwise() %>% 
+  mutate(surface_tot=sum(surfab,surfc1,surfc2,surfc3))
+  
+## calcul surface total bio et conv avec + pour éviter rowwise et sum
+surf_bio_pdl_poires_pommes_abconv <- bio_pdl_poires_pommes %>% 
+  mutate(surface_tot=surfab+surfc1+surfc2+surfc3) %>% 
+  group_by(dep) %>% 
+  summarise(surface_ab_conversion=sum(surface_tot)) %>% 
+  ungroup()
+```
+## Appliquer une fonction dplyr sur un groupe de colonnes : `across()`
+ 
+**La fonction `across()` permet de sélectionner un groupe de colonnes sur lequel on veut appliquer une fonction dplyr.** Ainsi on peut appliquer une fonction sur des colonnes en les sélectionnant comme le fait `select()`. Si on veut sélectionner des colonnes en fonction de leur type, on utilise en outre `where()`. Le code suivant groupe les données de la BPE avec les deux colonnes dont le nom commence par "DEP", puis effectue la somme de toutes les colonnes de type numérique.
+ 
+```{r , eval = FALSE}
+bpe_ens_2018_tbl %>% 
+  group_by(across(starts_with('DEP'))) %>%
+  summarise(across(where(is.numeric), sum, na.rm = TRUE)) 
+
+# lait_chevre_mensuel, sélection des 13 premières lignes
+lait_chevre <- read.xlsx(xlsxFile=paste0(chemin_entree,fichier_entree), 
+                        sheet = "lait chevre",colNames = TRUE,startRow = 8) %>% 
+  as_tibble(.name_repair = make_clean_names) %>% 
+  slice_head(n=13) %>% 
+  mutate(across(-x1, as.numeric) )
+
+produits_laitiers_2021_2 <- produits_laitiers_2021_1b %>% 
+  mutate(across(c(finiqte,finiqte1), as.numeric))
+
+# remplacement point par virgule
+lait_vache_reg_dep_2021_donnees_secret_2 <- lait_vache_reg_dep_2021_donnees_secret_1 %>% 
+  mutate(across(
+    .cols=everything(),
+    ~ str_replace(., "[.]", ",")))
+```
+
+## Regroupement de colonnes
+
+cbind, bind_cols
+```{r , eval = FALSE}
+# regroupement PDL + France
+agri_bio_vegetal_tab1_final <- cbind(agri_bio_vegetal_pdl_tab1_final,agri_bio_vegetal_fr_tab1_final) 
+str(agri_bio_vegetal_tab1_final)
+
+# exploitants
+exploitants_tot_2020 <- bind_cols(
+  mo_2020 %>% 
+    summarise(annee = annee_ra_2020,
+              nom = "nombre de chefs d'exploitation et coexploitants",
+              n_exploit = n() ),
+  mo_2020 %>% 
+    filter(sex == "F") %>% 
+    summarise(femmes = n() ) ) %>% 
+    mutate(pcent_f = femmes / n_exploit *100 ) 
+
+```
+::: Remarque
+
+La fonction `bind_cols()` permet de juxtaposer des tables (qui doivent avoir le même nombre d'observations). **Il est conseillé d'utiliser cette fonction avec une extrême précaution.** En effet, cette fonction juxtapose les colonnes par position (la première ligne d'une table est juxtaposée à la première de l'autre table), sans aucun contrôle. Si les différentes tables ne sont pas triées de la même façon, la table de sortie sera incohérente. Pour rapprocher deux tables, il est fortement conseillé d'utiliser les fonctions de jointures : `inner_join`, `left_join`, `full_join`... 
+:::
+
+
+# Manipulation d'observations (lignes)
+
+## Ajout de ligne Total 
+
+adorn_totals
+```{r , eval = FALSE}
+# nb exploitations par département et pour la région
+nb_exploit_2020_dep_reg <- exploit_2020 %>% 
+  select(nom_dossier,siege_dep) %>% 
+  group_by(territoire = siege_dep) %>% 
+  summarise(nb_total_exploitations = n() ) %>% 
+  ungroup() %>% 
+  adorn_totals(where = c("row"), name="Pays de la Loire" )
+
+# ajout ligne Total
+nb_exploitants_age_sau_2010_2020 <- exploitants_age_sau_2010_2020 %>% 
+  pivot_wider(names_from =annee,
+              names_prefix='an_',
+              names_sep = "_",
+              values_from= c(n_exploit,
+                             sau_ha) ) %>% 
+  mutate(n_exploit_an_2010_percent = arrondi(n_exploit_an_2010 / sum(n_exploit_an_2010)*100, 2),
+         sau_ha_an_2010_percent = arrondi(sau_ha_an_2010 / sum(sau_ha_an_2010)*100, 2),
+         n_exploit_an_2020_percent = arrondi(n_exploit_an_2020 / sum(n_exploit_an_2020)*100, 2),
+         sau_ha_an_2020_percent = arrondi(sau_ha_an_2020 / sum(sau_ha_an_2020)*100, 2)) %>% 
+  adorn_totals(where = c("row"), name="Ensemble" ) %>% 
+  relocate(tr_age_10,
+           sau_ha_an_2010_percent,
+           sau_ha_an_2020_percent,
+           sau_ha_an_2010,
+           sau_ha_an_2020,
+           n_exploit_an_2010_percent,
+           n_exploit_an_2020_percent,
+           n_exploit_an_2010,
+           n_exploit_an_2020)
+
+laits_mensuel_chevre_livr_coll_large <- laits_mensuel_chevre_livr_coll %>% 
+  pivot_wider(names_from = annee,
+              names_sep = "_",
+              values_from = c(livraison,collecte)) %>% 
+  adorn_totals(where = "row",
+               name = "Total")
+
+```
+
+## Filtrer des observations
+
+<center>![](images/filter.png)</center>
+
+* `filter()` : sélectionner des observations selon une ou plusieurs conditions ;
+
+La fonction `filter()` permet de sélectionner les observations, selon une condition (ou plusieurs).
+
+```{r, eval=FALSE}
+table_sortie <- filter(table_entree, Condition1, ..., ConditionN)
+
+# Par exemple :
+base_filter <- filter(base, DEP == "01" & P14_POP > 10000)
+
+S0 <- filter(selection, DEP == "62")
+
+S1 <- filter(selection, DEP != "62") # tout sauf le 62
+S2 <- filter(selection, DEP %in% c("59", "62")) 
+S3 <- filter(selection, !(DEP %in% c("59", "62"))) 
+S4 <- filter(selection, densite > 100) # l'urbain
+S5 <- filter(selection, DEP == "62" & densite > 100) # le PdC urbain
+S6 <- filter(selection, DEP == "62" | densite > 100) # le PdC et l'urbain
+```
+
+>**$\Rightarrow$ Attention à l’opérateur de comparaison : " == " et non pas "="**
+
+filter
+```{r , eval = FALSE}
+agri_bio_vegetal_fr_tab1 <- agri_bio_vegetal_fr %>%   
+  filter(groupe_de_productions %in% c("Toutes productions") ) %>% 
+  select(annee,territoire,nombre_de_producteurs,surface_bio_et_en_conversion_en_ha,surface_en_conversion_en_ha,surface_bio_en_ha,
+         part_bio_de_la_sau_en_percent) %>%  
+  mutate(part_bio_sau_plus_percent = paste0(part_bio_de_la_sau_en_percent," %") )
+
+# filtre des exploitations dont la ligne est differente de zero
+pa_2020_canards_total_ligne_positif <-  pa_2020_canards_total_ligne %>% 
+  filter(!total_ligne == 0)
+
+statut_percent <- statut %>% 
+  select(statut_jur="Statut.juridique",an_2010='2010',an_2019='2019',an_2020='2020') %>% 
+  filter(statut_jur %not_in% c("Tous statuts") ) %>% 
+  mutate(an_2010_percent = arrondi((an_2010/sum(an_2010)*100),2),
+         an_2019_percent = arrondi((an_2019/sum(an_2019)*100),2),
+         an_2020_percent = arrondi((an_2020/sum(an_2020)*100),2)) 
+
+# exploitants - coexploitants (age) + dim eco 
+exploitants_age_dim_hors_micro_2010_2020 <- bind_rows(exploitants_2010,exploitants_2020) %>% 
+  filter(dimeco_coef2017 %not_in% c("1-micros"))  %>% 
+  group_by(annee = factor(annee, levels = c(annee_ra_2010, annee_ra_2020)),
+           tr_age_10) %>%
+  summarise(n_exploit = n(),
+            .groups = "drop_last")
+
+# Créer le sous-tableau contenant l'établissement de collecte ou le producteur en Pays de la Loire
+# Pour des conditions non cumulatives (au moins une des conditions doit être remplie), le ou “|”
+laits_mensuel_3 <- laits_mensuel_2 %>% 
+  mutate(dep_etab=substr(sircodpost,1,2),
+         dep_prod=substr(dep,2,3) ) %>% 
+ filter(dep_etab %in% c("44","49","53","72","85") | dep_prod %in% c("44","49","53","72","85"))
+
+```
+Autre exemple.
+On va ici récupérer les analyses produites par l'ARS
+
+```{r , eval = FALSE}
+ars <- filter(prelevement, code_reseau == "ARS")
+```
+
+L'exemple ci-dessus n'exerce un filtre que sur une condition unique.
+
+Pour des conditions cumulatives (toutes les conditions doivent être remplies), le `"&"` ou la `","`
+
+```{r , eval = FALSE}
+ars <- filter(prelevement, code_reseau == "ARS", code_intervenant == "44")
+```
+
+Pour des conditions non cumulatives (au moins une des conditions doit être remplie), le "|"
+
+```{r , eval = FALSE}
+ars <- filter(prelevement, code_reseau == "ARS" | code_reseau == "FREDON")
+```
+
+Si une condition non cumulative s'applique sur une même variable, privilégier un test de sélection dans une liste avec le `%in%`
+
+```{r , eval = FALSE}
+ars <- filter(prelevement, code_reseau %in% c("ARS", "FREDON"))
+```
+
+Pour sélectionner des observations qui ne répondent pas à la condition, le `!` (la négation d'un test)
+
+Toutes les observations ayant été réalisées par un autre réseau que l'ARS :
+
+```{r , eval = FALSE}
+non_ars <- filter(prelevement, code_reseau != "ARS")
+```
+
+Toutes les observations ayant été réalisées par un autre réseau que l'ARS ou FREDON :
+
+```{r , eval = FALSE}
+ni_ars_ni_fredon <- filter(prelevement, !(code_reseau %in% c("ARS", "FREDON")))
+```
+
+**Le verbe `filter()` permet de sélectionner des observations selon une ou plusieurs conditions logiques.** Voici un exemple de code qui sélectionne les magasins de chaussures (`TYPEQU == "B304"`) dans le premier arrondissement de Paris (`DEPCOM == "75101"`) dans la BPE.
+
+```{r , eval = FALSE}
+bpe_ens_2018_tbl %>% 
+  filter(DEPCOM == "75101" & TYPEQU == "B304")
+```
+ 
+Voici quelques utilisations fréquentes de `filter()` :
+ 
+| Action                                                                | Code                                    |
+|-----------------------------------------------------------------------|-----------------------------------------|
+| Filtrer sur les modalités qualitatives d'une colonne                  | `filter(DEP %in% c("75", "92"))`  |
+| Filtrer sur les modalités quantitatives d'une colonne                 | `filter(NB_EQUIP == 1)`                 |
+| Filtrer sur une variable caractère                                    | `filter(str_detect(TYPEQU, "^A"))`      |
+| Filtrer sur deux conditions (et)                                      | `filter(DEP == "75" & NB_EQUIP == 1)`   |
+| Filtrer sur une alternative (ou)                                      | `filter(DEP == "75" | NB_EQUIP == 1)`   |
+| Conserver les observations pour lesquelles la variable est manquante  | `filter(is.na(pop_2016))`               |
+| Conserver les observations pour lesquelles la variable est renseignée | `filter( !is.na(pop_2016))`              |
+
+###  Sélection des n premières lignes
+
+slice_head
+
+```{r , eval = FALSE}
+# lait_chevre_mensuel, sélection des 13 premières lignes
+lait_chevre <- read.xlsx(xlsxFile=paste0(chemin_entree,fichier_entree), 
+                        sheet = "lait chevre",colNames = TRUE,startRow = 8) %>% 
+  as_tibble(.name_repair = make_clean_names) %>% 
+  slice_head(n=13) %>% 
+  mutate(across(-x1, as.numeric) ) 
+```
+
+## Regroupement de lignes (par exemple pour concaténer deux tables)
+
+Le package `dplyr` propose la fonction `bind_rows()` pour superposer deux ou plusieurs tables (en empilant des observations). Deux remarques sur l'utilisation de cette fonction :
+
+- `bind_rows()` combine les tables en fonction du nom des colonnes, l'ordre des colonnes n'a pas donc d'importance ;
+- si une colonne est manquante dans une des tables, alors des valeurs manquantes sont générées dans la table de sortie.
+
+```{r , eval = FALSE}
+# 1- Dans ce tableau ne conserver que l'année, le type (VB et VNB), les totaux départementaux et régionaux
+lait_production_vache_type <- lait_production_vache_1 %>%
+  group_by(type) %>%
+  mutate(livraison_reg=sum(colldiff, na.rm=TRUE)) %>%
+  group_by(type,dep_prod) %>% 
+  mutate(livraison_dep=sum(colldiff, na.rm=TRUE)) %>%
+  distinct(annee,type,livraison_reg,livraison_dep)
+
+# 2- Réaliser un tableau similaire pour l'ensemble des vaches (sans distinguer VB et VNB, en indiquant type="vache")
+lait_production_vache_ensemble <- lait_production_vache_1 %>%
+  mutate(type="vache",
+         livraison_reg=sum(colldiff / 100, na.rm=TRUE)) %>%
+  group_by(dep_prod) %>% 
+  mutate(livraison_dep=sum(colldiff / 100, na.rm=TRUE)) %>%
+  distinct(annee,type,livraison_reg,livraison_dep)
+
+# 3- Regrouper les 2 tableaux agrégés : tableau pour l'ensemble des vaches + tableau distinguant VB et VNB
+lait_production_vache <-  bind_rows(lait_production_vache_ensemble, lait_production_vache_type) 
+
+# statut
+statut_percent <- statut %>% 
+  select(statut_jur="Statut.juridique",an_2010='2010',an_2019='2019',an_2020='2020') %>% 
+  filter(statut_jur %not_in% c("Tous statuts") ) %>% 
+  mutate(an_2010_percent = arrondi((an_2010/sum(an_2010)*100),2),
+         an_2019_percent = arrondi((an_2019/sum(an_2019)*100),2),
+         an_2020_percent = arrondi((an_2020/sum(an_2020)*100),2)) 
+
+statut_complet <- statut_percent %>% 
+  bind_rows(statut %>% 
+              select(statut_jur="Statut.juridique",an_2010='2010',an_2019='2019',an_2020='2020') %>% 
+              filter(statut_jur %in% c("Tous statuts") ) %>% 
+              mutate(an_2010_percent = 100,an_2019_percent = 100,an_2020_percent = 100)  
+  )
+
+# agrégation données
+emploi_salarie <- bind_rows(a_agri_long, b_iaa_long,cz_ind_tot_long,d_constr_long,e_commerce_long,fz_serv_march_tot_long,fz_serv_non_march_tot_long)
+
+# regroupement PDL + France 2021
+groupe_produits_laitiers_2021 <- bind_rows(groupe_produits_laitiers_2021_France,
+                                           groupe_produits_laitiers_2021_PDL)
+
+# regroupements de lignes possibles aussi avec rbind
+volailles_sum <- rbind(volailles_dep_sum,volailles_pdl_sum)
+
+```
+## Ajout d'une ligne
+
+```{r , eval = FALSE}
+# ajout 0 pour R52 pour RUB144500	Fromages de vache à pâte persillée     
+produits_laitiers_2021_1b <- produits_laitiers_2021_1 %>% 
+  add_row(sir_regn=52,rub="144500",
+          lib="Fromages de vache à pâte persillée",
+          finiqte=0,finiqte1=0,nbfiniqte=0,nbfiniqte1=0)
+```
+
+# Transposition
+
+Les deux principales opérations de restructuration des données peuvent être illustrées par les deux transformations suivantes :
+
+* **Transformation *wide to long* ** : 
+
+![Transformation *wide to long*](./images/widetolong.png)
+
+* **Transformation *long to wide* ** : 
+
+![Transformation *long to wide*](./images/longtowide.png)
+
+
+## Transposition de colonnes en lignes (plus de lignes)
+
+`pivot_longer` : transformer des colonnes en lignes
+
+La fonction `pivot_longer` permet de restructurer des données en transformant des colonnes en lignes. Cette fonction prend quatre arguments principaux :
+
+- le `data.frame` (ou le `tibble`) auquel elle est appliquée ;
+- `cols` : un vecteur contenant le nom des colonnes dont les valeurs vont être transposées ;
+- `names_to` : le nom de la nouvelle colonne qui va contenir les noms des colonnes transposées ;
+- `values_to` : le nom de la nouvelle colonne qui va contenir les valeurs des colonnes transposées.
+
+
+```{r , eval = FALSE}
+library(tidyr) # pour pivot
+
+# pivot_longer
+# colonnes donnees en ligne
+agri_bio_vegetal_fr_tab1_long <- agri_bio_vegetal_fr_tab1_car %>%   
+  pivot_longer(cols=c("nombre_de_producteurs","surface_bio_et_en_conversion_en_ha","surface_en_conversion_en_ha","surface_bio_en_ha",
+               "part_bio_sau_plus_percent"),
+               names_to = c("vegetal"),
+               values_to = "donnees" ) %>% 
+  arrange(desc(territoire) )
+
+# colonne espece en ligne
+volailles_pdl_espece <- volailles_pdl_siqo2 %>%   
+  pivot_longer(cols=starts_with("espece_"),
+               names_to = c("espece","siqo"),
+               names_sep = "_siqo_",
+               names_prefix="espece_",
+               values_to = "tec" )
+volailles_pdl_espece <- volailles_pdl_espece %>% 
+  mutate(tec=tec/1000)
+
+```
+
+
+Nous souhaitons obtenir une nouvelle table, avec une observation par EPCI et par tranche d'âge. Voici le code qui permet d'obtenir cette table : on transpose les valeurs des colonnes dont le nom commence par "TP" (`cols = starts_with("TP")`), le nom des colonnes transposées sera indiquée dans la nouvelle colonne "tranche_age" (`names_to = "tranche_age"`) et les valeurs des colonnes transposées seront indiquées dans la colonne "taux_pauvrete" (`values_to = "taux_pauvrete"`).
+
+
+```{r , eval = FALSE}
+donnees_pauvrete_long <- filosofi_epci_2016_tbl %>% 
+  pivot_longer(cols = starts_with("TP"), 
+               names_to = "tranche_age", 
+               values_to = "taux_pauvrete")
+```
+
+
+## Transposition de lignes en colonnes (plus de colonnes)
+
+ `pivot_wider` : transformer des lignes en colonnes
+
+La fonction `pivot_wider` permet de restructurer des données en transformant des lignes en colonnes. Cette fonction prend quatre arguments principaux :
+
+- le `data.frame` (ou le `tibble`) auquel elle est appliquée ;
+- `id_cols` : un vecteur contenant le nom des colonnes qui définissent les observations de la table transposée ;
+- `names_from` : un vecteur contenant le nom de la (ou des) colonne(s) qui donne(nt) les noms des nouvelles colonnes ;
+- `values_from` : un vecteur contenant le nom de la (ou des) colonne(s) dont les valeurs vont être transposées.
+
+Par ailleurs, l'option `names_prefix` permet de définir le préfixe du nom des nouvelles colonnes, ce qui est utile pour avoir des noms explicites.
+
+```{r , eval = FALSE}
+library(tidyr) # pour pivot
+
+bpe_ens_2018_tbl %>%
+	group_by(REG, TYPEQU) %>%
+	summarise(NB_EQUIP_TOT = sum(NB_EQUIP)) %>%
+	pivot_wider(id_cols =TYPEQU,  
+	            names_from = REG, 
+	            values_from = NB_EQUIP_TOT, 
+	            names_prefix = "nb_equip_reg")
+
+# pivot_wider
+volailles_sum <- rbind(volailles_dep_sum,volailles_pdl_sum) %>% 
+  pivot_wider(names_from=dep,
+              values_from =tec_regrpt) 
+
+# territoire en colonne 
+agri_bio_vegetal_fr_tab1_final <- agri_bio_vegetal_fr_tab1_long %>%   
+  pivot_wider( names_from = "territoire", 
+               names_prefix="",
+               values_from = "donnees" ) 
+
+# Transposer le tableau en format plus large, à partir de la variable type
+lait_production_vache_large <- lait_production_vache_2 %>% 
+ pivot_wider(names_from = type,
+             values_from = c(livraison_reg,livraison_dep,livraison_dep_perc))
+
+# Le format large est approprié pour calculer des évolutions
+# Calculer l'évolution de la production de lait et de la collecte de lait entre 2020 et 2021, en hl et en %
+laits_mensuel_chevre_livr_coll_large_2 <- laits_mensuel_chevre_livr_coll_large_1 %>% 
+  mutate(livr2021_evol = livraison_2021 - livraison_2020,
+         livr2021_evol_perc = (livraison_2021 / livraison_2020 - 1) *100,
+         coll2021_evol = collecte_2021 - collecte_2020,
+         coll2021_evol_perc = (collecte_2021 / collecte_2020 - 1) *100) %>% 
+  mutate(across(c(livr2021_evol_perc,coll2021_evol_perc), arrondi, digits=2)) %>% 
+  mutate(across(c(livraison_2020,livraison_2021,collecte_2020,collecte_2021,livr2021_evol,coll2021_evol), arrondi, digits=0))
+  
+# colonne an_mois en colonne
+oeufs_2022_2021_an_mois <- oeufs_2022_2021 %>%   
+             pivot_wider( names_from = c(Année,mois),
+                          names_prefix="an_",
+                          values_from = c(Exportation_Nombre,Importation_Nombre,solde) )
+
+eff_volailles_evol_part <- eff_volailles_evol %>% 
+  select(-c(evo_percent,region,an_2020)) %>% 
+  pivot_wider(names_from =reg,
+              names_prefix='',
+              names_sep = "_",
+              values_from= c(an_2021,evol_2021_2020) ) %>% 
+  mutate(part_pdl_france_2021=paste0(arrondi(an_2021_pdl/an_2021_fm*100,0)," %") ) %>%
+  relocate(an_2021_pdl,evol_2021_2020_pdl,an_2021_fm,evol_2021_2020_fm,part_pdl_france_2021, .after = espece )
+
+laits_mensuel_chevre_livr_coll_large <- laits_mensuel_chevre_livr_coll %>% 
+  pivot_wider(names_from = annee,
+              names_sep = "_",
+              values_from = c(livraison,collecte)) %>% 
+  adorn_totals(where = "row",
+               name = "Total")
+
+# enchainement de pivots
+otex_regroupe <- otex_transp  %>% 
+  select(-c(ends_with('temp'),otex_4813,otex_4840,otex_5100,otex_5374) ) %>% 
+  pivot_longer(cols = -c(annee), 
+               names_to = c("otex_code_regr"),
+               values_to = "etp") %>% 
+  pivot_wider(names_from =annee,
+              values_from= c(etp) )
+
+```
+# Jointure de tableaux
+
+Les noms de variables peuvent être cités sans guillemets (sauf dans le cas des jointures).
+
+## Jointure à gauche avec left_join
+
+Dans une jointure à gauche, on adjoint aux informations de la table de gauche les informations issues de la table de droite.
+
+<center>![](images/left_join.png)</center>
+
+Ainsi, c'est le tableau de gauche qui définit les individus du tableau en sortie (quand bien-même il n'y a pas d'information à leur sujet dans le tableau de droite : on remarque ainsi la donnée manquante dans la colonne D pour le 3e individu).
+La fonction s'appuie sur les variables communes aux deux tableaux (ici A et B), qui permettent d'identifier les individus et de relier les informations des deux tables.
+On précise explicitement quelles sont les identifiants qui permettent de faire ce lien entre les deux tables, à travers l'argument by :
+
+```{r , eval = FALSE}
+left_join(x,y, by=c("A","B"))
+```
+
+```{r , eval = FALSE}
+# jointure des tableaux exploit et prod_anim, avec nom_dossier
+exploit_anim <- exploit %>% 
+  left_join(prod_anim,
+          by ="nom_dossier")
+
+# ajout au fichier historique des années 2020 et 2021
+lait_chevre_historiq <- lait_chevre3  %>%
+  left_join(laits_mensuel_chevre_livr_coll_large,
+            by="code_mois") 
+
+oeufs_annee <- oeufs_2021  %>%
+  left_join(oeufs_2020,
+            by = c("reg","libelle_culture") )
+
+laits_mensuel_chevre_livr_coll <- laits_mensuel_chevre_livraison %>% 
+  left_join(laits_mensuel_chevre_collecte,
+            by=c("annee","code_mois")) %>% 
+  select(-c(reg_etab,reg_prod))
+
+# ajout au fichier historique des années 2020 et 2021
+produits_laitiers_historiq <- produits_laitiers  %>%
+  left_join(groupe_produits_laitiers_2021 %>% 
+              select(-libellé_produit),
+            by=c("territoire","code_produit") )
+
+# on enleve avec collectiffil les pacages communs (Brière par exemple)
+exploit_2010 <- exploit_2010_fm %>% 
+  left_join(ra_2010_geo_2020 %>%
+              select(id_dossier,
+                     siege_dep_2020,       
+                     siege_reg_2020),
+              by = c("id_dossier") )  %>% 
+  filter(siege_reg_2020 == "52" & collectiffil == "0") 
+
+# enchainement de left_join
+exploitants_2010 <- fam_2010 %>% 
+  filter(famlien %in% c("10", "11", "12", "13"))  %>% 
+  mutate(nom_dossier = id_dossier,
+         annee = annee_ra_2010,
+         age = annee_ra_2010 - as.integer(famanais), 
+         tr_age_10 = cut(age, c(0, seq(40, 60, by = 10), Inf), right = FALSE ) ) %>% 
+  left_join(exploit_2010 %>% 
+              mutate(sau_tot = sau / 100) %>% 
+              select(nom_dossier = id_dossier,
+                     sau_tot), 
+             by = "nom_dossier") %>% 
+  left_join(pbs_2010 %>% 
+              select(nom_dossier = id_dossier,
+                     dimeco_coef2017,
+                     pbstot_coef17), 
+            by = "nom_dossier")
+
+```
+
+
+**Avec `dplyr`, les jointures se réalisent grâce aux fonctions `left_join`, `right_join`, `inner_join`, `full_join` et `anti_join`.** Ces fonctions prennent les arguments suivants :
+  
+- le nom des deux `data.frame` à joindre ;
+- les variables de jointure, défini par l'argument `by`. Lorsque la variable de jointure ne porte pas le même nom dans les deux tables, on utilise le paramètre `by = c("var_x" = "var_y")`. S'il y a plusieurs variables de jointures, on écrit `by = c("var_x1" = "var_y1", "var_x2" = "var_y2")`.
+
+Il est préférable d'utiliser ces fonctions sur des objets `tibble` plutôt que `data.frame`. On va donc convertir les deux tables avant de présenter un exemple :
+
+```{r , eval = FALSE}
+library(dplyr)
+filosofi_com_2016_tbl <- as_tibble(doremifasolData::filosofi_com_2016)
+cog_com_2019_tbl <- as_tibble(doremifasolData::cog_com_2019)
+```
+
+Voici un exemple dans lequel on utilise la fonction `left_join` pour réaliser une jointure à gauche entre la table des données Filosofi et la table des communes du COG.
+
+```{r , eval = FALSE}
+table_jointe_tbl <- filosofi_com_2016_tbl %>% 
+left_join(y = cog_com_2019_tbl, 
+by = c("CODGEO" = "com"))
+head(table_jointe_tbl)
+```
+
+La syntaxe pour réaliser les autres types de jointure est très similaire :
+
+| Type\ de\ jointure  | Syntaxe `dplyr`                                                                        |
+|-------------------|----------------------------------------------------------------------------------------|
+| Jointure\ à\ gauche | `left_join(x = filosofi_com_2016_tbl, y = cog_com_2019_tbl, by = c("CODGEO" = "com"))` |
+| Jointure à droite | `right_join(x = filosofi_com_2016_tbl, y = cog_com_2019_tbl, by = c("CODGEO" = "com"))`|
+| Jointure externe  | `full_join(x = filosofi_com_2016_tbl, y = cog_com_2019_tbl, by = c("CODGEO" = "com"))` |
+| Anti-jointure     | `anti_join(x = filosofi_com_2016_tbl, y = cog_com_2019_tbl, by = c("CODGEO" = "com"))` |
+
+Pour plus de précisions, consulter la fiche https://www.book.utilitr.org/jointures.html qui présente un certain nombre de règles et de bonnes pratiques sur les jointures.
+
+
+## Jointure complète avec full_join
+
+
+Dans le cas d'une jointure complète, au contraire d'une jointure interne, on conserve l'ensemble des individus décrits par l'un ou l'autre des jeux de données.
+
+<center>![](images/full_join.png)</center>
+
+```{r , eval = FALSE}
+full_join(x,y,by=c("A","B"))
+```
+
+Identifiants portant des noms différents
+
+Il arrive qu'une variable identifiant les individus n'ait pas le même nom dans les deux tableaux. Dans ce cas on peut préciser de faire correspondre à une variable du premier tableau, une autre variable du deuxième tableau, de la manière suivante:
+
+```{r , eval = FALSE}
+# Fait correspondre x$C et y$D:
+full_join(x,y,by=c("C"="D"))
+```
+
+```{r , eval = FALSE}
+# jointure des tables des différents millésimes et de la table de passage
+# plusieurs lignes par commune en geo 2022 
+# filtre pour récupérer uniquement les communes des Pays de la Loire
+pop <- pop_1990 %>% 
+  full_join(pop_1999, by = c("COM")) %>%
+  full_join(pop_2010, by = c("COM")) %>%
+  full_join(pop_2019, by = c("COM")) %>%
+  full_join(comdepuis1943_com2022, by = c("COM"="depcom_initial")) %>%
+  filter(dep_2022 %in% c("44","49","53","72","85")) %>%
+  select(depcom_2022,libcom_2022,PSDC90,PSDC99,PMUN10,PMUN19)
+```
+
+
+***
+
+<br>
+
+# Foire aux questions
+
+## Où trouver de la documentation ?
+
+utilitR 
+https://www.book.utilitr.org/
+
+Ministère de la Transition écologique et de la Cohésion des territoires
+https://mtes-mct.github.io/parcours-r/
+
+## Comment nommer les fichiers  ?
+
+Les différents segments du nom d'un fichier sont séparés par un underscore (le caractère "_").
+
+Les accents et les caractères spéciaux ne doivent pas être utilisés.
+
+Idéalement, le nom du fichier ne sera pas trop long et suffisamment descriptif.
+
+## Aide sur une fonction
+
+Pour obtenir de l’aide sur une fonction (installée, peut-être non chargée):
+```{r, eval = FALSE}
+??nom_fonction
+```
+Pour obtenir de l’aide sur une fonction (installée et chargée):
+```{r, eval = FALSE}
+?nom_fonction
+help(nom_fonction)
+```
+Documentation simplifiée : vignettes
+
+Les vignettes sont des documents qui aident à prendre en main un package en identifiant ses fonctions les plus importantes, et en montrant un ou plusieurs cas d’usage.
+
+Pour lister les vignettes relatives à un package (par exemple dplyr):
+
+```{r, eval = TRUE}
+vignette(package="dplyr")
+```
+
+Pour visualiser une vignette donnée :
+
+```{r, eval = TRUE}
+vignette("rowwise", package="dplyr") # dans RStudio
+RShowDoc("rowwise", package="dplyr") # dans le navigateur web
+```
+
+Les cheatsheets (ou antisèches) sont des documents visant à résumer de manière graphique la fonction et l’usage d’un package.
+Les plus utiles sont listées ici:
+https://posit.co/resources/cheatsheets/
+
+## L'encodage
+https://orion.agriculture/confluence/pages/viewpage.action?pageId=285442455
+
+## Les types de valeurs dans R
+
+Une valeur constitue l'unité de base des données pour R. Comme pour la plupart des logiciels, elles peuvent être de trois **types** :
+
+- **Numérique** : entier, double
+- **Caractère** : texte ou code
+- **Logique** : booléens
+
+*En anglais : numeric, character et logical *
+
+Les formats de dates sont de type character.
+
+Chaque variable est du type de son contenu (numeric, character, logical). 
+Si les valeurs prises par la variables correspondent à un nombre fini de modalités, **la variable peut être du type "factor"**. 
+Ses composantes sont toujours d'un des 3 types décrits ci-dessus mais il est possible d'employer des fonctions spécifiques au traitement de modalités.
+À chaque type de variable correspond une utilisation. 
+Lors de l’import des données, un type est affecté automatiquement par R.
+Mais le type peut être erroné. 
+Il suffit alors de les convertir :
+
+```{r converttype, eval = FALSE}
+base <- mutate(base0, LIBGEO = as.character(LIBGEO))
+```
+
+ou `as.factor()`, `as.numeric()`, etc...
+
+On peut aussi gérer les types au moment de l'importation (par exemple avec le paramètre `colClasses`).
+
+
+## Les vecteurs
+
+Les valeurs peuvent être structurées au sein de vecteurs. 
+Ces vecteurs peuvent être vus comme des colonnes de valeurs toutes du même type.
+
+
+**Vecteurs** : suite unidimensionnelle de **valeurs** ayant le même type.
+
+Différentes fonctions permettent de créer des vecteurs.
+
+```{r premierJeuDonnees}
+vect_num <- c(1, 160, 2, 9)
+vect_txt <- c("Je", "programme", "en", "R")
+sequence <- seq(from = 1, to = 10, by = 1)
+sequence_pareille <- 1:10
+repetition <- rep("bla", 3)
+```
+
+**Facteurs** : vecteur qui prend un nombre limité de modalités (exemple : sexe). Il est défini par les niveaux (`levels`) et les libellés associés (`labels`).  On parle aussi de variables qualitatives ou catégorielles (de type catégoriel).
+
+
+### Extraire un vecteur : `pull()`
+
+`pull()` permet d'extraire sous forme de vecteur une variable d'un *dataframe.*
+
+```{r, eval = FALSE}
+stations_de_la_table_prelevement <- pull(prelevement, code_station)
+stations_de_la_table_prelevement <- unique(stations_de_la_table_prelevement)
+```
+
+## Les dataframes
+
+Plusieurs vecteurs de types différents possédant un même nombre de lignes peuvent être accolés pour former une **dataframe**.
+Les dataframes sont les objets les plus courants dans le traitement de données usuel.
+Il s'agit de tableaux dont les lignes correspondent à des observations et les colonnes à des variables.
+
+Ces dataframes peuvent être créées par association des vecteurs avec les fonctions :
+```{r, eval = FALSE}
+dataframe_a <- data.frame(vect_num, vect_txt)
+dataframe_b <- bind_cols("vect_num" = vect_num, "vect_txt" = vect_txt)
+```
+
+Une dataframe peut aussi être créée par l'import d'un tableau.
+
+
+Il est possible d'accéder aux éléments d’une dataframe à partir du numéro de ligne et de colonne, grâce aux crochets :
+
+<center>![](images/DF2.png)</center>
+
+- `base[1,3]` $\rightarrow$ <span style="color:red">valeur de la première ligne et de la troisième colonne </span>
+- `base[2,]` $\rightarrow$ <span style="color:blue">toutes les variables pour la 2e observation</span>
+- `base[,4]` $\rightarrow$ <span style="color:green">toutes les observations de la quatrième colonne  </span>
+- `base[,’V6’]` $\rightarrow$ <span style="color:cyan">toutes les observations de la variable V6</span>
+
+Le *dataframe* est constitué de 
+- n lignes (observations)
+- p colonnes (variables)
+
+<center>![](images/DF1.png)</center>
+
+
+**Tableaux** (`data.frame`) : Objet qui ressemble le plus aux tables Excel, SAS ou SPSS... : description d'individus statistiques (observations, en ligne) par des caractéristiques (variables, en colonnes).
+
+## Le `tibble` : un `data.frame` amélioré
+
+**Le `tibble` est une version améliorée du `data.frame` de base.**  Il s'agit d'un `data.frame` standard, avec quelques propriétés supplémentaires qui rendent son utilisation plus facile. 
+
+**Pour convertir un `data.frame` en `tibble` on utilise la fonction `tibble::as_tibble()`.** Dans l'exemple suivant, on charge la table de la base permanente des équipements puis on la convertit en `tibble`.
+
+```{r, eval = FALSE}
+# Charger la base permanente des équipements
+bpe_ens_2018 <- doremifasolData::bpe_ens_2018
+# Convertir ce data.frame en tibble
+bpe_ens_2018_tbl <- as_tibble(bpe_ens_2018)
+```
+* **L'affichage des `tibbles` est meilleur que celui des `data.frames`.** Même sans la fonction `head()`, l'affichage d'un `tibble` affiche les dimensions de celui-ci (nombres de lignes et de colonnes), ainsi que le type des variables (en-dessous des noms des colonnes).
+  
+https://www.book.utilitr.org/tidyverse.html#le-tibble-un-data.frame-am%C3%A9lior%C3%A9
+
+## Les fonctions et les valeurs particulières
+- NA : valeur manquante (*Not Available*) dans une dataframe ou en résultat d'une fonction
+- NaN : pas un nombre (*Not a Number*) lorsqu'une fonction tente de diviser par 0
+- -Inf, Inf : inﬁni positif ou négatif lorsque une fonction diverge
+
+Une valeur manquante peut perturber l’exécution d'une fonction :
+```{r}
+V1 <- c(1, 14, NA, 32.7)
+mean(V1)              # renvoie NA
+mean(V1, na.rm = TRUE)   # renvoie 15.9
+```
+La fonction `coalesce(x, y)` permet de remplacer les valeurs manquantes de x par la valeur de y.
+
+
+## Travailler avec les valeurs manquantes
+
+```{r , eval = FALSE}
+# mettre NA pour variable d'évolution avec regroupement
+otex_regroupe <- otex_regroupe %>% 
+  mutate(evol_2020_2019 = case_when(
+    otex_code_regr %in% c("otex_5374_5100","otex_4813_4840") ~ as.numeric(NA), 
+    TRUE   ~ evol_2020_2019),
+    evol_2020_2010_par_an = case_when(
+      otex_code_regr %in% c("otex_5374_5100","otex_4813_4840") ~ as.numeric(NA), 
+      TRUE   ~ evol_2020_2010_par_an )
+    )
+# calcul evolution
+otex_regroupe <- otex_regroupe %>%
+  mutate(tx_evol_2020_2010_par_an = arrondi((((an_2020/an_2010)**(1/10)-1)*100),3),
+         tx_evol_2020_2019 = arrondi(((an_2020/an_2019 -1)*100),3),
+         otex_code = substr(otex_code_regr,6,10) ) %>%
+  arrange(otex_code_regr) %>%
+  left_join(otex %>% 
+              select(otex_code,otex_lib),
+            by = "otex_code") 
+
+# remplacement valeurs NA pour regroupements
+otex_regroupe <- otex_regroupe %>% 
+  mutate(evol_2020_2010_par_an = case_when(
+    is.na(evol_2020_2010_par_an) ~ arrondi(tx_evol_2020_2010_par_an,1),
+    TRUE   ~ evol_2020_2010_par_an),
+    evol_2020_2019 = case_when(
+      is.na(evol_2020_2019) ~ arrondi(tx_evol_2020_2019,1),
+      TRUE   ~ evol_2020_2019) )
+```
+
+### `replace_na` : remplacer des valeurs manquantes
+
+La fonction `replace_na` permet de remplacer des valeurs manquantes (`NA`). Cette fonction peut être utilisée de deux façons, que l'on va illustrer avec les données suivantes :
+
+```{r replace_na}
+df <- tibble::tibble(x = c(1, 2, 3, NA), y = c("a", NA, "b", NA))
+df
+```
+
+Premier usage : on remplace les valeurs manquantes **dans une colonne** d'un `data.frame`. Dans ce cas, la fonction prend deux arguments : le nom de la variable et la valeur utilisée pour remplacer les valeurs manquantes. Voici un exemple :
+
+```{r replace_na2}
+library(magrittr) # pour utilisation %>%
+library(tidyr) # pour replace_na
+df %>% 
+  dplyr::mutate(x = replace_na(x, 888))
+```
+
+Second usage : on remplace les valeurs manquantes **dans toutes les colonnes** d'un `data.frame`. Dans ce cas, la fonction prend deux arguments : le nom du `data.frame`, et une liste donnant pour chaque variable la valeur à utiliser pour remplacer les valeurs manquantes. Voici un exemple :
+
+
+```{r replace_na3}
+df %>% 
+  replace_na(list(x = 888, y = "zzz"))
+```
+
+
+## Les principes des fonctions de `dplyr`
+
+Le but du package `dplyr}` est d'identifier et de rassembler dans un seul package les outils de manipulation de données. Ce package rassemble donc des fonctions correspondant à un ensemble d'opérations élémentaires (ou *verbes*) qui permettent de : 
+
+- Sélectionner un ensemble de variables : `select()`  
+- Sélectionner un ensemble de lignes : `filter()`  
+- Ajouter/modifier/renommer des variables : `mutate()` ou `rename()`  
+- Produire des statistiques agrégées sur les dimensions d'une table : `summarise()`  
+- Trier une table : `arrange()`  
+- Manipuler plusieurs tables : `left_join()`, `right_join()`, `full_join()`, `inner_join()`...  
+
+D'appliquer cela en articulation avec `group_by()` qui change la façon d'interpréter chaque fonction : d'une interprétation *globale* sur l'ensemble d'une table, on passe alors à une approche *groupe par groupe* : chaque groupe étant défini par un ensemble des modalités des variables définies dans l'instruction `group_by()`.
+
+
+## Qu'est-ce que l'opérateur `pipe` ?
+
+Lorsqu'on enchaîne les manipulations sur une table de données, un problème est que le code devient peu lisible car il y a beaucoup d'opérations imbriquées les unes dans les autres, avec un grand nombre de parenthèses ou de crochets. **L'opérateur `pipe` (noté `%>%`) du package `magrittr` permet de résoudre ce problème en réécrivant les opérations de façon plus lisible.** Le principe de l'opérateur `pipe` est très simple :
+
+* le terme qui précède l'opérateur est utilisé comme **premier** argument de la fonction qui suit l'opérateur ;
+* les opérations peuvent être enchaînées en enchaînant les opérateurs `pipe` ;
+* l'opérateur `pipe` fonctionne quelle que soit la nature de l'argument ;
+* l'opérateur `pipe` fonctionne également à l'intérieur de parenthèses.
+
+Voici un petit tableau qui vous donne des exemples : 
+
+| **Ce code est équivalent à...**      | **... ce code**                                     |
+|--------------------------------------|-----------------------------------------------------|
+| `fonction(x)`                        | `x %>% fonction()`                                  |
+| `fonction3(fonction2(fonction1(x)))` | `x %>% fonction1() %>% fonction2() %>% fonction3()` |
+| `mutate(tibble, y = log(x))`        | `tibble %>% mutate(y = x %>% log())`               |
+
+Avec l'usage du pipe, le premier argument -qui devrait être une table- disparaît de l'appel aux fonctions 'dplyr' (filter, arrange...) En effet, le pipe envoie le résultat de la ligne précédente comme premier argument de la ligne suivante.
+
+### Comment utiliser l'opérateur `pipe` avec le `tidyverse`
+
+**Un traitement statistique avec les _packages_ du `tidyverse` prend généralement la forme d'une succession de verbes séparés par l'opérateur `pipe` (`%>%`).** Il est possible d'aller à la ligne en mettant le `pipe` en bout de ligne (mais pas en début de ligne).
+
+Voici un exemple détaillé pour comprendre l'utilisation du `pipe`. Ce code se lit comme ceci : on part de la base permanente des équipements 2018, puis on la transforme en `tibble`, puis on conserve uniquement les stations services `TYPEQU == "B316"`, puis on groupe les observations par département `group_by(DEP)`, puis on calcule la somme du nombre de stations-services par département `summarise(nb_equip_total = sum(NB_EQUIP, na.rm = TRUE))`.
+
+```{r, eval = FALSE}
+nombre <- bpe_ens_2018 %>%
+  as_tibble() %>%
+  filter(TYPEQU == "B316") %>% 
+  group_by(DEP) %>% 
+  summarise(nombre_station_serv = sum(NB_EQUIP, na.rm = TRUE)) 
+
+# on ne conserve que les exploitations avec des bovins
+exploit_bovins_a <- exploit_anim_sel %>%  
+  filter(bovinfil == 1)
+
+# Calculer par département, le nombre d’exploitations ayant des vaches, avec l’effectif de vaches
+nb_exploit_vaches_pdl <- exploit_bovins_c %>%
+  filter(cheptq_111000>0) %>% 
+  group_by(siege_dep) %>% 
+  summarise(nb_expl=n(),
+            vaches=sum(cheptq_111000)) %>% 
+  ungroup() %>% 
+  adorn_totals(where = c("row"), name="Pays de la Loire" )
+
+# Calculer par département, le nombre d’exploitations ayant des vaches, avec l’effectif de vaches
+# La fonction summarise() permet d’agréger des données, en appliquant une fonction sur les variables # pour construire une statistique sur les observations de la table. C’est une fonction dite de “résumé”.
+nb_exploit_vaches_dep <- exploit_bovins_c %>%
+  filter(cheptq_111000>0) %>% 
+  group_by(siege_dep) %>% 
+  summarise(nb_expl=n(),
+            vaches=sum(cheptq_111000)) %>% 
+  ungroup()
+  
+# ajouter la part par rapport à l'ensemble de la région
+nb_exploit_vaches_dep_reg <- nb_exploit_vaches_dep %>%
+  mutate(nb_expl_reg=sum(nb_expl),
+         vaches_reg=sum(vaches),
+         part_expl = nb_expl / nb_expl_reg * 100,
+         part_vaches = vaches / vaches_reg * 100) %>% 
+  adorn_totals(where = c("row"), name="Pays de la Loire" ) %>% 
+  mutate(across(c(part_expl,part_vaches),arrondi,digits=2))
+
+```
+
+https://www.book.utilitr.org/tidyverse.html#encha%C3%AEner-les-manipulations-avec-lop%C3%A9rateur-pipe
+
+### Exemple d'utilisation du pipe `%>%`
+On peut combiner les opérations à l'aide de l'opérateur pipe `%>%` :
+
+```{r, eval = FALSE}
+selection_62 <- base %>%
+  mutate(densite = P14_POP / SUPERF,
+         tx_natal = 1000 * NAISD15 / P14_POP,
+         tx_mort = 1000 * DECESD15 / P14_POP) %>%
+  select(CODGEO, ZAU, REG, DEP, densite, tx_natal) %>%
+  filter(DEP == "62")
+```
+Cette écriture permet d'enchaîner les opérations telles qu'on les décrirait à l'oral.
+L'objet auquel s'applique chaque nouvelle opération est le résultat de l'opération précédente.
+
+Sans le pipe `%>%`, pour enchaîner des opérations, on peut créer des variables successives :
+```{r,  eval = FALSE}
+df <- mutate(base, densite = P14_POP / SUPERF,
+             tx_natal = 1000 * NAISD15 / P14_POP,
+             tx_mort = 1000 * DECESD15 / P14_POP)
+selection <- select(df, CODGEO, ZAU, REG, DEP, densite, tx_natal)
+filtre_62 <- filter(selection, DEP == "62")
+```
+
+Sans le pipe `%>%`, on peut emboîter les fonctions avec des () :
+```{r,  eval = FALSE}
+selection_62 <- filter(select(mutate(base, densite = P14_POP / SUPERF,
+                                     tx_natal = 1000 * NAISD15 / P14_POP,
+                                     tx_mort = 1000 * DECESD15 / P14_POP),
+                              CODGEO, ZAU, REG, DEP, densite, tx_natal), 
+                       DEP == "62")
+```
+La lecture est particulièrement confuse et le risque d'oubli de parenthèses important.
+
+## Les tests logiques dans R
+
+Syntaxe             | Action
+--------------------|----------------------------------------
+`==`                |  Test d'égalité
+`!=`                |  Différent de
+`%in%  c(...)`      |  Dans une liste de valeurs 
+`>, >= ,  <, <=`    |  Supérieur (ou inférieur) (ou égal)
+`! (x %in% c(...))` |  N'est pas dans une liste de valeurs 
+
+```{r, eval=FALSE}
+table_sortie <- filter(table_entree, x==a & y==b)    #  x vaut a **ET** y vaut b
+table_sortie <- filter(table_entree, x==a | y==b)    #  x vaut a **OU** y vaut b (barre verticale AltGR+6)
+```
+
+## Ajout d'une fonction 'not in'
+```{r fonction not_in, eval = TRUE}
+# Création d'une fonction `%not_in%`
+`%not_in%` <- purrr::negate(`%in%`)
+```
+à placer en début de programme
+
+
+## La question des arrondis
+
+La fonction 'round' arrondit selon le principe de la parité.
+Pour arrondir systématiquement à l'excès au-delà de 5, il convient d'utiliser une fonction spécifique (à placer en début de programme)
+
+Les noms des colonnes peuvent être appelés avec la syntaxe `nomtable$nomvariable`. L’indexation des colonnes de tables (le “$”) permet d'appeler une variable
+
+```{r fonctions arrondi, eval = TRUE}
+# Fonction pour gérer les arrondis de .5 
+arrondi<-function (x, digits = 0)
+{
+  .local <- function(x, digits) {
+    x <- x * (10^digits)
+    ifelse(abs(x%%1 - 0.5) < .Machine$double.eps^0.5, ceiling(x)/(10^digits),
+           round(x)/(10^digits))
+  }
+  if (is.data.frame(x))
+    return(data.frame(lapply(x, .local, digits)))
+  .local(x, digits)
+}
+
+# exemple
+# volailles_pdl_sum$tec_regrpt <- arrondi(volailles_pdl_sum$tec_regrpt,digits=2)
+
+# eff_volailles_evol <- eff_volailles_annee %>% 
+#   mutate(evol_2021_2020 = paste0(arrondi((((an_2021/an_2020)-1)*100),0)," %"),
+#          reg = case_when(
+#            region %in% c("52  -  Pays de la Loire") ~ "pdl",
+#            region %in% c("98  -  Total France métropolitaine") ~ "fm") )
+
+# Comparaison des fonctions 'round' et 'arrondi'  
+# round(3.5,digits=0) donne 4 tout comme round(4.5,digits=0)
+# L"'"aide de cette fonction indique que les arrondis respectent la norme IEC 60559 
+# qui prévoit que l'arrondi soit à la valeur de décimale paire la plus proche 
+# donc round (3.5,digits=0) donne 4 tout comme round(4.5,digits=0). 
+a <- round(3.5,digits=0)
+a1 <- arrondi(3.5,digits=0)
+a
+a1
+b <- round(4.5,digits=0)
+b1 <- arrondi(4.5,digits=0)
+b
+b1
+x1 <- c(3.5,4.5,1.35,1.45,1.46,1.5,1.6,2.5,2.6)
+round(x1,0)
+arrondi(x1,0)
+round(x1,1)
+arrondi(x1,1)
+```
+
+## Gestion du secret
+
+```{r , eval = FALSE}
+# gestion secret
+# messages non contraignants Warning messages:
+# 1: Problem while computing as.numeric(producteurs_2020) 
+# i NAs introduits lors de la conversion automatique 
+lait_vache_reg_dep_2021_donnees_secret_1 <- lait_vache_reg_dep_2021_donnees %>% 
+  mutate(livraisons_2021=as.character(livraisons_2021) ) %>% 
+  mutate(livraisons_2021=ifelse(as.numeric(producteurs_2021) > 0 & as.numeric(producteurs_2021) < 3,"Secret",livraisons_2021) ) %>%
+  mutate(producteurs_2021=ifelse(as.numeric(producteurs_2021) > 0 & as.numeric(producteurs_2021) < 3,"Secret",producteurs_2021) ) %>% 
+  mutate(livraisons_2021=ifelse(Département=="Hérault","Secret",livraisons_2021) ) %>%
+  mutate(producteurs_2021=ifelse(Département=="Hérault","Secret",producteurs_2021) )
+
+```
+
+## Calculer des statistiques spécifiques
+
+Les fonctions `sum()`, `mean()`, `median()`, `min()`, `max()`, `var()`, `sd()`... résument l'information pour en donner une statistique.
+La fonction `quantile()` renvoie les quartiles de la variables (ou bien tout autre découpage qu'on lui renseigne).
+
+```{r,  eval = FALSE}
+sum(pull(base_extrait, P14_POP), na.rm = TRUE)
+mean(pull(base_extrait, P14_POP), na.rm = TRUE)
+median(pull(base_extrait, P14_POP), na.rm = TRUE)
+quantile(pull(base_extrait, P14_POP), probs = c(0.25, 0.5, 0.75), na.rm = T)
+```
+
+Ces fonctions retournent une valeur, ou bien un ensemble de valeur (pour `quantile()`). Le résultat est donc un vecteur de un ou plusieurs nombres.
+
+On utilise le paramètre `na.rm = TRUE` pour gérer les valeurs manquantes.
+
+## Comment ajouter le total régional à des données par département ?
+
+La première méthode consiste à utiliser la fonction 'adorn_totals' du package 'janitor'. 
+
+```{r,  eval = FALSE}
+# nb exploitations par département et pour la région
+# méthode 1 avec adorn_totals
+nb_exploit_2020_dep_reg <- exploit_2020 %>% 
+  select(nom_dossier,siege_dep) %>% 
+  group_by(territoire = siege_dep) %>% 
+  summarise(nb_total_exploitations = n() ) %>% 
+  ungroup() %>% 
+  adorn_totals(where = c("row"), name="Pays de la Loire" )
+```
+
+La deuxième méthode consiste à réaliser les sommes (ou moyennes) pour le niveau régional, et à concaténer ensuite les lignes avec le niveau départemental. 
+
+```{r,  eval = FALSE}
+# méthode 2 avec ajout variable territoire commune (pour département et région)
+# nb exploitations par département
+nb_exploit_2020_dep <- exploit_2020 %>% 
+  select(nom_dossier,siege_dep,sau_tot) %>% 
+  group_by(territoire = siege_dep) %>% 
+  summarise(nb_total_exploitations = n(),
+            SAU_moyenne_ha = sum(sau_tot, na.rm = TRUE) / n() ) %>% 
+  ungroup()      
+
+# méthode 2.1 nb exploitations pour la région
+nb_exploit_2020_reg_a <- exploit_2020 %>% 
+  select(nom_dossier,siege_dep,sau_tot) %>% 
+  summarise(nb_total_exploitations = n(),
+         SAU_moyenne_ha = sum(sau_tot, na.rm = TRUE) / n() ) %>% 
+  mutate(territoire = "Pays de la Loire") 
+# méthode 2.2 nb exploitations pour la région
+nb_exploit_2020_reg_b <- exploit_2020 %>% 
+  select(nom_dossier,siege_dep,sau_tot) %>% 
+  mutate(territoire = "Pays de la Loire",
+         nb_total_exploitations = n(),
+         SAU_moyenne_ha = sum(sau_tot, na.rm = TRUE) / n() ) %>% 
+  distinct(territoire,nb_total_exploitations,SAU_moyenne_ha)
+
+# nb exploitations par département et pour la région par concaténation des lignes
+nb_exploit_2020_dep_reg2a <- bind_rows(nb_exploit_2020_dep,nb_exploit_2020_reg_a)
+nb_exploit_2020_dep_reg2b <- bind_rows(nb_exploit_2020_dep,nb_exploit_2020_reg_b)
+```
+
+## Erreurs fréquentes
+
+R est prêt à exécuter une commande lorsque le chevron > est affiché dans la console. Si le chevron n'apparaît pas, c'est qu'une commande est incomplète. Appuyer sur 'Echap' ('ESC') pour sortir de cette commande.
+
+
+### `Error in nom_de_la_fonction()`
+impossible de trouver la fonction "nom_de_la_fonction"
+
+Cela signifie que le package auquel appartient la fonction n'est pas chargé, voire pas installé.
+Il convient alors d'ajouter :
+```{r,  eval = FALSE}
+library(nom_package)
+```
+
+### there is no package called ‘nom_package’
+
+```{r,  eval = FALSE}
+library(nom_package)
+```
+Il convient alors d'ajouter dans le fichier 'installation_packages.R'
+```{r,  eval = FALSE}
+install.packages("nom_package")
+```
+
+### erreur avec mutate associé à case_when
+```{r, eval=FALSE}
+> rp_individu_pdl_age_actif <-  rp_individu_pdl_var %>% 
++   mutate(age=case_when(agerevq %in% c("20","25","30","35","40","45","50","55","60") ~ "a_20_64_ans",
++                        TRUE ~ agerevq),
++          actif=case_when(tact %in% c(11,12) ~ "actifs",
++                          TRUE ~ tact) )
+```
+```{r, eval=FALSE}
+Error in `mutate()`:
+! Problem while computing `actif = case_when(tact %in% c(11, 12) ~ "actifs", TRUE ~ tact)`.
+Caused by error in `` names(message) <- `*vtmp*` ``:
+! attribut 'names' [1] doit être de même longueur que le vecteur [0]
+Run `rlang::last_error()` to see where the error occurred.
+```
+En effet, la valeur associée à TRUE ~ doit être de même type que la variable créée (ici actif), soit de type caractère.
+En associant, TRUE ~ à un élément de type "caractère", cela a résolu le problème.
+
+```{r, eval=FALSE}
+> rp_individu_pdl_age_actif <-  rp_individu_pdl_var %>% 
++   mutate(age=case_when(agerevq %in% c("020","025","030","035","040","045","050","055","060") ~ "a_20_64_ans",
++                        TRUE ~ agerevq),
++          activite=case_when(tact %in% c(11,12) ~ "actifs",
++                          TRUE ~ "inactifs") )
+> 
+```
+
+***
+
+<br>
+
+## Tableau de contingence
+
+La fonction `table()` calcule les effectifs d'un tableau croisé :
+```{r, eval = FALSE}
+t <- base_extrait %>% 
+  select(ZAU, REG) %>% 
+  table()
+print(t)
+```
+
+## Tableau de proportions
+
+La fonction `prop.table()` prend en entrée un objet `table` (tableau de contingence avec les effectifs) et calcule les pourcentages (total, ligne, colonne) associés $\rightarrow$ `?prop.table`
+
+```{r, eval = FALSE}
+# Calcule la fréquence en % (la somme de tous les pourcentages vaut 100)
+(prop.table(t) * 100) %>% 
+  round(digits = 1)
+```
+
+```{r, eval = FALSE}
+# Calcule la fréquence en % par région (la somme de tous les pourcentages d'une colonne vaut 100)
+(prop.table(t,"REG") * 100) %>% 
+  round(digits = 1)
+```
+
+## Extraire une chaîne de caractères avec `str_sub()`  
+
+Le package `stringr` propose des fonctions de manipulation de chaînes de caractère.
+
+Extraire une chaîne de caractères avec `str_sub()`  
+
+`str_sub()` prend 3 arguments : une chaîne de caractère, une position de début, une position de fin.
+Les positions peuvent être positives, et dans ce cas, on compte à partir de la gauche, ou négatives, et dans ce cas on compte à partir de la droite.
+
+```{r}
+library(dplyr)
+library(stringr)
+a <- data.frame(x = c(" libeatg", "delivo y"))
+b <- mutate(a, pos3a4 = str_sub(string = x, start = 3, end = 4),
+               pos3a2avtlafin = str_sub(string = x, start = 3, end = -2))
+```
+
+`str_sub()` peut être utilisé pour remplacer un caractère
+
+```{r}
+str_sub(a$x, start = 6, end = 9) <-"rer"
+a$x
+```
+
+Si on souhaite réaliser ce genre d'opération dans le cadre d'un `mutate`, il faut utiliser 
+une fonction dite "pipe-operator-friendly", par exemple `stri_sub_replace()` du package `stringi`
+
+```{r}
+# install.packages("stringi")
+library(stringi)
+a <- data.frame(x = c(" libeatg", "delivo y"))
+b <- mutate(a, y=stri_sub_replace(str=x, from=6, to=9, value = "rer"))
+```
+
+## Obtenir la longueur d'une chaîne de caractères avec `str_length()` :
+
+```{r}
+library(stringr)
+str_length("abc")
+```
+
+## Remplacer partout les points par des virgules, en vue d'un export vers excel
+
+```{r, eval = FALSE}
+library(stringr) # pour str_replace
+# remplacement point par virgule
+lait_vache_reg_dep_2021_donnees_secret_2 <- lait_vache_reg_dep_2021_donnees_secret_1 %>% 
+  mutate(across(
+    .cols=everything(),
+    ~ str_replace(., "[.]", ",")))
+```
+
+## Utiliser les expressions régulières
+
+Les **expressions régulières** permettent la détection de "patterns" sur des chaînes de caractères. Par exemple "^" sert à indiquer que la chaîne de caractère recherchée doit se trouver au début de la chaîne examinée. Au contraire, "$" sert à indiquer que la chaîne de caractère recherchée doit se trouver à la fin.
+
+
+```{r}
+a <- data.frame(txt = c("vélo", "train", "voilier", "bus", "avion", "tram", "trottinette"))
+b <- mutate(a, tr_au_debut = str_detect(string = txt, pattern = "^tr"))
+b
+filter(b, tr_au_debut)
+filter(a, str_detect(string = txt, pattern = "n$"))
+```
+
+## Ecriture de fonctions
+
+La fonction est un objet comme les autres, qu'on crée avec l'opérateur d'affectation. Elle est définie par des paramètres et elle se termine souvent par la fonction `return()`. 
+
+```{r}
+# Exemple du calcul de l'IMC
+calcul_IMC <- function (poids, taille)
+{
+  ## La taille est exprimée en mètres
+  imc <- poids / taille ^ 2
+  return (imc)
+}
+calcul_IMC (poids = 80, taille = 1.89)
+calcul_IMC (poids = 60, taille = 1.55)
+```
+
+```{r, eval = FALSE}
+# fonction secteurs
+secteur_1 <- function(df)  {
+  df %>% 
+    select(region,'2019','2020') %>% 
+    filter(region %in% c("France métropolitaine","Pays de la Loire")) 
+}
+# nouvelle variable emploi_salarie en mettant la liste des especes par transposition
+secteur_2 <- function(df)  {
+  df %>%   
+    pivot_longer(cols = c('2019','2020'), 
+                 names_to = c("annee"),
+                 values_to = "nb_emploi_salarie")
+}
+
+# utilisation fonction secteur
+b_iaa <- secteur_1(b_iaa)
+# ajout colonne secteur
+b_iaa_long <- secteur_2(b_iaa)  %>% 
+  mutate(secteur = "b2_iaa")
+
+```
+## Les boucles conditionnelles
+
+Les commandes `if` et `else` sont utilisables. Le "then" n'existe pas : il est implicite après les accolades.
+
+```{r}
+diag_IMC <- function(poids,taille)
+{
+  imc <- poids / taille ^ 2
+  if (imc < 18.5) {diag <- "maigre"}
+  else if (imc < 25) {diag <- "normal"}
+       else {diag <- "surpoids"}
+  return (diag)
+}
+diag_IMC (poids=60,taille=1.89)
+diag_IMC (poids=80,taille=1.89)
+diag_IMC (poids=80,taille=1.55)
+```
+
+
+## Les boucles
+
+On peut utiliser les boucles classiques : `repeat`, `while`, `for` :
+
+```{r}
+for (pp in seq(from = 50, to = 100, by = 5))
+{
+  print(paste ("Taille = 1,70m, poids =", pp, "Diagnotic :",
+               diag_IMC (poids = pp, taille = 1.70)))
+}
+```
+
+On peut aussi appliquer des fonctions sur les lignes, colonnes et autres dimensions grâce à la fonction  ```apply()```.
