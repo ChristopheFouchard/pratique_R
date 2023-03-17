@@ -307,7 +307,7 @@ Pour gagner du temps, il est important d'utiliser les raccourcis pour les comman
 
 https://orion.agriculture/confluence/display/CER/Ergonomie+et+raccourcis+dans+RStudio
 
-https://www.book.utilitr.org/rproject.html#raccourcis-utiles-pour-l%C3%A9dition-de-code
+https://www.book.utilitr.org/03_fiches_thematiques/fiche_rprojects#raccourcis-utiles-pour-l%C3%A9dition-de-code
 
 ### L'espace de travail - le 'workspace'
 
@@ -502,7 +502,7 @@ Si le fichier est de type "source" (extension .tar.gz), Rtools peut s'avérer n�
 
 ### Installation de Rtools en cas de difficulté
 
-Installer une seule fois Rtools (outils de compilation pour R) à partir de https://cran.r-project.org/bin/windows/Rtools
+Installer une seule fois Rtools (outils de compilation pour R) à partir de https://cran.r-project.org/bin/windows/Rtools. 
 Par exemple https://cran.r-project.org/bin/windows/Rtools/rtools40.html
 
 Il convient de télécharger rtools40-x86_64.exe vers `D:\user\R\packages` puis de lancer rtools40-x86_64.exe. 
@@ -695,26 +695,16 @@ eff_volailles <- read.xlsx(xlsxFile=paste0(chemin_entree,fichier_entree),
   filter(region %in% c("52  -  Pays de la Loire","98  -  Total France métropolitaine") )
 
 
-
-
-
-
-# à changer
-library(readxl)
-
 chemin <- "S:/ETUDES/En cours/memento_Christophe/entree/AgenceBio/"
 fichier_nat <- "Export Productions Bio - National.xlsx"
-fichier_dep <- "Export Productions Bio - Région - Pays de la Loire.xlsx"
 an <- "2021"
-
-agri_bio_vegetal_fr <- read_xlsx(path = paste0(chemin,fichier_nat), 
-                                      sheet = "Productions végétales", skip = 0) %>% 
+agri_bio_vegetal_fr <- read.xlsx(xlsxFile=paste0(chemin,fichier_nat), 
+                                 sheet = "Productions végétales",colNames = TRUE,startRow = 1) %>% 
   as_tibble(.name_repair = make_clean_names) %>% 
   filter(annee %in% c(an) & territoire %in% c("National","Pays de la Loire") )
 ```
 
-https://www.book.utilitr.org/importxl.html#importer-un-fichier-xlsx-avec-le-package-openxlsx
-
+https://www.book.utilitr.org/03_fiches_thematiques/fiche_import_tableurs#importer-un-fichier-xlsx-avec-le-package-openxlsx
 
 ### Importer des fichiers xls
 
@@ -761,8 +751,7 @@ volailles_pdl_espece_siqo <- read_xls(path = paste0(chemin,fichier),
 
 * **Gestion des `NA` ** : il est possible de préciser les valeurs qu'on souhaite considérer comme des `NA` avec le paramètre `na`. Par défaut, la valeur `""` est considérée comme `NA`.
 
-
-https://www.book.utilitr.org/importxl.html#importer-un-fichier-xls-avec-le-package-readxl
+https://www.book.utilitr.org/03_fiches_thematiques/fiche_import_tableurs#importer-un-fichier-xls-avec-le-package-readxl
 
 
 ### Importer des fichiers ods
@@ -793,6 +782,14 @@ chemin_entree <- "S:/ETUDES/En cours/Fiche filière volailles/conjoncture volail
 fichier_entree <- "COMEXOEUFS_France.ods"
 oeufs <- read_ods(path=paste0(chemin_entree,fichier_entree), sheet = "Données",skip = 0)
 
+# Chargement du chemin 
+chemin  <- "~/CERISE/01-Espace-de-Partage/SRISE/Pays-De-La-Loire/Partage_R/Christophe/Volailles/entree/" 
+fichier_cotation <- "Cotations_modif.ods"
+# Import + ajout annee mois
+vol_oeufs_cot <- read_ods(path=paste0(chemin,fichier_cotation), 
+                   sheet = "VolaillesOeufsLapinsMensuel",skip = 2) %>% 
+  as_tibble(.name_repair = make_clean_names) 
+
 ```
 
 ### Importer des fichiers csv
@@ -812,8 +809,7 @@ library(readr)
 ```
 
 Source
-Cerise : https://rstudio.stats.national.agri
-Fichier "DIFFABATVOL_2021.csv", présent dans CERISE/03-Espace-de-Diffusion/060_Productions_viandes_oeufs/6030_Abattage_volailles_lapins/60304_Volailles/ABATVOL_2021
+Cerise - Fichier "DIFFABATVOL_2021.csv", présent dans CERISE/03-Espace-de-Diffusion/060_Productions_viandes_oeufs/6030_Abattage_volailles_lapins/60304_Volailles/ABATVOL_2021
 
 ```{r, eval = FALSE}
 library(dplyr)
@@ -838,7 +834,7 @@ La fonction `read_delim()` de `readr` permet d'importer les données d'un fichie
 **Il est plus simple de sélectionner des colonnes avec `fread()` qu'avec les fonctions du *package* `readr`**. Il est donc recommandé d'utiliser `fread()` lorsque vous souhaitez sélectionner facilement les colonnes à importer.
 :::
 
-https://www.book.utilitr.org/importcsv.html
+https://www.book.utilitr.org/03_fiches_thematiques/fiche_import_fichiers_plats#utiliser-la-fonction-read_delim
 
 
 ### Importer des fichiers SPSS (.sav) 
@@ -1326,6 +1322,22 @@ otex <- read.xlsx(xlsxFile=paste0(chemin_entree,fichier_entree),
   rename(otex_lib="Orientation.technico-économique.(OTEX)") %>% 
   mutate(otex_code = substr(otex_lib,1,4) )
 
+# Pourcentage en colonne
+produits_a17_percent <- produits_a17_large %>% 
+   mutate(an_2021_imports_percent_col = an_2021_imports / sum(an_2021_imports) * 100,
+          an_2022_imports_percent_col = an_2022_imports / sum(an_2022_imports) * 100,
+          an_2021_exports_percent_col = an_2021_exports / sum(an_2021_exports) * 100,
+          an_2022_exports_percent_col = an_2022_exports / sum(an_2022_exports) * 100,
+          an_2021_I_sem1_percent_col = an_2021_I_sem1 / sum(an_2021_I_sem1) * 100,
+          an_2021_I_sem2_percent_col = an_2021_I_sem2 / sum(an_2021_I_sem2) * 100,
+          an_2022_I_sem1_percent_col = an_2022_I_sem1 / sum(an_2022_I_sem1) * 100,
+          an_2022_I_sem2_percent_col = an_2022_I_sem2 / sum(an_2022_I_sem2) * 100,
+          an_2021_E_sem1_percent_col = an_2021_E_sem1 / sum(an_2021_E_sem1) * 100,
+          an_2021_E_sem2_percent_col = an_2021_E_sem2 / sum(an_2021_E_sem2) * 100,
+          an_2022_E_sem1_percent_col = an_2022_E_sem1 / sum(an_2022_E_sem1) * 100,
+          an_2022_E_sem2_percent_col = an_2022_E_sem2 / sum(an_2022_E_sem2) * 100,
+          .after=a17_lib_detail) %>% 
+   mutate(across(where(is.numeric),arrondi,digits=2))
 
 # type.convert pour transformer en numérique poids_produit_en_tec (caractère) qui a comme séparateur ","
 viande_volaille_tec_2021 <- read.xlsx(xlsxFile=paste0(chemin,"cd2022-5_SAA_2021_provisoire_resultats_LIB.xlsx"), 
@@ -1524,6 +1536,15 @@ agri_bio_vegetal_fr_cultures <- agri_bio_vegetal_fr %>%
     groupe_de_productions %in% c("Autres surfaces") & sous_groupe_de_productions %in% c("Toutes") ~ "7_Autres",
     TRUE ~ "autre cas - doublon")
   )
+  
+# nb chefs et coexploitants
+stats_chefcoexpl_statutdirig <- mo_2020 %>% 
+  mutate(statut_dirig=case_when(statutdirig=="1" ~ "Chef d'exploitation",
+                               statutdirig=="2" ~ "Coexploitant",
+                               TRUE ~ statutdirig)) %>% 
+  group_by (statut_dirig) %>% 
+  summarise(nb=n()) %>% 
+  adorn_totals(where=c("row"))
 
 ```
 
@@ -1696,6 +1717,31 @@ age_moyen <- exploitants_2010 %>%
            nom = "âge moyen des chefs d'exploitation et coexploitants",
            .drop = FALSE) %>% 
   summarise(age_moy = mean(age, na.rm = TRUE) )
+  
+# calcul moyenne semestrielle
+oeufs_cot_det_2022_2021_an_mois <- oeufs_cot_det_2022_2021_an_mois %>%   
+  mutate(moy_sem_1_2021 = rowMeans((across(an_2021_01:an_2021_06)),na.rm = TRUE),
+         moy_sem_1_2022 = rowMeans((across(an_2022_01:an_2022_06)),na.rm = TRUE),
+         moy_sem_2_2021 = rowMeans((across(an_2021_07:an_2021_12)),na.rm = TRUE),
+         moy_sem_2_2022 = rowMeans((across(an_2022_07:an_2022_12)),na.rm = TRUE),
+         moy_an_2021 = rowMeans((across(an_2021_01:an_2021_12)),na.rm = TRUE),
+         moy_an_2022 = rowMeans((across(an_2022_01:an_2022_12)),na.rm = TRUE))
+         
+# calcul moyenne semestrielle
+# avec rowwise() (fonction dplyr) et c_across() for working within rows, in combination with rowwise()
+vol_2022_mois <- vol_2022_mois %>%  
+  mutate(moy_an = mois_total /12) %>% 
+  rowwise() %>%
+  mutate(moy_sem_1 = mean(c_across(mois_01:mois_06), na.rm = TRUE),
+         moy_sem_2 = mean(c_across(mois_07:mois_12), na.rm = TRUE),
+         moy_an_b = mean(c_across(mois_01:mois_12), na.rm = TRUE))
+# rowwise() is just a special form of grouping, so if you want to remove it from a data frame, just call ungroup()
+# avec rowMeans (fonction base R) et across()
+vol_2021_mois <- vol_2021_mois %>%   
+            mutate(moy_sem_1 = rowMeans(across(mois_01:mois_06), na.rm = TRUE),
+                   moy_sem_2 = rowMeans(across(mois_07:mois_12), na.rm = TRUE),
+                   moy_an = mois_total /12,
+                   moy_an_b = rowMeans(across(mois_01:mois_12), na.rm = TRUE))
 
 ```
 **La fonction `summarise()` permet de calculer une ou plusieurs statistiques à partir de la table de données.** Cette fonction est souvent utilisée après la fonction `group_by()` pour calculer des statistiques par groupe, et elle conduit à une agrégation de la table en fonction des groupes définis par la fonction `group_by` (par défaut une agrégation sur l'ensemble de la table). Le code suivant calcule le nombre total d'équipements dans la BPE `sum(NB_EQUIP, na.rm = TRUE)`, et le nombre total de boulangeries `sum(NB_EQUIP * (TYPEQU == "B203"), na.rm = TRUE)`.
@@ -1962,6 +2008,15 @@ lait_vache_reg_dep_2021_donnees_secret_2 <- lait_vache_reg_dep_2021_donnees_secr
     .cols=everything(),
     ~ str_replace(., "[.]", ",")))
 ```
+## Ajouter un préfixe à un nom de variable
+
+```{r , eval = FALSE}
+# ajout prefixe annee pour Total
+vol_2022 <- vol_2022 %>%
+  rename_with(.cols = c(total_nombre,total_poids), function(x){paste0("x2022_", x)})
+vol_2021 <- vol_2021 %>%
+  rename_with(.cols = c(total_nombre,total_poids), function(x){paste0("x2021_", x)})
+```
 
 ## Regroupement de colonnes
 
@@ -2176,21 +2231,24 @@ Le package `dplyr` propose la fonction `bind_rows()` pour superposer deux ou plu
 - si une colonne est manquante dans une des tables, alors des valeurs manquantes sont générées dans la table de sortie.
 
 ```{r , eval = FALSE}
-# 1- Dans ce tableau ne conserver que l'année, le type (VB et VNB), les totaux départementaux et régionaux
-lait_production_vache_type <- lait_production_vache_1 %>%
+# 1- Dans ce tableau ne conserver que l'année, le département de la production, le type (VB et VNB), les totaux départementaux et régionaux
+lait_production_vache_type <- exploit_lait_production_vache_type %>%
   group_by(type) %>%
   mutate(livraison_reg=sum(colldiff, na.rm=TRUE)) %>%
+  ungroup() %>% 
   group_by(type,dep_prod) %>% 
   mutate(livraison_dep=sum(colldiff, na.rm=TRUE)) %>%
-  distinct(annee,type,livraison_reg,livraison_dep)
-
+  ungroup() %>% 
+  distinct(annee,dep_prod,type,livraison_reg,livraison_dep)
+  
 # 2- Réaliser un tableau similaire pour l'ensemble des vaches (sans distinguer VB et VNB, en indiquant type="vache")
 lait_production_vache_ensemble <- lait_production_vache_1 %>%
   mutate(type="vache",
          livraison_reg=sum(colldiff / 100, na.rm=TRUE)) %>%
   group_by(dep_prod) %>% 
   mutate(livraison_dep=sum(colldiff / 100, na.rm=TRUE)) %>%
-  distinct(annee,type,livraison_reg,livraison_dep)
+  ungroup() %>% 
+  distinct(annee,dep_prod,type,livraison_reg,livraison_dep)
 
 # 3- Regrouper les 2 tableaux agrégés : tableau pour l'ensemble des vaches + tableau distinguant VB et VNB
 lait_production_vache <-  bind_rows(lait_production_vache_ensemble, lait_production_vache_type) 
@@ -2277,7 +2335,24 @@ volailles_pdl_espece <- volailles_pdl_siqo2 %>%
                values_to = "tec" )
 volailles_pdl_espece <- volailles_pdl_espece %>% 
   mutate(tec=tec/1000)
+  
+# un seul montant en colonne
+# nouvelle variable 'montant' en mettant la liste des montants par trimestre par transposition
+# crée variables "trimestre"(modalités 'x1','x2','x3','x4') et "annee" à partir de c('x4t2018','x1t2019'...)  
+produits_long <- produits %>%   
+             pivot_longer(cols = c('x4t2018','x1t2019','x2t2019','x3t2019','x4t2019','x1t2020','x2t2020','x3t2020','x4t2020',
+                                   'x1t2021','x2t2021','x3t2021','x4t2021','x1t2022','x2t2022','x3t2022'), 
+                          names_to = c("trimestre","annee"),
+                          names_sep = "t",
+                          values_to = "montant")
 
+# une seule espece en colonne
+# nouvelle variable espece en mettant la liste des especes par transposition
+itavi_2022_2021_espece <- itavi_2022_2021 %>%   
+             pivot_longer(cols = c(poulet_standard,poulet_label_rouge,dinde,pintade,poule_pondeuse,canard_rotir,canard_gras,lapin,
+                                   poulet_label_rouge_non_ogm,poule_pondeuse_label_rouge_non_ogm), 
+                          names_to = c("espece"),
+                          values_to = "indice")
 ```
 
 
@@ -2320,6 +2395,18 @@ bpe_ens_2018_tbl %>%
 volailles_sum <- rbind(volailles_dep_sum,volailles_pdl_sum) %>% 
   pivot_wider(names_from=dep,
               values_from =tec_regrpt) 
+
+# transposition lignes vers colonnes
+produits_a17_large <- produits_a17 %>%
+   pivot_wider(names_from = c(annee,flux,semestre), 
+               values_from = valeur, 
+               names_prefix = "an_"
+               ) %>%
+   mutate(an_2021_imports = an_2021_I_sem1 + an_2021_I_sem2,
+          an_2022_imports = an_2022_I_sem1 + an_2022_I_sem2,
+          an_2021_exports = an_2021_E_sem1 + an_2021_E_sem2,
+          an_2022_exports = an_2022_E_sem1 + an_2022_E_sem2,
+          .after=a17_lib_detail)
 
 # territoire en colonne 
 agri_bio_vegetal_fr_tab1_final <- agri_bio_vegetal_fr_tab1_long %>%   
@@ -2372,6 +2459,16 @@ otex_regroupe <- otex_transp  %>%
                values_to = "etp") %>% 
   pivot_wider(names_from =annee,
               values_from= c(etp) )
+
+# on remet temporairement import export en colonne pour calculer le solde
+produits_large <- produits_long_AZ_C1 %>%   
+   pivot_wider( names_from = flux, 
+                values_from = montant) %>% 
+   mutate(solde = Export - Import)
+produits_long_AZ_C1 <- produits_large %>%   
+             pivot_longer(cols = c('Export','Import','solde'), 
+                          names_to = 'flux',
+                          values_to = "montant")
 
 ```
 # Jointure de tableaux
@@ -2445,6 +2542,17 @@ exploitants_2010 <- fam_2010 %>%
                      pbstot_coef17), 
             by = "nom_dossier")
 
+# on ajoute le libelle des nomenclatures a129, cpf4 et a17
+produits <- produits %>% 
+   left_join(y = a129, 
+             by = "a_129") %>% 
+   left_join(y = cpf4, 
+             by = "cpf4") %>% 
+   left_join(y = table_NAF, 
+             by = "a_129") %>% 
+   left_join(y = secteur_a17, 
+             by = "a_17")
+
 ```
 
 
@@ -2479,7 +2587,51 @@ La syntaxe pour réaliser les autres types de jointure est très similaire :
 | Jointure externe  | `full_join(x = filosofi_com_2016_tbl, y = cog_com_2019_tbl, by = c("CODGEO" = "com"))` |
 | Anti-jointure     | `anti_join(x = filosofi_com_2016_tbl, y = cog_com_2019_tbl, by = c("CODGEO" = "com"))` |
 
-Pour plus de précisions, consulter la fiche https://www.book.utilitr.org/jointures.html qui présente un certain nombre de règles et de bonnes pratiques sur les jointures.
+Pour plus de précisions, consulter la fiche https://www.book.utilitr.org/03_fiches_thematiques/fiche_joindre_donnees#jointure-avec-dplyr qui présente un certain nombre de règles et de bonnes pratiques sur les jointures.
+
+
+Parfois, il peut être utile de réaliser une jointure de la table avec elle-même pour affecter la valeur d'une variable à une autre variable. Dans l'exemple suivant, on affecte la date d'installation qui est relative au chef d'exploitation au co-exploitant.
+```{r , eval = FALSE}
+# Installés depuis 2010
+# anchef	Année de début de fonction du chef
+# on prend l'année d'installation anchef du chef (statutdirig == 1) et on affecte la valeur dans anchef_co 
+# pour l'ensemble des chefs et co-exploitants (même nom_dossier)
+mo_2020_install2010 <-  mo_2020 %>% 
+  left_join(mo_2020 %>% 
+              select(nom_dossier,statutdirig_y=statutdirig,anchef_co=anchef) %>%
+              filter(statutdirig_y == 1),
+            by="nom_dossier") %>% 
+  select(-statutdirig_y) %>% 
+  mutate(age=2020-as.numeric(anais),
+         install2010 = (!is.na(anchef_co) & (anchef_co >= 2010) ) )
+```
+### Vérification de doublons de lignes 
+
+Cette vérification peut permettre de déterminer les varaibles servant d'identifiant commun à 2 tables.
+On peut aussi utiliser la numérotation de lignes comme identifiant commun pour la concaténation d'une table avec une sous-table.
+
+```{r , eval = FALSE}
+# afficher les lignes en doublon pour l'ensemble des variables
+bio_pdl_test_doublons <- bio_pdl %>% 
+  group_by(across(everything())) %>%
+  filter(n()>1) %>%
+  ungroup()
+
+# afficher les lignes en doublon pour l'ensemble des variables servant d'identifiant
+bio_pdl_test_doublons_var_ok <- bio_pdl %>% 
+  group_by(raisonsociale,numeropacage,numerobio,libelleonab,ss_groupe_onab_libelle,nomoc) %>%
+  filter(n()>1) %>%
+  arrange(raisonsociale,numeropacage,numerobio,libelleonab,ss_groupe_onab_libelle,nomoc) %>%
+  ungroup()
+
+# afficher les lignes en doublon pour l'ensemble des variables servant d'identifiant sans nomoc
+# il reste 11 lignes en double, soit 22 observations
+bio_pdl_test_doublons_var_doubl <- bio_pdl %>% 
+  group_by(raisonsociale,numeropacage,numerobio,libelleonab,ss_groupe_onab_libelle) %>%
+  filter(n()>1) %>%
+  arrange(raisonsociale,numeropacage,numerobio,libelleonab,ss_groupe_onab_libelle) %>%
+  ungroup()
+```
 
 
 ## Jointure complète avec full_join
@@ -2601,6 +2753,19 @@ ou `as.factor()`, `as.numeric()`, etc...
 
 On peut aussi gérer les types au moment de l'importation (par exemple avec le paramètre `colClasses`).
 
+### Travail sur les dates
+
+```{r , eval = FALSE}
+itavi <- itavi %>%
+  mutate(an_mois_date = convertToDate(an_mois))
+# itavi <- itavi %>% mutate(an_mois = substr(as.character(an_mois_date),1,7) ) 
+# itavi <- itavi %>% gsub("-","_",itavi$an_mois)
+# itavi <- itavi %>% str_replace_all("-","_")
+itavi <- itavi %>% 
+  mutate(annee = year(an_mois_date),
+         mois = month(an_mois_date),
+         an_mois =paste0(annee,"_",mois) ) 
+```
 
 ## Les vecteurs
 
@@ -2679,7 +2844,7 @@ bpe_ens_2018_tbl <- as_tibble(bpe_ens_2018)
 ```
 * **L'affichage des `tibbles` est meilleur que celui des `data.frames`.** Même sans la fonction `head()`, l'affichage d'un `tibble` affiche les dimensions de celui-ci (nombres de lignes et de colonnes), ainsi que le type des variables (en-dessous des noms des colonnes).
   
-https://www.book.utilitr.org/tidyverse.html#le-tibble-un-data.frame-am%C3%A9lior%C3%A9
+https://www.book.utilitr.org/03_fiches_thematiques/fiche_tidyverse#le-tibble-un-data.frame-am%C3%A9lior%C3%A9
 
 ## Les fonctions et les valeurs particulières
 - NA : valeur manquante (*Not Available*) dans une dataframe ou en résultat d'une fonction
@@ -2832,8 +2997,7 @@ nb_exploit_vaches_dep_reg <- nb_exploit_vaches_dep %>%
   mutate(across(c(part_expl,part_vaches),arrondi,digits=2))
 
 ```
-
-https://www.book.utilitr.org/tidyverse.html#encha%C3%AEner-les-manipulations-avec-lop%C3%A9rateur-pipe
+https://www.book.utilitr.org/03_fiches_thematiques/fiche_tidyverse#encha%C3%AEner-les-manipulations-avec-lop%C3%A9rateur-pipe
 
 ### Exemple d'utilisation du pipe `%>%`
 On peut combiner les opérations à l'aide de l'opérateur pipe `%>%` :
@@ -3202,6 +3366,39 @@ b_iaa <- secteur_1(b_iaa)
 b_iaa_long <- secteur_2(b_iaa)  %>% 
   mutate(secteur = "b2_iaa")
 
+# fonction pour an_semestre en colonne
+an_sem_col <- function(df)  {
+   df %>% 
+   pivot_wider( names_from = c(annee,semestre), names_prefix="an_",
+                values_from = montant)
+   }
+# utilisation fonction pour an_semestre en colonne   
+produits_AZ_C1_reg <- an_sem_col(produits_long_AZ_C1_reg)
+
+# fonction pour calcul évolutions et / semestre précédent
+calcul_evol <- function(df)  {
+   df %>% 
+      mutate(diff2022_sem1_evol = an_2022_sem1 - an_2021_sem1,
+             diff2022_sem1_evol_perc = (an_2022_sem1/an_2021_sem1-1)*100,
+             diff2021_sem2_evol_prec = an_2021_sem2-an_2021_sem1,
+             diff2021_sem2_evol_prec_perc = ( an_2021_sem2/an_2021_sem1 -1)*100,
+             diff2022_sem1_evol_prec = an_2022_sem1-an_2021_sem2,
+             diff2022_sem1_evol_prec_perc = ( an_2022_sem1/an_2021_sem2 -1)*100 
+             )
+}
+# utilisation fonction calcul évolutions
+produits_AZ_C1_reg <- calcul_evol(produits_AZ_C1_reg) 
+
+# fonction pour arrondi évolutions 
+arrondi_evol <- function(df)  {
+  df %>% 
+  mutate(diff2022_sem1_evol_perc=arrondi(diff2022_sem1_evol_perc, digits=2),
+  diff2021_sem2_evol_prec_perc=arrondi(diff2021_sem2_evol_prec_perc, digits=2),
+  diff2022_sem1_evol_prec_perc=arrondi(diff2022_sem1_evol_prec_perc, digits=2) )
+}
+# utilisation fonction arrondi évolutions 
+produits_AZ_C1_reg <- arrondi_evol(produits_AZ_C1_reg) 
+
 ```
 ## Les boucles conditionnelles
 
@@ -3235,3 +3432,45 @@ for (pp in seq(from = 50, to = 100, by = 5))
 ```
 
 On peut aussi appliquer des fonctions sur les lignes, colonnes et autres dimensions grâce à la fonction  ```apply()```.
+
+## Exemples de nomenclatures
+
+```{r, eval = FALSE}
+# code a17
+secteur_a17 <- data.frame(a_17 = c("AZ","DE","C1","C2","C3","C4","C5","FZ","GZ","HZ","IZ","JZ","KZ","LZ","MN","OQ","RU"),
+                             a17_lib_detail = c("Agriculture, sylviculture et p\u00eache",
+                                                "Industries extractives, \u00e9nergie, eau, gestion des d\u00e9chets et d\u00e9pollution",
+                                                "Fabrication de denr\u00e9es alimentaires, de boissons et  de produits à base de tabac",
+                                                "Cok\u00e9faction et raffinage",
+                                                "Fabrication d'\u00e9quipements \u00e9lectriques, \u00e9lectroniques, informatiques ; fabrication de machines",
+                                                "Fabrication de mat\u00e9riels de transport",
+                                                "Fabrication d'autres produits industriels",
+                                                "Construction",
+                                                "Commerce ; r\u00e9paration d'automobiles et de motocycles",
+                                                "Transports et entreposage",
+                                                "H\u00e9bergement et restauration",
+                                                "Information et communication",
+                                                "Activit\u00e9s financi\u00e8res et d'assurance",
+                                                "Activit\u00e9s immobili\u00e8res",
+                                                "Activit\u00e9s scientifiques et techniques ; services administratifs et de soutien",
+                                                "Administration publique, enseignement, sant\u00e9 humaine et action sociale",
+                                                "Autres activit\u00e9s de services"),
+                             stringsAsFactors = FALSE)
+
+# otex en clair
+# recode(x, old = new)
+exploit_vaches_otex_clair <- exploit_vaches_otex %>% 
+  mutate(otex_libelle = recode(otefda_coef17,
+                               "1516"="Grandes cultures",
+                               "2829"="Maraîchage, horticulture",
+                               "3500"="Viticulture",
+                               "3900"="Fruits ou autres cultures permanentes",
+                               "4500"="Bovins lait",
+                               "4600"="Bovins viande",
+                               "4700"="Bovins mixte",
+                               "4800"="Ovins, caprins, autres herbivores",
+                               "5074"="Porcs, volailles",
+                               "6184"="Polyculture, polyélevage",
+                               "9000"="Exploitations non classées",
+                                .default = "autre"))
+```
