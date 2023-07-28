@@ -3,17 +3,25 @@ title: "Guide pratique R"
 author: "Christophe Fouchard"
 date: "`r format(Sys.Date(),format = '%d/%m/%Y')`"
 output:
-  html_document:
-    df_print: tibble
-    fig_height: 2
-    fig_width: 3
-    fontfamily: mathpazo
-    highlight: tango
-    theme: lumen
-    toc: yes
-    toc_depth: 3
-    toc_float: yes
-    number_sections: true
+  rmdformats::readthedown:
+    fig_width : 4
+    fig_height : 3
+    highlight : "kate"
+    toc_depth : 3
+    use_bookdown : TRUE
+    theme: united
+    css: styles.css
+  #   html_document:
+  #   df_print: tibble
+  #   fig_height: 2
+  #   fig_width: 3
+  #   fontfamily: mathpazo
+  #   highlight: tango
+  #   theme: lumen
+     # toc: yes
+     # toc_depth: 3
+     # toc_float: yes
+     # number_sections: true
     # toc signifie "table of contents" (càd table des matières)
   word_document:
     toc: yes
@@ -103,6 +111,21 @@ h5 { /* Header 5 */
 </style>
 
 
+```{r setup, include=FALSE}
+library(knitr)
+library(rmdformats)
+## Global options
+knitr::opts_chunk$set(cache = TRUE,
+                      include = TRUE,
+                      echo = TRUE,
+                      eval=TRUE,
+                      message = FALSE,
+                      warning = FALSE,
+                      results="hide",
+                      fig.height=3, fig.width=4)
+```
+
+
 ***
 
 <br>
@@ -129,16 +152,16 @@ Pour changer de version, aller en haut à droite et cocher la version souhaitée
 Il est possible d'avoir plusieurs sessions R ouvertes.
 On peut choisir la version de R utilisée au lancement de la session, en allant en haut à droite, via :
 
-<center>![](images/Cerise_ouvrir_session_R.png)</center>
+<center>![](images/Cerise_ouvrir_session_R.png){width=50%}</center>
 
-puis chosir la version de R à travers la fenêtre :
+puis choisir la version de R à travers la fenêtre :
 
-<center>![](images/Cerise_nouvelle_session_R.png)</center>
+<center>![](images/Cerise_nouvelle_session_R.png){width=50%}</center>
 
 
 ### Pour récupérer un chemin pour l'utiliser dans un programme R ?
 
-Dans la fenêtre de parcours des dossiers (fenêtre en bas à droite dans RStudio Server), choisir More 
+Dans la fenêtre de parcours des dossiers (fenêtre en bas à droite dans RStudio Server), choisir More   
 puis Set as Working Directory.
 
 ```{r}
@@ -152,7 +175,7 @@ Le chemin peut-être aussi copié depuis la console (fenêtre en bas à gauche).
 
 Pour l'utilisateur muni de ce chemin, il convient de cliquer sur les trois petits points (fenêtre en bas à droite dans RStudio Server)
 
-Dans la fenêtre qui apparaît, on colle le chemin vers le dossier d'intérêt, par exemple
+Dans la fenêtre qui apparaît, on colle le chemin vers le dossier d'intérêt, par exemple  
 ~/CERISE/01-Espace-de-Partage/SRISE/Pays-De-La-Loire/Partage_R
 
 ~(AltGr+2) permet d'indiquer le répertoire racine dans Cerise.
@@ -283,7 +306,8 @@ Pour gagner du temps, il est important d'utiliser les raccourcis pour les comman
     # (`AltGr` + `3`) pour commenter son code
     
     `Ctrl` + `Shift` + `M` : insère le pipe `%>%`
-     Plusieurs verbes (ou fonctions) peuvent facilement être combinés en utilisant l'opérateur `%>%` (pipe) qui permet d'enchaîner les instructions.
+     Plusieurs verbes (ou fonctions) peuvent facilement être combinés  
+     en utilisant l'opérateur `%>%` (pipe) qui permet d'enchaîner les instructions.
     Penser à aérer son code, notamment en revenant à la ligne, après un %>%
      x %>% 
       f %>% 
@@ -291,20 +315,29 @@ Pour gagner du temps, il est important d'utiliser les raccourcis pour les comman
           h  
     est équivalent à h(g(f(x)))
 
-    `Alt` + `-` : insère la flèche d'assignation <- (il faut utiliser le - du pavé numérique, pas celui du 6)
+    `Alt` + `-` : insère la flèche d'assignation <- (il faut utiliser le - du pavé numérique, 
+    pas celui du 6)
     `Alt`+ `6` (Windows) : insére l'opérateur assignation `<-`
-    `Ctrl`+`Entrée` : exécute le code sélectionné (ou la commande ou se trouve le curseur si rien n'a été sélectionné)
+    `Ctrl`+`Entrée` : exécute le code sélectionné 
+    (ou la commande ou se trouve le curseur si rien n'a été sélectionné)
     Ctrl + A : tout sélectionner
     Ctrl + C/X/V : copier/couper/coller classique
     Ctrl + z : annule la dernière modification
     `Ctrl` + `F` : ouvre le formulaire de chercher/remplacer
     `Ctrl` + `Shift` + `F` : recherche une expression dans plusieurs fichiers
-    `Ctrl` + `I` : indente automatiquement le code sélectionné (ou la commande ou se trouve le curseur si rien n'a été sélectionné)
-    Ctrl + Shift + C : bascule en commentaire le code sélectionné (ou la ligne où se trouve le curseur si rien n'a été sélectionné)
-    Tab ou Ctrl + Espace : ouvre les propositions d'autocomplétion (pour les noms de fonctions ou d'objets, et pour les chemins à l'intérieur de guillemets)
+    `Ctrl` + `I` : indente automatiquement le code sélectionné
+    (ou la commande ou se trouve le curseur si rien n'a été sélectionné)
+    Ctrl + Shift + C : bascule en commentaire le code   sélectionné 
+    (ou la ligne où se trouve le curseur si rien n'a été sélectionné)
+    Tab ou Ctrl + Espace : ouvre les propositions d'autocomplétion   
+    (pour les noms de fonctions ou d'objets, et pour les chemins à l'intérieur de guillemets)
 
-    F1 : sur une fonction R, affiche l'aide de la fonction (si le package est chargé). On peut aussi utiliser ?nom_fonction (ou ??nom_fonction). La documentation de la fonction apparaîtra dans le panneau en bas à droite de RStudio.
-    F2 : sur une fonction, affiche le code de la fonction (sur une fonction personnalisée uniquement si le script contenant la définition de la fonction est ouvert)
+    F1 : sur une fonction R, affiche l'aide de la fonction 
+    (si le package est chargé).  On peut aussi utiliser ?nom_fonction (ou ??nom_fonction).  
+    La documentation de la fonction apparaîtra dans le panneau en bas à droite de RStudio.
+    F2 : sur une fonction, affiche le code de la fonction 
+    (sur une fonction personnalisée uniquement 
+    si le script contenant la définition de la fonction est ouvert)
 
     Ctrl + ↑ : dans la console, affiche l'historique des commandes exécutées (et permet de les relancer)
     Ctrl + L : vide la console
@@ -312,7 +345,7 @@ Pour gagner du temps, il est important d'utiliser les raccourcis pour les comman
     `Ctrl` + `+++` : Zoom positif
     `Ctrl` + `---` : Zoom négatif
     
-   `Ctrl` + 'Alt' + `Shift` + `W` : ferme tous les fichiers sauf le fichier courant
+   `Ctrl` + `Alt` + `Shift` + `W` : ferme tous les fichiers sauf le fichier courant
     
     Ctrl + Alt + I : insère un chunk R (dans une syntaxe markdown uniquement)
     
@@ -451,7 +484,7 @@ chemin_sortie <- "./sortie/"
 ```
 ### Script R - entête de section
 
-On peut utiliser quatre symboles ---- (ou #)  de suite pour créer un entête de section.
+On peut utiliser quatre symboles - (ou #)  de suite pour créer un entête de section.
 
 Par exemple :
 ```{r, eval = FALSE}
@@ -622,7 +655,8 @@ library(dplyr)
 library(janitor) # pour 'make_clean_names'
 
 # import fichiers
-chemin_geographie <- "/var/data/gluster/volume0/CERISE/01-Espace-de-Partage/SRISE/Pays-De-La-Loire/Partage_R/Christophe/Geographie/sortie/"
+chemin_geographie <- "/var/data/gluster/volume0/CERISE/01-Espace-de-Partage/SRISE/Pays-De-La-Loire/Partage_R/
+Christophe/Geographie/sortie/"
 
 fichier_geographie_dep <- "dep_reg_lib.RDS"
 fichier_geographie_reg <- "reg_lib.RDS"
@@ -637,7 +671,8 @@ geographie_reg <- readRDS(file = paste0(chemin_geographie,fichier_geographie_reg
 chemin_pdl_20 <- "S:/Fichiers source/RA 2020_déf/BASES_RA2020_data_def_15avril2022/RDS/"
 annee_ra_2020            <- 2020
 
-exploit_pdl_2020 <- readRDS(file = paste0(chemin_pdl_20,"RA2020_EXPLOITATIONS_R52_220415_modif_27juin2022.rds") ) %>% 
+exploit_pdl_2020 <- readRDS(file = paste0(chemin_pdl_20,
+                                        "RA2020_EXPLOITATIONS_R52_220415_modif_27juin2022.rds")) %>% 
   as_tibble(.name_repair = make_clean_names)
 # ident_pdl_2020 <- readRDS(file = paste0(chemin_pdl_20,"RA2020_IDENTIFICATION_R52_220415.rds") ) %>% 
 #   as_tibble(.name_repair = make_clean_names)  
@@ -743,8 +778,10 @@ agri_bio_vegetal_fr <- read.xlsx(xlsxFile=paste0(chemin,fichier_nat),
 
 
 # fichier annuel présent sur Cerise 
-# 03-Espace-de-Diffusion/070_Production_lait/7020_Enqu_Annuelle_Laitiere/EAL_2021_resultats_definitifs_septembre_2022
-chemin_entree_2021 <- "/var/data/gluster/volume0/CERISE/03-Espace-de-Diffusion/070_Production_lait/7020_Enqu_Annuelle_Laitiere/EAL_2021_resultats_definitifs_septembre_2022/"
+# 03-Espace-de-Diffusion/070_Production_lait/7020_Enqu_Annuelle_Laitiere/
+EAL_2021_resultats_definitifs_septembre_2022
+chemin_entree_2021 <- "/var/data/gluster/volume0/CERISE/03-Espace-de-Diffusion/070_Production_lait/
+7020_Enqu_Annuelle_Laitiere/EAL_2021_resultats_definitifs_septembre_2022/"
 
 fichier_entree_liv_reg_dep <- "LIVRAISON_REGNDEP_2020_2021.xlsx"
 
@@ -1792,7 +1829,7 @@ mo_2020_diplome_max <-  mo_2020_install2010 %>%
                                mofagri=="23" ~ "Niveau CAP (certificat d'aptitude professionnelle)",
                                mofagri=="24" ~ "Niveau BEP (brevet d'études professionnelles)",
                                mofagri=="25" ~ "Niveau baccalauréat technologique agricole, bac pro agricole",
-                               mofagri=="26" ~ "Niveau baccalauréat de technicien agricole (BTA), BEA,  BPREA",
+                               mofagri=="26" ~ "Niveau baccalauréat de technicien agricole (BTA), BEA,BPREA",
                                mofagri=="27" ~ "Niveau diplôme de 1er cycle universitaire, BTS, DUT",
                                mofagri=="28" ~ "Niveau d'études supérieures longues, diplôme d'ingénieur, ...",
                                TRUE ~ mofagri)
@@ -1808,7 +1845,8 @@ library(forcats)  # fonction "fct_collapse"
 
 # regroupements par type de volailles
 volailles_pdl$espece_regrpt1 <- fct_collapse(volailles_pdl$libelle_espece,
-                                                "b11-poulets" =  c("Poulets (yc coquelets)","Chapons, poulardes",
+                                                "b11-poulets" =  c("Poulets (yc coquelets)",
+                                                                   "Chapons,poulardes",
                                                 # "Coqs et poules de réforme",
                                                 "Poules de réforme (filière œufs de consommation)",
                                                 "Coqs et poules de réforme (reproducteurs)"),
@@ -2594,7 +2632,7 @@ lait_chevre <- read.xlsx(xlsxFile=paste0(chemin_entree,fichier_entree),
 
 Le package `dplyr` propose la fonction `bind_rows()` pour superposer deux ou plusieurs tables (en empilant des observations). Deux remarques sur l'utilisation de cette fonction :
 
-- `bind_rows()` combine les tables en fonction du nom des colonnes, l'ordre des colonnes n'a pas donc d'importance ;
+- `bind_rows()` combine les tables en fonction du nom des colonnes, l'ordre des colonnes n'a pas donc d'importance
 - si une colonne est manquante dans une des tables, alors des valeurs manquantes sont générées dans la table de sortie.
 
 ```{r , eval = FALSE}
@@ -2666,11 +2704,11 @@ Les deux principales opérations de restructuration des données peuvent être i
 
 * **Transformation *wide to long* ** : 
 
-![Transformation *wide to long*](./images/widetolong.png)
+![Transformation *wide to long*](./images/widetolong.png){width=80%}
 
 * **Transformation *long to wide* ** : 
 
-![Transformation *long to wide*](./images/longtowide.png)
+![Transformation *long to wide*](./images/longtowide.png){width=80%}
 
 
 ## Transposition de colonnes en lignes (plus de lignes)
@@ -2876,7 +2914,7 @@ Les variables non jointives portant le même nom sont suffixées par .x et par .
 
 Dans une jointure à gauche, on adjoint aux informations de la table de gauche les informations issues de la table de droite.
 
-<center>![](images/left_join.png)</center>
+<center>![](images/left_join.png){width=50%}</center>
 
 Ainsi, c'est le tableau de gauche qui définit les individus du tableau en sortie (quand bien-même il n'y a pas d'information à leur sujet dans le tableau de droite : on remarque ainsi la donnée manquante dans la colonne D pour le 3e individu).
 La fonction s'appuie sur les variables communes aux deux tableaux (ici A et B), qui permettent d'identifier les individus et de relier les informations des deux tables.
@@ -3129,7 +3167,7 @@ recolte_bois_pdl_indic <- recolte_bois_pdl_indic %>%
 
 Dans le cas d'une jointure complète, au contraire d'une jointure interne, on conserve l'ensemble des individus décrits par l'un ou l'autre des jeux de données.
 
-<center>![](images/full_join.png)</center>
+<center>![](images/full_join.png){width=50%} </center>
 
 ```{r , eval = FALSE}
 full_join(x,y,by=c("A","B"))
@@ -3810,9 +3848,12 @@ recolte_bois_dep_reg <- recolte_bois_dep_reg %>%
 
 # Calcul de rangs 2 ----  
 # ajout du rang 1 (département) à l'ensemble des lignes
-# on réalise une jointure de la table avec elle-même pour affecter la valeur d’une variable à une autre variable. 
-# Dans l’exemple suivant, on affecte la valeur (le 1er dep) de valeur_dep_rang1 relative à valeur_dep_rang==1.
-# on prend valeur_dep_rang1 correspondant au dep du rang1 (pour valeur_dep_rang == 1) et on affecte la valeur 
+# on réalise une jointure de la table avec elle-même 
+# pour affecter la valeur d’une variable à une autre variable. 
+# Dans l’exemple suivant, on affecte la valeur (le 1er dep)
+# de valeur_dep_rang1 relative à valeur_dep_rang==1.
+# on prend valeur_dep_rang1 correspondant au dep du rang1 
+# (pour valeur_dep_rang == 1) et on affecte la valeur 
 # pour l'ensemble des cas 
 # jointure de l'ensemble des lignes avec la ligne contenant valeur_dep_rang1 (le 1er dep) ligne par ligne
 recolte_bois_dep_reg <-  recolte_bois_dep_reg %>% 
@@ -3887,7 +3928,8 @@ En associant, TRUE ~ à un élément de type "caractère", cela a résolu le pro
 
 ```{r, eval=FALSE}
 > rp_individu_pdl_age_actif <-  rp_individu_pdl_var %>% 
-+   mutate(age=case_when(agerevq %in% c("020","025","030","035","040","045","050","055","060") ~ "a_20_64_ans",
++   mutate(age=case_when(agerevq %in%
+                           c("020","025","030","035","040","045","050","055","060") ~ "a_20_64_ans",
 +                        TRUE ~ agerevq),
 +          activite=case_when(tact %in% c(11,12) ~ "actifs",
 +                          TRUE ~ "inactifs") )
