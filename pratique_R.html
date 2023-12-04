@@ -2392,19 +2392,36 @@ Dans le cas où on ne sait pas quelles sont les colonnes dont on a besoin, il es
 <span id="cb30-15"><a href="#cb30-15" tabindex="-1"></a>fichier_entree <span class="ot">&lt;-</span> <span class="st">&quot;DIFFABATVOL_2021.csv&quot;</span></span>
 <span id="cb30-16"><a href="#cb30-16" tabindex="-1"></a>fichier_entree_prod <span class="ot">&lt;-</span> <span class="st">&quot;FDS_COMPT0005_NRP_2020.txt&quot;</span></span>
 <span id="cb30-17"><a href="#cb30-17" tabindex="-1"></a></span>
-<span id="cb30-18"><a href="#cb30-18" tabindex="-1"></a></span>
-<span id="cb30-19"><a href="#cb30-19" tabindex="-1"></a>volailles_pdl <span class="ot">&lt;-</span> <span class="fu">read_csv2</span>(<span class="at">file =</span> <span class="fu">paste0</span>(chemin,fichier_entree)) <span class="sc">%&gt;%</span>  </span>
-<span id="cb30-20"><a href="#cb30-20" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">.name_repair =</span> make_clean_names) <span class="sc">%&gt;%</span> </span>
-<span id="cb30-21"><a href="#cb30-21" tabindex="-1"></a>  <span class="fu">filter</span>(reg <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;52&quot;</span>) ) <span class="sc">%&gt;%</span></span>
-<span id="cb30-22"><a href="#cb30-22" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">siret=</span><span class="fu">as.character</span>(siret))</span>
-<span id="cb30-23"><a href="#cb30-23" tabindex="-1"></a></span>
-<span id="cb30-24"><a href="#cb30-24" tabindex="-1"></a><span class="co"># lecture d’un txt séparé par des points-virgules, avec un point comme marqueur décimal</span></span>
-<span id="cb30-25"><a href="#cb30-25" tabindex="-1"></a>comptes_prod <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="at">file =</span> <span class="fu">paste0</span>(chemin_entree,fichier_entree_prod),</span>
-<span id="cb30-26"><a href="#cb30-26" tabindex="-1"></a>                           <span class="at">delim =</span> <span class="st">&quot;;&quot;</span>,</span>
-<span id="cb30-27"><a href="#cb30-27" tabindex="-1"></a>                           <span class="at">locale =</span> <span class="fu">locale</span>(<span class="at">decimal_mark =</span> <span class="st">&quot;.&quot;</span>)) <span class="sc">%&gt;%</span>  </span>
-<span id="cb30-28"><a href="#cb30-28" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">.name_repair =</span> make_clean_names) <span class="sc">%&gt;%</span> </span>
-<span id="cb30-29"><a href="#cb30-29" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">libelle_produits=</span>libelle_produits_compt0005_nrp_dim1,</span>
-<span id="cb30-30"><a href="#cb30-30" tabindex="-1"></a>         <span class="at">libelle_indic_n027=</span>libelle_indicateurs_n027) </span></code></pre></div>
+<span id="cb30-18"><a href="#cb30-18" tabindex="-1"></a>volailles_pdl <span class="ot">&lt;-</span> <span class="fu">read_csv2</span>(<span class="at">file =</span> <span class="fu">paste0</span>(chemin,fichier_entree)) <span class="sc">%&gt;%</span>  </span>
+<span id="cb30-19"><a href="#cb30-19" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">.name_repair =</span> make_clean_names) <span class="sc">%&gt;%</span> </span>
+<span id="cb30-20"><a href="#cb30-20" tabindex="-1"></a>  <span class="fu">filter</span>(reg <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;52&quot;</span>) ) <span class="sc">%&gt;%</span></span>
+<span id="cb30-21"><a href="#cb30-21" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">siret=</span><span class="fu">as.character</span>(siret))</span>
+<span id="cb30-22"><a href="#cb30-22" tabindex="-1"></a></span>
+<span id="cb30-23"><a href="#cb30-23" tabindex="-1"></a><span class="co"># Encodage du fichier .csv trouvé avec la fonction guess_encoding du package &#39;readr&#39;</span></span>
+<span id="cb30-24"><a href="#cb30-24" tabindex="-1"></a><span class="fu">guess_encoding</span>(<span class="at">file =</span> <span class="fu">paste0</span>(chemin_entree,fichier_entree_eff_avant_2010),</span>
+<span id="cb30-25"><a href="#cb30-25" tabindex="-1"></a>               <span class="at">n_max =</span> <span class="dv">1000</span>)</span>
+<span id="cb30-26"><a href="#cb30-26" tabindex="-1"></a></span>
+<span id="cb30-27"><a href="#cb30-27" tabindex="-1"></a><span class="co"># A tibble: 1 × 2</span></span>
+<span id="cb30-28"><a href="#cb30-28" tabindex="-1"></a><span class="co">#   encoding   confidence</span></span>
+<span id="cb30-29"><a href="#cb30-29" tabindex="-1"></a><span class="co">#   &lt;chr&gt;           &lt;dbl&gt;</span></span>
+<span id="cb30-30"><a href="#cb30-30" tabindex="-1"></a><span class="co"># 1 ISO-8859-1       0.77</span></span>
+<span id="cb30-31"><a href="#cb30-31" tabindex="-1"></a></span>
+<span id="cb30-32"><a href="#cb30-32" tabindex="-1"></a><span class="co"># locale(encoding = )</span></span>
+<span id="cb30-33"><a href="#cb30-33" tabindex="-1"></a><span class="co"># Encodage par défaut. Cela n&#39;affecte que la façon dont le fichier est lu</span></span>
+<span id="cb30-34"><a href="#cb30-34" tabindex="-1"></a><span class="co"># readr convertit toujours la sortie en UTF-8.</span></span>
+<span id="cb30-35"><a href="#cb30-35" tabindex="-1"></a>eff_volailles_avant_2010 <span class="ot">&lt;-</span> <span class="fu">read_csv2</span>(<span class="at">file =</span> <span class="fu">paste0</span>(chemin_entree,fichier_entree_eff_avant_2010),</span>
+<span id="cb30-36"><a href="#cb30-36" tabindex="-1"></a>                                      <span class="at">locale =</span> <span class="fu">locale</span>(<span class="at">encoding =</span><span class="st">&quot;ISO-8859-1&quot;</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb30-37"><a href="#cb30-37" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">.name_repair =</span> make_clean_names) <span class="sc">%&gt;%</span> </span>
+<span id="cb30-38"><a href="#cb30-38" tabindex="-1"></a>  <span class="fu">filter</span>(reg <span class="sc">%not_in%</span> <span class="fu">c</span>(<span class="st">&quot;01 : Guadeloupe&quot;</span>,<span class="st">&quot;02 : Martinique&quot;</span>,<span class="st">&quot;03 : Guyane&quot;</span>,<span class="st">&quot;04 : La Réunion&quot;</span>),</span>
+<span id="cb30-39"><a href="#cb30-39" tabindex="-1"></a>         annee <span class="sc">%in%</span> <span class="dv">2000</span><span class="sc">:</span><span class="dv">2010</span>)</span>
+<span id="cb30-40"><a href="#cb30-40" tabindex="-1"></a></span>
+<span id="cb30-41"><a href="#cb30-41" tabindex="-1"></a><span class="co"># lecture d’un txt séparé par des points-virgules, avec un point comme marqueur décimal</span></span>
+<span id="cb30-42"><a href="#cb30-42" tabindex="-1"></a>comptes_prod <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="at">file =</span> <span class="fu">paste0</span>(chemin_entree,fichier_entree_prod),</span>
+<span id="cb30-43"><a href="#cb30-43" tabindex="-1"></a>                           <span class="at">delim =</span> <span class="st">&quot;;&quot;</span>,</span>
+<span id="cb30-44"><a href="#cb30-44" tabindex="-1"></a>                           <span class="at">locale =</span> <span class="fu">locale</span>(<span class="at">decimal_mark =</span> <span class="st">&quot;.&quot;</span>)) <span class="sc">%&gt;%</span>  </span>
+<span id="cb30-45"><a href="#cb30-45" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">.name_repair =</span> make_clean_names) <span class="sc">%&gt;%</span> </span>
+<span id="cb30-46"><a href="#cb30-46" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">libelle_produits=</span>libelle_produits_compt0005_nrp_dim1,</span>
+<span id="cb30-47"><a href="#cb30-47" tabindex="-1"></a>         <span class="at">libelle_indic_n027=</span>libelle_indicateurs_n027) </span></code></pre></div>
 <p>La fonction <code>read_delim()</code> de <code>readr</code> permet d’importer les données d’un fichier csv.</p>
 <p><code>read_csv()</code>, <code>read_csv2()</code> et <code>read_tsv()</code> sont des implémentations pré-renseignées de <code>read_delim</code> pour lire des fichiers plats avec séparateurs (caractère délimiteur de colonne) <strong>,</strong> <strong>;</strong> et <strong>tabulaire</strong>.</p>
 <p><strong>Il est plus simple de sélectionner des colonnes avec <code>fread()</code> qu’avec les fonctions du <em>package</em> <code>readr</code></strong>. Il est donc recommandé d’utiliser <code>fread()</code> lorsqu’on souhaite sélectionner facilement les colonnes à importer.</p>

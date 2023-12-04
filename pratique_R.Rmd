@@ -1021,11 +1021,28 @@ chemin_entree <- "./entree/comptes_prod/"
 fichier_entree <- "DIFFABATVOL_2021.csv"
 fichier_entree_prod <- "FDS_COMPT0005_NRP_2020.txt"
 
-
 volailles_pdl <- read_csv2(file = paste0(chemin,fichier_entree)) %>%  
   as_tibble(.name_repair = make_clean_names) %>% 
   filter(reg %in% c("52") ) %>%
   mutate(siret=as.character(siret))
+
+# Encodage du fichier .csv trouvé avec la fonction guess_encoding du package 'readr'
+guess_encoding(file = paste0(chemin_entree,fichier_entree_eff_avant_2010),
+               n_max = 1000)
+
+# A tibble: 1 × 2
+#   encoding   confidence
+#   <chr>           <dbl>
+# 1 ISO-8859-1       0.77
+
+# locale(encoding = )
+# Encodage par défaut. Cela n'affecte que la façon dont le fichier est lu
+# readr convertit toujours la sortie en UTF-8.
+eff_volailles_avant_2010 <- read_csv2(file = paste0(chemin_entree,fichier_entree_eff_avant_2010),
+                                      locale = locale(encoding ="ISO-8859-1")) %>% 
+  as_tibble(.name_repair = make_clean_names) %>% 
+  filter(reg %not_in% c("01 : Guadeloupe","02 : Martinique","03 : Guyane","04 : La Réunion"),
+         annee %in% 2000:2010)
 
 # lecture d’un txt séparé par des points-virgules, avec un point comme marqueur décimal
 comptes_prod <- read_delim(file = paste0(chemin_entree,fichier_entree_prod),
