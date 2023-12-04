@@ -4212,6 +4212,9 @@ nb_exploit_2020_dep_reg2b <- bind_rows(nb_exploit_2020_dep,nb_exploit_2020_reg_b
 ```
 ## Calcul de rangs
 
+On cherche par exemple à déterminer en quelle position se trouve la région d'intérêt, comme dans le fichier https://draaf.pays-de-la-loire.agriculture.gouv.fr/IMG/xls/annexe_regionale_2023.xls
+présent dans https://draaf.pays-de-la-loire.agriculture.gouv.fr/dossier-territorial-a1657.html.
+
 ```{r,  eval = FALSE}
 # Calcul de rangs 1 ----  
 # ajout des rangs au niveau dep, par categorie
