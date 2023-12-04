@@ -1058,10 +1058,6 @@ La fonction `read_delim()` de `readr` permet d'importer les données d'un fichie
 
 `read_csv()`, `read_csv2()` et `read_tsv()` sont des implémentations pré-renseignées de `read_delim` pour lire des fichiers plats avec séparateurs (caractère délimiteur de colonne) **,** **;** et **tabulaire**.
 
-
-**Il est plus simple de sélectionner des colonnes avec `fread()` qu'avec les fonctions du *package* `readr`**. Il est donc recommandé d'utiliser `fread()` lorsqu'on souhaite sélectionner facilement les colonnes à importer.
-
-
 https://www.book.utilitr.org/03_fiches_thematiques/fiche_import_fichiers_plats#utiliser-la-fonction-read_delim
 
 
