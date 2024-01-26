@@ -140,12 +140,12 @@ L'accès à R peut se réaliser via Cerise, la plateforme de stockage et de trai
 
 ### Version de R
 
-La version de R par défaut est la 4.0.2. La version précédente (3.3.2) est toujours disponible.
+La version de R par défaut est la 4.2.3. La version précédente (4.0.2) est toujours disponible.
 Il est recommandé d'utiliser la nouvelle version de R.
 
 Pour changer de version, aller en haut à droite et cocher la version souhaitée.
 
-<center>![](images/Cerise_version_R.png)</center>
+<center>![](images/Cerise_version_R.png){width=50%}</center>
 
 ### Sessions R
 
@@ -300,17 +300,19 @@ Dans ce mode, l'utilisateur doit attendre que le programme se termine pour à no
 
 ### Raccourcis RStudio
 
+Pour modifier le raccourci pour le pipe natif : menu Outils -> Options Globales, cliquer sur l’icône Code à gauche et cocher la case à cocher pour Utiliser l’opérateur pipe natif |>.
+
 Pour gagner du temps, il est important d'utiliser les raccourcis pour les commandes répétitives. 
 
     # (`AltGr` + `3`) pour commenter son code
     
-    `Ctrl` + `Shift` + `M` : insère le pipe `%>%`
+    `Ctrl` + `Shift` + `M` : insère le pipe `|>`
      Plusieurs verbes (ou fonctions) peuvent facilement être combinés  
-     en utilisant l'opérateur `%>%` (pipe) qui permet d'enchaîner les instructions.
-    Penser à aérer son code, notamment en revenant à la ligne, après un %>%
-     x %>% 
-      f %>% 
-        g %>% 
+     en utilisant l'opérateur `|>` (pipe) qui permet d'enchaîner les instructions.
+    Penser à aérer son code, notamment en revenant à la ligne, après un |>
+     x |> 
+      f |> 
+        g |> 
           h  
     est équivalent à h(g(f(x)))
 
@@ -402,6 +404,13 @@ Il est également recommandé de désactiver la restauration automatique de ces 
 ### Parenthèses et autres
 
 Dans RStudio, les caractères marchant par paires (parenthèses, guillemets, accolades, crochets) sont automatisés. En sélectionnant du code et en appuyant sur le caractère ouvrant correspondant, RStudio place automatiquement les caractères au début et à la fin du code sélectionné. En plaçant le curseur après un caractère de ce type (par exemple une parenthèse fermante), RStudio va surligner l'autre caractère correspondant (par exemple la parenthèse ouvrante correspondante), permettant de visualiser les paires.
+
+Mdifier la couleur des parenthèses pour faciliter la lecture du code. 
+
+Aller dans le même menu "Tools" (Outils) > "Global Options" (Options globales).
+Sélectionner Code -> Afficher.
+Activer l’option Parenthèses arc-en-ciel en bas.
+Cela changera la couleur des parenthèses, des accolades et des crochets pour qu’ils correspondent entre eux. 
 
 ### Encodage
 
@@ -686,7 +695,6 @@ install.packages("~/CERISE/01-Espace-de-Partage/SRISE/Pays-De-La-Loire/Partage_R
 # namespace ‘hms’ 0.5.3 is already loaded, but >= 1.1.1 is required
 # namespace ‘jsonlite’ 1.7.1 is being loaded, but >= 1.7.2 is required
 # namespace ‘lubridate’ 1.7.9 is being loaded, but >= 1.8.0 is required
-# namespace ‘magrittr’ 1.5 is already loaded, but >= 2.0.1 is required
 # namespace ‘readr’ 1.3.1 is being loaded, but >= 2.1.1 is required
 # namespace ‘xml2’ 1.3.2 is already loaded, but >= 1.3.3 is required
 install.packages("forcats")
@@ -695,7 +703,6 @@ install.packages("haven")
 install.packages("hms")
 install.packages("jsonlite")
 install.packages("lubridate")
-install.packages("magrittr")
 install.packages("readr")
 install.packages("xml2")
 install.packages("readr")
@@ -754,6 +761,12 @@ Il convient d'indiquer dans le script de préparation des données comment le fi
 - **Il est conseillé d'importer uniquement les colonnes dont on a besoin.** 
 Dans le cas où on ne sait pas quelles sont les colonnes dont on a besoin, il est conseillé de commencer par importer un petit nombre de lignes (par exemple 1 000 ou 10 000) afin d’étudier les données et de choisir ensuite les colonnes à importer. 
 
+- **Il est conseillé de nettoyer les noms de colonnes après l'import.** 
+janitor::make_clean_names permet notamment d'obtenir des noms de variables propres et cohérents :  tout en minuscules, sans espaces ni caractères spéciaux. Elle remplace les caractères non autorisés par des underscores (traits de soulignement _).
+```{r, eval=FALSE}
+df <- tibble::as_tibble(df, .name_repair = janitor::make_clean_names)
+```
+
 ### Importer des fichiers RDS
 
 
@@ -768,9 +781,9 @@ Christophe/Geographie/sortie/"
 fichier_geographie_dep <- "dep_reg_lib.RDS"
 fichier_geographie_reg <- "reg_lib.RDS"
 
-geographie_dep <- readRDS(file = paste0(chemin_geographie,fichier_geographie_dep) ) %>% 
+geographie_dep <- readRDS(file = paste0(chemin_geographie,fichier_geographie_dep) ) |> 
   as_tibble(.name_repair = make_clean_names)
-geographie_reg <- readRDS(file = paste0(chemin_geographie,fichier_geographie_reg) ) %>% 
+geographie_reg <- readRDS(file = paste0(chemin_geographie,fichier_geographie_reg) ) |> 
   as_tibble(.name_repair = make_clean_names)
 
 # Chargement des données
@@ -779,66 +792,66 @@ chemin_pdl_20 <- "S:/Fichiers source/RA 2020_déf/BASES_RA2020_data_def_15avril2
 annee_ra_2020            <- 2020
 
 exploit_pdl_2020 <- readRDS(file = paste0(chemin_pdl_20,
-                                        "RA2020_EXPLOITATIONS_R52_220415_modif_27juin2022.rds")) %>% 
+                                        "RA2020_EXPLOITATIONS_R52_220415_modif_27juin2022.rds")) |> 
   as_tibble(.name_repair = make_clean_names)
-# ident_pdl_2020 <- readRDS(file = paste0(chemin_pdl_20,"RA2020_IDENTIFICATION_R52_220415.rds") ) %>% 
+# ident_pdl_2020 <- readRDS(file = paste0(chemin_pdl_20,"RA2020_IDENTIFICATION_R52_220415.rds") ) |> 
 #   as_tibble(.name_repair = make_clean_names)  
-# pv_pdl_2020 <- readRDS(file = paste0(chemin_pdl_20,"RA2020_PRODVEG_R52_220415.rds") ) %>% 
+# pv_pdl_2020 <- readRDS(file = paste0(chemin_pdl_20,"RA2020_PRODVEG_R52_220415.rds") ) |> 
 # as_tibble(.name_repair = make_clean_names)
-# cult_pdl_2020 <- readRDS(file = paste0(chemin_pdl_20,"RA2020_SURF_SAU_R52_220415.rds") ) %>% 
+# cult_pdl_2020 <- readRDS(file = paste0(chemin_pdl_20,"RA2020_SURF_SAU_R52_220415.rds") ) |> 
 #   as_tibble(.name_repair = make_clean_names)
-pa_pdl_2020 <- readRDS(file = paste0(chemin_pdl_20,"RA2020_PRODANIM_R52_220415.rds") ) %>% 
+pa_pdl_2020 <- readRDS(file = paste0(chemin_pdl_20,"RA2020_PRODANIM_R52_220415.rds") ) |> 
  as_tibble(.name_repair = make_clean_names)
-# COEFPBS <- readRDS(file = paste0(chemin_pdl_20,"RA2020_COEFS_PBS17_R52_220415.rds") ) %>% 
+# COEFPBS <- readRDS(file = paste0(chemin_pdl_20,"RA2020_COEFS_PBS17_R52_220415.rds") ) |> 
 # as_tibble(.name_repair = make_clean_names)
-# cc_pdl_2020  <- readRDS(file = paste0(chemin_pdl_20,"RA2020_COM_CIRCOU_R52_220415.rds") ) %>% 
+# cc_pdl_2020  <- readRDS(file = paste0(chemin_pdl_20,"RA2020_COM_CIRCOU_R52_220415.rds") ) |> 
 # as_tibble(.name_repair = make_clean_names)
-# COMCIRCUIT <- readRDS(file = paste0(chemin_pdl_20,"RA2020_COM_CIRCUIT_R52_220415.rds") ) %>% 
+# COMCIRCUIT <- readRDS(file = paste0(chemin_pdl_20,"RA2020_COM_CIRCUIT_R52_220415.rds") ) |> 
 # as_tibble(.name_repair = make_clean_names)
-# div_pdl_2020  <- readRDS(file = paste0(chemin_pdl_20,"RA2020_DIVERSIF_R52_220415.rds") ) %>% 
+# div_pdl_2020  <- readRDS(file = paste0(chemin_pdl_20,"RA2020_DIVERSIF_R52_220415.rds") ) |> 
 # as_tibble(.name_repair = make_clean_names)
-# HORTI_PEPI <- readRDS(file = paste0(chemin_pdl_20,"RA2020_HORTI_PEPI_R52_220415.rds") ) %>% 
+# HORTI_PEPI <- readRDS(file = paste0(chemin_pdl_20,"RA2020_HORTI_PEPI_R52_220415.rds") ) |> 
 # as_tibble(.name_repair = make_clean_names)
-# LEGUMES <- readRDS(file = paste0(chemin_pdl_20,"RA2020_LEGUMES_R52_220415.rds") ) %>% 
+# LEGUMES <- readRDS(file = paste0(chemin_pdl_20,"RA2020_LEGUMES_R52_220415.rds") ) |> 
 # as_tibble(.name_repair = make_clean_names)
-mo_pdl_2020 <- readRDS(file = paste0(chemin_pdl_20,"RA2020_MO_CHEF_COEXPL_R52_220415.rds") ) %>% 
+mo_pdl_2020 <- readRDS(file = paste0(chemin_pdl_20,"RA2020_MO_CHEF_COEXPL_R52_220415.rds") ) |> 
   as_tibble(.name_repair = make_clean_names)
-# MOFAM <- readRDS(file = paste0(chemin_pdl_20,"RA2020_MO_FAM_R52_220415.rds") ) %>% 
+# MOFAM <- readRDS(file = paste0(chemin_pdl_20,"RA2020_MO_FAM_R52_220415.rds") ) |> 
 # as_tibble(.name_repair = make_clean_names)
-# PPAM <- readRDS(file = paste0(chemin_pdl_20,"RA2020_PPAM_R52_220415.rds") ) %>% 
+# PPAM <- readRDS(file = paste0(chemin_pdl_20,"RA2020_PPAM_R52_220415.rds") ) |> 
 # as_tibble(.name_repair = make_clean_names)
 # fichier_ra_otex_com_pdl_2020 <- readRDS(file = paste0(chemin_pdl_20,"RA2020_PBS_OTEX_COMMUNALES_220415.rds") )
 
 # RA2020 DONNEES INDIVIDUELLES France
 chemin_fr_20 <- "D:/user/RA2020/RA2020_source/RDS/"
-exploit_fr_2020 <- readRDS(file = paste0(chemin_fr_20,"RA2020_EXPLOITATIONS_220415.rds") ) %>% 
-  as_tibble(.name_repair = make_clean_names) %>% 
+exploit_fr_2020 <- readRDS(file = paste0(chemin_fr_20,"RA2020_EXPLOITATIONS_220415.rds") ) |> 
+  as_tibble(.name_repair = make_clean_names) |> 
   filter(siege_dep %in% c("44","49","53","72","79","") )
-# ident_fr_2020 <- readRDS(file = paste0(chemin_fr_20,"RA2020_IDENTIFICATION_220415.rds") ) %>% 
+# ident_fr_2020 <- readRDS(file = paste0(chemin_fr_20,"RA2020_IDENTIFICATION_220415.rds") ) |> 
 #   as_tibble(.name_repair = make_clean_names)  
-# pv_fr_2020 <- readRDS(file = paste0(chemin_fr_20,"RA2020_PRODVEG_220415.rds") ) %>% 
+# pv_fr_2020 <- readRDS(file = paste0(chemin_fr_20,"RA2020_PRODVEG_220415.rds") ) |> 
 # as_tibble(.name_repair = make_clean_names)
-# cult_fr_2020 <- readRDS(file = paste0(chemin_fr_20,"RA2020_SURF_SAU_220415.rds") ) %>% 
+# cult_fr_2020 <- readRDS(file = paste0(chemin_fr_20,"RA2020_SURF_SAU_220415.rds") ) |> 
 #   as_tibble(.name_repair = make_clean_names)
-pa_fr_2020 <- readRDS(file = paste0(chemin_fr_20,"RA2020_PRODANIM_220415.rds") ) %>% 
+pa_fr_2020 <- readRDS(file = paste0(chemin_fr_20,"RA2020_PRODANIM_220415.rds") ) |> 
  as_tibble(.name_repair = make_clean_names) 
-# COEFPBS <- readRDS(file = paste0(chemin_fr_20,"RA2020_COEFS_PBS17_220415.rds") ) %>% 
+# COEFPBS <- readRDS(file = paste0(chemin_fr_20,"RA2020_COEFS_PBS17_220415.rds") ) |> 
 # as_tibble(.name_repair = make_clean_names)
-# cc_fr_2020  <- readRDS(file = paste0(chemin_fr_20,"RA2020_COM_CIRCOU_220415.rds") ) %>% 
+# cc_fr_2020  <- readRDS(file = paste0(chemin_fr_20,"RA2020_COM_CIRCOU_220415.rds") ) |> 
 # as_tibble(.name_repair = make_clean_names)
-# COMCIRCUIT <- readRDS(file = paste0(chemin_fr_20,"RA2020_COM_CIRCUIT_220415.rds") ) %>% 
+# COMCIRCUIT <- readRDS(file = paste0(chemin_fr_20,"RA2020_COM_CIRCUIT_220415.rds") ) |> 
 # as_tibble(.name_repair = make_clean_names)
-# div_fr_2020  <- readRDS(file = paste0(chemin_fr_20,"RA2020_DIVERSIF_220415.rds") ) %>% 
+# div_fr_2020  <- readRDS(file = paste0(chemin_fr_20,"RA2020_DIVERSIF_220415.rds") ) |> 
 # as_tibble(.name_repair = make_clean_names)
-# HORTI_PEPI <- readRDS(file = paste0(chemin_fr_20,"RA2020_HORTI_PEPI_220415.rds") ) %>% 
+# HORTI_PEPI <- readRDS(file = paste0(chemin_fr_20,"RA2020_HORTI_PEPI_220415.rds") ) |> 
 # as_tibble(.name_repair = make_clean_names)
-# LEGUMES <- readRDS(file = paste0(chemin_fr_20,"RA2020_LEGUMES_220415.rds") ) %>% 
+# LEGUMES <- readRDS(file = paste0(chemin_fr_20,"RA2020_LEGUMES_220415.rds") ) |> 
 # as_tibble(.name_repair = make_clean_names)
-# mo_fr_2020 <- readRDS(file = paste0(chemin_fr_20,"RA2020_MO_CHEF_COEXPL_220415.rds") ) %>% 
+# mo_fr_2020 <- readRDS(file = paste0(chemin_fr_20,"RA2020_MO_CHEF_COEXPL_220415.rds") ) |> 
 #   as_tibble(.name_repair = make_clean_names)
-# MOFAM <- readRDS(file = paste0(chemin_fr_20,"RA2020_MO_FAM_220415.rds") ) %>% 
+# MOFAM <- readRDS(file = paste0(chemin_fr_20,"RA2020_MO_FAM_220415.rds") ) |> 
 # as_tibble(.name_repair = make_clean_names)
-# PPAM <- readRDS(file = paste0(chemin_fr_20,"RA2020_PPAM_220415.rds") ) %>% 
+# PPAM <- readRDS(file = paste0(chemin_fr_20,"RA2020_PPAM_220415.rds") ) |> 
 # as_tibble(.name_repair = make_clean_names)
 # fichier_ra_otex_com_fr_2020 <- readRDS(file = paste0(chemin_fr_20,"RA2020_PBS_OTEX_COMMUNALES_220415.rds") )
 
@@ -870,8 +883,8 @@ library(janitor) # pour 'make_clean_names'
 chemin_entree <- "S:/ETUDES/En cours/memento_Christophe/entree/SAA/"
 fichier_entree <- "cd2022-5_SAA_2021_provisoire_resultats_LIB.xlsx"
 eff_volailles <- read.xlsx(xlsxFile=paste0(chemin_entree,fichier_entree), 
-                         sheet = "Eff. volailles",colNames = TRUE,startRow = 1) %>% 
-  as_tibble(.name_repair = make_clean_names) %>% 
+                         sheet = "Eff. volailles",colNames = TRUE,startRow = 1) |> 
+  as_tibble(.name_repair = make_clean_names) |> 
   filter(region %in% c("52  -  Pays de la Loire","98  -  Total France métropolitaine") )
 
 
@@ -879,8 +892,8 @@ chemin <- "S:/ETUDES/En cours/memento_Christophe/entree/AgenceBio/"
 fichier_nat <- "Export Productions Bio - National.xlsx"
 an <- "2021"
 agri_bio_vegetal_fr <- read.xlsx(xlsxFile=paste0(chemin,fichier_nat), 
-                                 sheet = "Productions végétales",colNames = TRUE,startRow = 1) %>% 
-  as_tibble(.name_repair = make_clean_names) %>% 
+                                 sheet = "Productions végétales",colNames = TRUE,startRow = 1) |> 
+  as_tibble(.name_repair = make_clean_names) |> 
   filter(annee %in% c(an) & territoire %in% c("National","Pays de la Loire") )
 
 
@@ -893,8 +906,8 @@ chemin_entree_2021 <- "~/CERISE/03-Espace-de-Diffusion/070_Production_lait/
 fichier_entree_liv_reg_dep <- "LIVRAISON_REGNDEP_2020_2021.xlsx"
 
 laits_reg_dep_2021 <- read.xlsx(xlsxFile=paste0(chemin_entree_2021,fichier_entree_liv_reg_dep), 
-                                sheet = "Sheet 1",colNames = TRUE,startRow = 1) %>% 
-  as_tibble(.name_repair = make_clean_names) %>% 
+                                sheet = "Sheet 1",colNames = TRUE,startRow = 1) |> 
+  as_tibble(.name_repair = make_clean_names) |> 
   mutate(reg_dep_prod=paste0(regnprod,sep = "_",depprod),
          dep_prod=substr(depprod,2,3))  
 ```
@@ -931,8 +944,8 @@ fichier <- "Abattages_signes_qualite_2021_modif.xls"
 
 volailles_pdl_espece_siqo <- read_xls(path = paste0(chemin,fichier), 
                                       sheet = "res_nouvelle_region_modif", 
-                                      skip = 9) %>% 
-  as_tibble(.name_repair = make_clean_names) %>% 
+                                      skip = 9) |> 
+  as_tibble(.name_repair = make_clean_names) |> 
   filter(espece %in% c("siqo","PAYS DE LA LOIRE") )
 ```
 
@@ -982,7 +995,7 @@ chemin  <- "~/CERISE/01-Espace-de-Partage/SRISE/Pays-De-La-Loire/Partage_R/Chris
 fichier_cotation <- "Cotations_modif.ods"
 # Import + ajout annee mois
 vol_oeufs_cot <- read_ods(path=paste0(chemin,fichier_cotation), 
-                   sheet = "VolaillesOeufsLapinsMensuel",skip = 2) %>% 
+                   sheet = "VolaillesOeufsLapinsMensuel",skip = 2) |> 
   as_tibble(.name_repair = make_clean_names) 
 
 ```
@@ -1021,9 +1034,9 @@ chemin_entree <- "./entree/comptes_prod/"
 fichier_entree <- "DIFFABATVOL_2021.csv"
 fichier_entree_prod <- "FDS_COMPT0005_NRP_2020.txt"
 
-volailles_pdl <- read_csv2(file = paste0(chemin,fichier_entree)) %>%  
-  as_tibble(.name_repair = make_clean_names) %>% 
-  filter(reg %in% c("52") ) %>%
+volailles_pdl <- read_csv2(file = paste0(chemin,fichier_entree)) |>  
+  as_tibble(.name_repair = make_clean_names) |> 
+  filter(reg %in% c("52") ) |>
   mutate(siret=as.character(siret))
 
 # Encodage du fichier .csv trouvé avec la fonction guess_encoding du package 'readr'
@@ -1039,16 +1052,16 @@ guess_encoding(file = paste0(chemin_entree,fichier_entree_eff_avant_2010),
 # Encodage par défaut. Cela n'affecte que la façon dont le fichier est lu
 # readr convertit toujours la sortie en UTF-8.
 eff_volailles_avant_2010 <- read_csv2(file = paste0(chemin_entree,fichier_entree_eff_avant_2010),
-                                      locale = locale(encoding ="ISO-8859-1")) %>% 
-  as_tibble(.name_repair = make_clean_names) %>% 
+                                      locale = locale(encoding ="ISO-8859-1")) |> 
+  as_tibble(.name_repair = make_clean_names) |> 
   filter(reg %not_in% c("01 : Guadeloupe","02 : Martinique","03 : Guyane","04 : La Réunion"),
          annee %in% 2000:2010)
 
 # lecture d’un txt séparé par des points-virgules, avec un point comme marqueur décimal
 comptes_prod <- read_delim(file = paste0(chemin_entree,fichier_entree_prod),
                            delim = ";",
-                           locale = locale(decimal_mark = ".")) %>%  
-  as_tibble(.name_repair = make_clean_names) %>% 
+                           locale = locale(decimal_mark = ".")) |>  
+  as_tibble(.name_repair = make_clean_names) |> 
   rename(libelle_produits=libelle_produits_compt0005_nrp_dim1,
          libelle_indic_n027=libelle_indicateurs_n027) 
 
@@ -1075,7 +1088,7 @@ tableau <- haven::read_spss(paste0(chemin,fichier_entree))
 
 # Importer un fichier SPSS
 fichier_entree_mensuel <- "COLLECTE_TOUS_LAITS.sav"
-laits_mensuel_1 <- haven::read_spss(paste0(chemin_entree_mensuel,fichier_entree_mensuel)) %>% 
+laits_mensuel_1 <- haven::read_spss(paste0(chemin_entree_mensuel,fichier_entree_mensuel)) |> 
   as_tibble(.name_repair = make_clean_names) 
 ```
 ### Importer des fichiers SAS
@@ -1093,6 +1106,35 @@ library(haven)
 comdepuis1943_com2022 <- read_sas("S:/ETUDES/En cours/memento_Christophe/entree/geographie/geo2022/fcodcomm.sas7bdat")
 
 ```
+### Importer des fichiers de façon récurrente
+
+```{r, eval = FALSE}
+library(dplyr)
+library(openxlsx)
+library(janitor) # pour 'make_clean_names'
+library(readr)
+library(purrr) # pour map
+
+# import fichiers
+chemin_entree_avant_2010 <- "~/CERISE/01-Espace-de-Partage/SRISE/Pays-De-La-Loire/Partage_R/Christophe/Volailles/entree/saa/"
+
+# fichier_entree_eff_2000 <- "FDS_SAANR_8_2000.csv"
+
+# Liste des années de 2000 à 2010
+annees <- 2000:2010
+
+# Ce code utilise la fonction map() de la bibliothèque purrr pour itérer sur la liste annees
+# Utilisation de map pour appliquer une fonction à chaque année
+# La fonction map permet d'appliquer une fonction à chaque élément d'une liste et de renvoyer une nouvelle liste résultante.
+list_eff_annees <- map(annees, function(annee) {
+  fichier_entree_eff_annee <- paste0("FDS_SAANR_8_", annee, ".csv")
+  read_csv2(file = paste0(chemin_entree_avant_2010,fichier_entree_eff_annee)) |> 
+    as_tibble(.name_repair = make_clean_names)
+})
+# Combine tous les dataframes en un seul
+eff_volailles_2000_2010 <- bind_rows(list_eff_annees)
+```
+
 ## Exporter
 
 ### Exporter des fichiers RDS
@@ -1163,6 +1205,12 @@ sort(unique(exploit_2020$siege_dep))
 # modalités d'une variable séparées par une virgule
 paste0(unique(exploit_2020$siege_dep),collapse = ",")
 
+# modalités d'une variable (entre guillemets) séparées par une virgule
+# Lorsqu'on imprime le résultat dans la console, il affiche les guillemets d’échappement (\") 
+# pour indiquer que le guillemet fait partie de la chaîne. C’est pourquoi on voit \"NR01\" au lieu de "NR01".
+# pour voir le résultat sans les guillemets d’échappement, on peut utiliser la fonction cat() pour imprimer le résultat.
+cat(paste0(unique(eff_volailles_2000_2010$dep),collapse = '","'))
+
 # modalités d'un facteur
 levels(exploit_2020$siege_reg)
 
@@ -1225,6 +1273,8 @@ base <- mutate(base,
 La fonction `mutate()` permet également de modifier une variable. Dans ce cas la syntaxe est la même que ci-dessus, mais les noms d'entrée et de sortie sont les mêmes :
 
 ```{r,  eval = FALSE}
+library(janitor) # pour round_half_up
+
 # Par exemple pour modifier une variable existante :
 base <- mutate(base, 
                log_SUPERF = 100 * log_SUPERF,
@@ -1236,69 +1286,69 @@ df <- mutate(df,
              tx_mort = 1000 * DECESD15 / P14_POP)
 
 # ajout d'une variable avec mutate
-agri_bio_vegetal_fr_tab1 <- agri_bio_vegetal_fr %>%   
-  filter(groupe_de_productions %in% c("Toutes productions") ) %>% 
+agri_bio_vegetal_fr_tab1 <- agri_bio_vegetal_fr |>   
+  filter(groupe_de_productions %in% c("Toutes productions") ) |> 
   select(annee,territoire,nombre_de_producteurs,
          surface_bio_et_en_conversion_en_ha,surface_en_conversion_en_ha,surface_bio_en_ha,
-         part_bio_de_la_sau_en_percent) %>%  
+         part_bio_de_la_sau_en_percent) |>  
   mutate(part_bio_sau_plus_percent = paste0(part_bio_de_la_sau_en_percent," %") )
 
 # ajout d'une variable avec une modalité déterminée
 volailles_fr <- read.xlsx(xlsxFile=paste0(chemin,fichier), 
-                           sheet = "res-France",colNames = TRUE,startRow = 1) %>% 
-  as_tibble(.name_repair = make_clean_names) %>% 
-  mutate(reg="France") %>% 
+                           sheet = "res-France",colNames = TRUE,startRow = 1) |> 
+  as_tibble(.name_repair = make_clean_names) |> 
+  mutate(reg="France") |> 
   select(reg,espece,total_poids)
 
 # ajout d'une variable par calcul
 # passage d'ares en hectares
-sau_pbs_2010_2020 <- exploit_2010 %>% 
+sau_pbs_2010_2020 <- exploit_2010 |> 
   mutate(sau_tot = sau / 100, annee=annee_ra_2010) 
 # calcul solde
-oeufs <- oeufs %>%   
+oeufs <- oeufs |>   
             mutate(solde = Exportation_Nombre - Importation_Nombre)
 
 # on peut préciser l'emplacement de la nouvelle colonne avec .before ou .after
-groupe_produits_laitiers_2021_France <- produits_laitiers_2021_2 %>% 
-  group_by(code_produit,libellé_produit) %>% 
-  summarise(production_2020=arrondi(sum(finiqte1, na.rm = TRUE) ,digits=0),
-            production_2021=arrondi(sum(finiqte, na.rm = TRUE) ,digits=0),
+groupe_produits_laitiers_2021_France <- produits_laitiers_2021_2 |> 
+  group_by(code_produit,libellé_produit) |> 
+  summarise(production_2020=round_half_up(sum(finiqte1, na.rm = TRUE) ,digits=0),
+            production_2021=round_half_up(sum(finiqte, na.rm = TRUE) ,digits=0),
             établissements_2020=sum(nbfiniqte1, na.rm = TRUE),
-            établissements_2021=sum(nbfiniqte, na.rm = TRUE)) %>% 
-  ungroup() %>% 
+            établissements_2021=sum(nbfiniqte, na.rm = TRUE)) |> 
+  ungroup() |> 
   mutate(territoire="France",.before=1)
 
 # lors d'un mutate avec un group_by, 
 # il est conseillé d'ajouter le suffixe correspondant au nom de variable
 # par exemple _reg
 # VOLAILLEFIL	Élevez-vous des volailles ?
-exploit_dont_volailles_2020 <- exploit_dont_volailles_2020 %>% 
+exploit_dont_volailles_2020 <- exploit_dont_volailles_2020 |> 
   mutate(nb_exploit_volailles_France = sum(volaillefil, na.rm = TRUE),
-         part_exploit_volailles_France = nb_exploit_volailles_France / n()*100) %>% 
-  group_by(reg) %>% 
+         part_exploit_volailles_France = nb_exploit_volailles_France / n()*100) |> 
+  group_by(reg) |> 
   mutate(nb_exploit_volailles_reg = sum(volaillefil, na.rm = TRUE),
-         part_exploit_volailles_reg = nb_exploit_volailles_reg / n()*100) %>% 
+         part_exploit_volailles_reg = nb_exploit_volailles_reg / n()*100) |> 
   ungroup() 
 
-nb_exploit_dont_volailles_2020 <- exploit_dont_volailles_2020 %>% 
+nb_exploit_dont_volailles_2020 <- exploit_dont_volailles_2020 |> 
   distinct(reg,nb_exploit_volailles_France,part_exploit_volailles_France,
            nb_exploit_volailles_reg,part_exploit_volailles_reg)
 
-nb_exploit_dont_volailles_2020_pdl <- exploit_dont_volailles_2020 %>% 
-  filter(reg == "52") %>% 
-  group_by(dep) %>% 
+nb_exploit_dont_volailles_2020_pdl <- exploit_dont_volailles_2020 |> 
+  filter(reg == "52") |> 
+  group_by(dep) |> 
   mutate(nb_exploit_volailles_dep = sum(volaillefil, na.rm = TRUE),
          part_exploit_volailles_dep = nb_exploit_volailles_dep / n()*100)
 
 # ajout niveau dep, reg et fm
-recolte_bois_dep_reg <- recolte_bois_depart %>%  
-  group_by(categorie) %>% 
-  mutate(valeur_fm = sum(valeur)) %>%
-  ungroup() %>% 
-  group_by(reg,categorie) %>% 
-  mutate(valeur_reg = sum(valeur)) %>%
-  ungroup() %>%  
-  rename(valeur_dep = valeur) %>% 
+recolte_bois_dep_reg <- recolte_bois_depart |>  
+  group_by(categorie) |> 
+  mutate(valeur_fm = sum(valeur)) |>
+  ungroup() |> 
+  group_by(reg,categorie) |> 
+  mutate(valeur_reg = sum(valeur)) |>
+  ungroup() |>  
+  rename(valeur_dep = valeur) |> 
   select(dep,reg,categorie,
            valeur_fm,
            valeur_reg,
@@ -1306,44 +1356,44 @@ recolte_bois_dep_reg <- recolte_bois_depart %>%
            libdep,libreg)
 
 # nombre des exploitants par groupe
-repart_diplome_max_groupe1 <-  mo_2020_diplome_max %>% 
-  mutate(n_tot = n()) %>%
-  group_by(dipl_max_groupe1) %>% 
-  summarise(nb=n(), percent = n() / n_tot * 100) %>% 
-  distinct() %>% 
+repart_diplome_max_groupe1 <-  mo_2020_diplome_max |> 
+  mutate(n_tot = n()) |>
+  group_by(dipl_max_groupe1) |> 
+  summarise(nb=n(), percent = n() / n_tot * 100) |> 
+  distinct() |> 
   adorn_totals(where = c("row"), name="Ensemble")
 
 # utilisation de la fonction last, qui permet de récupérer la valeur de la dernière ligne
 # à manier avec précaution (ne pas modifier l'ordre au préalable par exemple)
-exploit_otex_dep_reg_fm <- exploit_otex_pdl %>% 
+exploit_otex_dep_reg_fm <- exploit_otex_pdl |> 
   left_join(exploit_otex_dep,
-            by= "otex_regroup") %>% 
+            by= "otex_regroup") |> 
   adorn_totals(where = "row",
-               name = "Ensemble") %>% 
+               name = "Ensemble") |> 
   mutate(a01_part_otex_fm = a01_n_exploit_fm / last(a01_n_exploit_fm) *100,
          b02_part_otex_reg = b02_n_exploit_reg / last(b02_n_exploit_reg) *100,
          c03_part_otex_85 = dep_85 / last(dep_85) *100,
          d04_part_otex_72 = dep_72 / last(dep_72) *100,
          e05_part_otex_53 = dep_53 / last(dep_53) *100,
          f06_part_otex_49 = dep_49 / last(dep_49) *100,
-         g07_part_otex_44 = dep_44 / last(dep_44) *100) %>% 
-  mutate(across(contains("part"), ~ arrondi(.,digits=3)))
+         g07_part_otex_44 = dep_44 / last(dep_44) *100) |> 
+  mutate(across(contains("part"), ~ round_half_up(.,digits=3)))
 
 # sau irriguées
-exploit_anim_produit_grand_pdl <- exploit_anim_produit_grand_pdl %>% 
-  group_by(seuil_produit) %>% 
+exploit_anim_produit_grand_pdl <- exploit_anim_produit_grand_pdl |> 
+  group_by(seuil_produit) |> 
   mutate(indic_10_sau_reg = sum(sau_tot),
          sau2_reg = sum(rowSums(across(contains("cultsur")))),
          sau3_reg = sum(across(contains("cultsur"))),
          indic_11_sau_irrig_reg = sum(across(contains("irrisur"))),
-         .after=nom_dossier) %>% 
+         .after=nom_dossier) |> 
   ungroup()
 ```
 
 **La fonction `mutate()` permet de créer de nouvelles colonnes ou de modifier des colonnes existantes.** Il est possible d'utiliser toutes sortes de fonctions à l'intérieur d'une étape `mutate()`. Le code suivant crée une variable `NB_EQUIP_3PLUS` qui vaut `TRUE` si le nombre d'équipement est supérieur ou égal à 3, et `FALSE` sinon. 
 
 ```{r, eval=FALSE}
-bpe_ens_2018_tbl %>% 
+bpe_ens_2018_tbl |> 
   mutate(NB_EQUIP_3PLUS = (NB_EQUIP >= 3))
 ```
 
@@ -1370,27 +1420,27 @@ Il arrive que plusieurs informations réunies en une seule colonne et qu'on souh
 Voici un exemple qui utilise la table des communes du Code Officiel Géographique. Dans cette table, la colonne `com` (code commune Insee) contient deux informations : le numéro du département et le numéro de la commune.
 
 ```{r, eval=FALSE}
-cog_com_2019_tbl <- doremifasolData::cog_com_2019 %>% as_tibble()
+cog_com_2019_tbl <- doremifasolData::cog_com_2019 |> as_tibble()
 cog_com_2019_tbl
 ```
 
 Voici comment on peut utiliser `separate` pour scinder `com` en deux nouvelles colonnes `code_dep` et `code_com`. La colonne `com` disparait, car par défaut `separate` supprime la colonne scindée. Si on souhaite la conserver, il faut ajouter l'option `remove = FALSE`.
 
 ```{r, eval=FALSE}
-cog_com_2019_tbl %>% 
+cog_com_2019_tbl |> 
   separate(com, c("code_dep", "code_com"), sep = 2)
 
 # séparation d'une variable date ("22-09-2022") en "jour","mois","annee"
-oeufs_cot_det <- oeufs_cot_det %>% 
+oeufs_cot_det <- oeufs_cot_det |> 
   separate(DATE,sep="-", into = c("jour","mois","annee"))
 
 # on divise les noms de colonnes en "indicateur" et "territoire"
 # on transpose le niveau dep en colonnes
-agreg_anim_produit_grand_dep_reg <- agreg_anim_produit_grand_dep_pdl_long %>%
-  separate(indicateur_territoire, into = c("indicateur", "territoire"), sep = "_dep_") %>%
-  arrange(territoire) %>% 
+agreg_anim_produit_grand_dep_reg <- agreg_anim_produit_grand_dep_pdl_long |>
+  separate(indicateur_territoire, into = c("indicateur", "territoire"), sep = "_dep_") |>
+  arrange(territoire) |> 
   pivot_wider(names_from = territoire, 
-              values_from = donnees_territoire) %>%
+              values_from = donnees_territoire) |>
   arrange(indicateur) 
 ```
 
@@ -1405,7 +1455,7 @@ La fonction `unite` permet est de réaliser l'opération inverse de `separate` :
 Voici un exemple où l'on regroupe le code commune Insee et le nom officiel de la commune, avec " - " comme séparateur. Les colonnes `com` et `ncc` disparaissent, car par défaut `unite` supprime les colonnes regroupées. Si on souhaite les conserver, il faut ajouter l'option `remove = FALSE`.
 
 ```{r, eval=FALSE}
-cog_com_2019_tbl %>% 
+cog_com_2019_tbl |> 
   unite(code_et_nom, c("com", "ncc"), sep = " - ") 
 ```
 
@@ -1417,20 +1467,20 @@ row.names
 # ajout colonne numéro de ligne
 # creation d'une variable identifiant reprenant le numéro de ligne 
 produits_laitiers <- read.xlsx(xlsxFile=paste0(chemin_entree,fichier_entree), 
-                         sheet = "produits laitiers",colNames = TRUE,startRow = 12) %>% 
+                         sheet = "produits laitiers",colNames = TRUE,startRow = 12) |> 
   as_tibble(.name_repair = make_clean_names) 
 
-produits_laitiers <- produits_laitiers %>% 
+produits_laitiers <- produits_laitiers |> 
   mutate(ident=row.names(produits_laitiers), .before=1)
 
 # filtre en fonction du numéro de ligne
 # avec l'identifiant “numéro de ligne”
 # Ajout d’une colonne “numéro de ligne”
 # creation d'une variable identifiant reprenant le numéro de ligne 
-vab_agri_2020_2 <- vab_agri_2020 %>% 
-  mutate(ident=row.names(vab_agri_2020), .before=1) %>% 
-  filter(ident %in% 1:15) %>% 
-  mutate(total=as.numeric(total)) %>% 
+vab_agri_2020_2 <- vab_agri_2020 |> 
+  mutate(ident=row.names(vab_agri_2020), .before=1) |> 
+  filter(ident %in% 1:15) |> 
+  mutate(total=as.numeric(total)) |> 
   left_join(geographie_reg,
             by= "libreg")
 ```
@@ -1461,24 +1511,24 @@ base_select <- select(base, -CODGEO)
 
 select
 ```{r , eval = FALSE}
-agri_bio_vegetal_tab1_final <- agri_bio_vegetal_tab1_final %>% 
+agri_bio_vegetal_tab1_final <- agri_bio_vegetal_tab1_final |> 
   select(c("annee","vegetal","Loire-Atlantique","Maine-et-Loire", "Mayenne","Sarthe","Vendée",
            "Pays de la Loire","National"))
 
-agri_bio_vegetal_fr_tab1 <- agri_bio_vegetal_fr %>%   
-  filter(groupe_de_productions %in% c("Toutes productions") ) %>% 
+agri_bio_vegetal_fr_tab1 <- agri_bio_vegetal_fr |>   
+  filter(groupe_de_productions %in% c("Toutes productions") ) |> 
   select(annee,territoire,nombre_de_producteurs,
          surface_bio_et_en_conversion_en_ha,surface_en_conversion_en_ha,surface_bio_en_ha,
-         part_bio_de_la_sau_en_percent) %>%  
+         part_bio_de_la_sau_en_percent) |>  
   mutate(part_bio_sau_plus_percent = paste0(part_bio_de_la_sau_en_percent," %") )
 ```
 Une sélection négative est aussi possible avec 'select(-variable_a_enlever)'.
 ```{r , eval = FALSE}
 # conversion en caractère
-agri_bio_vegetal_fr_tab1_car <- agri_bio_vegetal_fr_tab1 %>% 
+agri_bio_vegetal_fr_tab1_car <- agri_bio_vegetal_fr_tab1 |> 
   mutate(across(c(nombre_de_producteurs,surface_bio_et_en_conversion_en_ha,
                   surface_en_conversion_en_ha,surface_bio_en_ha,
-                  part_bio_de_la_sau_en_percent), as.character ) ) %>% 
+                  part_bio_de_la_sau_en_percent), as.character ) ) |> 
   select(-c(part_bio_de_la_sau_en_percent) )
 ```
 
@@ -1501,8 +1551,8 @@ Exemple : enlever de la sélection les variables dont les noms contiennent "type
 
 ```{r , eval = FALSE}
 # A partir du tableau transposé, ajout du total régional
-bio_pdl_animaux_large_2 <- bio_pdl_animaux_large %>% 
-  adorn_totals(where = "row", name = "Pays de la Loire" ) %>% 
+bio_pdl_animaux_large_2 <- bio_pdl_animaux_large |> 
+  adorn_totals(where = "row", name = "Pays de la Loire" ) |> 
   select(-c(contains("type_reg")))
 ```
 
@@ -1518,17 +1568,17 @@ prelevementb <- select(prelevement, one_of(mes_variables))
 - Avec une liste de noms de variables. Le code suivant sélectionne le code commune, le type d'équipement et le nombre d'équipement dans la base permanente des équipements :
  
 ```{r , eval = FALSE}
-  bpe_ens_2018_tbl %>% 
+  bpe_ens_2018_tbl |> 
     select(DEPCOM, TYPEQU, NB_EQUIP)
 ```
 
 - Avec une condition logique. Par exemple, la fonction `starts_with("DEP")` permet de sélectionner toutes les variables dont le nom commence par "DEP". 
 
 ```{r , eval = FALSE}
-  bpe_ens_2018_tbl %>% 
+  bpe_ens_2018_tbl |> 
     select(starts_with("DEP"))
 
-bio_pdl_dep_ab <- bio_pdl_dep_large2 %>%
+bio_pdl_dep_ab <- bio_pdl_dep_large2 |>
   select(dep,c(contains("ab_")))
 
 ```
@@ -1547,7 +1597,7 @@ bio_pdl_dep_ab <- bio_pdl_dep_large2 %>%
 On peut aussi indiquer une plage de colonnes (soit par les noms de variables, soit par les numeros de colonne, par exemple ci-après on pourrait indiquer 1:4 au lieu de haircolor:weight)
 
 ```{r , eval = FALSE}
-data <- data  %>% 
+data <- data  |> 
   select(catdata, haircolor:weight)
 ```
 
@@ -1555,7 +1605,7 @@ data <- data  %>%
 - On peut aussi renommer des colonnes avec la syntaxe `select(data, nouveau_nom = selection_colonne)` :
 
 ```{r , eval = FALSE}
-  bpe_ens_2018_tbl %>% 
+  bpe_ens_2018_tbl |> 
     select(dept = DEP, depcom = DEPCOM)
 ```
 
@@ -1573,7 +1623,7 @@ base <- rename(base, nouveau_nom = ancien_nom)
 base_rename <- rename(base, ZONE_EMPLOI = ZE)
 
 # renommage 2 lignes intitulés
-volailles_pdl_siqo2 <- volailles_pdl_siqo %>%   
+volailles_pdl_siqo2 <- volailles_pdl_siqo |>   
   rename(espece_poulets_coquelets_siqo_label_rouge=label_rouge_2,
          espece_poulets_coquelets_siqo_aoc_aop=aoc_aop_3,       
          espece_poulets_coquelets_siqo_agri_bio=agri_bio_4,       
@@ -1585,20 +1635,20 @@ volailles_pdl_siqo2 <- volailles_pdl_siqo %>%
 La fonction `rename()` permet de renommer des variables. La syntaxe est la suivante :  `rename(data, nouveau_nom = ancien nom)`. Voici un exemple :
 
 ```{r , eval = FALSE}
-bpe_ens_2018_tbl %>% 
+bpe_ens_2018_tbl |> 
   rename(code_commune = DEPCOM)
 ```
 
 La fonction `rename_with()` permet de renommer un groupe de colonnes avec une fonction. La syntaxe est la suivante :  `rename_with(data, nom_fonction, selection_colonnes)`. Voici un exemple qui met en minuscules tous les noms de colonnes :
 
 ```{r , eval = FALSE}
-bpe_ens_2018_tbl %>% 
+bpe_ens_2018_tbl |> 
   rename_with(tolower)
 
 # on renomme _reg en _dep_ensemble
 # on renomme toutes les colonnes contenant "_reg" à la fin par "_dep_ensemble"
 # ensuite en enlevant le suffixe _dep, il restera 44,49,53,72,85,ensemble
-agreg_anim_produit_grand_dep_pdl_b <- agreg_anim_produit_grand_dep_pdl_a %>%
+agreg_anim_produit_grand_dep_pdl_b <- agreg_anim_produit_grand_dep_pdl_a |>
   rename_with(.cols = contains("reg"),
               ~str_replace(.,"_reg", "_dep_ensemble"))
 ```
@@ -1620,16 +1670,16 @@ dep <- substr(depcom,1,2)
 # Ainsi on extrait "44"
 
 # Filtrer les enregistrements de la région Pays de la Loire
-bio_pdl <- bio %>% 
+bio_pdl <- bio |> 
   filter(substr(codecommuneinsee,1,2) %in% c('44','49','53','72','85'))
 
 # Créer une variable dep pour département
-bio_pdl <- bio %>% 
-  filter(substr(codecommuneinsee,1,2) %in% c('44','49','53','72','85')) %>% 
+bio_pdl <- bio |> 
+  filter(substr(codecommuneinsee,1,2) %in% c('44','49','53','72','85')) |> 
   mutate(dep=substr(codecommuneinsee,1,2))
 
 # Extraire une chaîne de caractères avec `substr`  
-laits_mensuel_2 <- laits_mensuel_1 %>% 
+laits_mensuel_2 <- laits_mensuel_1 |> 
   mutate(dep_etab=substr(sircodpost,1,2),
          dep_prod=substr(dep,2,3) )
 ```
@@ -1639,7 +1689,7 @@ laits_mensuel_2 <- laits_mensuel_1 %>%
 On utilise la fonction 'as.numeric'.
 
 ```{r , eval = FALSE}
-agri_bio_vegetal_fr <- agri_bio_vegetal_fr %>% 
+agri_bio_vegetal_fr <- agri_bio_vegetal_fr |> 
   mutate(across(c(surface_bio_et_en_conversion_en_ha,surface_en_conversion_en_ha,surface_bio_en_ha,
                   part_bio_de_la_sau_en_percent), as.numeric ) ) 
 ```
@@ -1657,13 +1707,13 @@ chemin_entree <- "S:/ETUDES/En cours/memento_Christophe/entree/BAEA/"
 fichier_entree <- "baea_diff_2020_reg_52_Pays_de_la_Loire.xlsx"
 
 otex <- read.xlsx(xlsxFile=paste0(chemin_entree,fichier_entree), 
-                         sheet = "ETP - OTEX",colNames = TRUE,startRow = 7) %>% 
-  mutate(across(-c("Orientation.technico-économique.(OTEX)"), as.numeric) ) %>% 
-  rename(otex_lib="Orientation.technico-économique.(OTEX)") %>% 
+                         sheet = "ETP - OTEX",colNames = TRUE,startRow = 7) |> 
+  mutate(across(-c("Orientation.technico-économique.(OTEX)"), as.numeric) ) |> 
+  rename(otex_lib="Orientation.technico-économique.(OTEX)") |> 
   mutate(otex_code = substr(otex_lib,1,4) )
 
 # Pourcentage en colonne
-produits_a17_percent <- produits_a17_large %>% 
+produits_a17_percent <- produits_a17_large |> 
    mutate(an_2021_imports_percent_col = an_2021_imports / sum(an_2021_imports) * 100,
           an_2022_imports_percent_col = an_2022_imports / sum(an_2022_imports) * 100,
           an_2021_exports_percent_col = an_2021_exports / sum(an_2021_exports) * 100,
@@ -1676,18 +1726,18 @@ produits_a17_percent <- produits_a17_large %>%
           an_2021_E_sem2_percent_col = an_2021_E_sem2 / sum(an_2021_E_sem2) * 100,
           an_2022_E_sem1_percent_col = an_2022_E_sem1 / sum(an_2022_E_sem1) * 100,
           an_2022_E_sem2_percent_col = an_2022_E_sem2 / sum(an_2022_E_sem2) * 100,
-          .after=a17_lib_detail) %>% 
-   mutate(across(where(is.numeric), ~ arrondi(.,digits=3)))
+          .after=a17_lib_detail) |> 
+   mutate(across(where(is.numeric), ~ round_half_up(.,digits=3)))
 
 # type.convert pour transformer en numérique poids_produit_en_tec (caractère) qui a comme séparateur ","
 viande_volaille_tec_2021 <- read.xlsx(xlsxFile=paste0(chemin,"cd2022-5_SAA_2021_provisoire_resultats_LIB.xlsx"), 
-                         sheet = "Volailles finies produites",colNames = TRUE,startRow = 1) %>% 
-  as_tibble(.name_repair = make_clean_names) %>% 
-  filter(region %in% c("52  -  Pays de la Loire","98  -  Total France métropolitaine")  ) %>% 
+                         sheet = "Volailles finies produites",colNames = TRUE,startRow = 1) |> 
+  as_tibble(.name_repair = make_clean_names) |> 
+  filter(region %in% c("52  -  Pays de la Loire","98  -  Total France métropolitaine")  ) |> 
   mutate(an_2021=type.convert(poids_produit_en_tec,dec=","),
          reg = case_when(
            region %in% c("52  -  Pays de la Loire") ~ "pdl",
-           region %in% c("98  -  Total France métropolitaine") ~ "fm") ) %>% 
+           region %in% c("98  -  Total France métropolitaine") ~ "fm") ) |> 
   select(c(reg,libelle_culture,an_2021)) 
 
 ```
@@ -1697,11 +1747,13 @@ viande_volaille_tec_2021 <- read.xlsx(xlsxFile=paste0(chemin,"cd2022-5_SAA_2021_
 On utilise la fonction 'as.character'.
 
 ```{r , eval = FALSE}
+library(janitor) # pour round_half_up
+
 # conversion en caractère
-agri_bio_vegetal_fr_tab1_car <- agri_bio_vegetal_fr_tab1 %>% 
+agri_bio_vegetal_fr_tab1_car <- agri_bio_vegetal_fr_tab1 |> 
   mutate(across(c(nombre_de_producteurs,surface_bio_et_en_conversion_en_ha,
                   surface_en_conversion_en_ha,surface_bio_en_ha,
-                  part_bio_de_la_sau_en_percent), as.character ) ) %>% 
+                  part_bio_de_la_sau_en_percent), as.character ) ) |> 
   select(-c(part_bio_de_la_sau_en_percent) )
 ```
 
@@ -1710,8 +1762,10 @@ agri_bio_vegetal_fr_tab1_car <- agri_bio_vegetal_fr_tab1 %>%
 
 ### avec `recode()`
 ```{r , eval = FALSE}
+library(janitor) # pour round_half_up
+
 # ajout date en nombre
-lait_chevre3 <- lait_chevre2  %>%
+lait_chevre3 <- lait_chevre2  |>
   mutate(code_mois = recode(mois,
                             Janvier = "01",
                             Février = "02",
@@ -1727,7 +1781,7 @@ lait_chevre3 <- lait_chevre2  %>%
                             Décembre = "12"))
 
 # ajout date en lettres
-laits_mensuel_chevre_2 <- laits_mensuel_chevre_1  %>%
+laits_mensuel_chevre_2 <- laits_mensuel_chevre_1  |>
   mutate(mois = recode(code_mois,
                             "01"="Janvier",
                             "02"="Février",
@@ -1744,7 +1798,7 @@ laits_mensuel_chevre_2 <- laits_mensuel_chevre_1  %>%
                             
 # otex en clair
 # recode(x, old = new)
-exploit_vaches_otex_clair <- exploit_vaches_otex %>% 
+exploit_vaches_otex_clair <- exploit_vaches_otex |> 
   mutate(otex_libelle = recode(otefda_coef17,
                                "1516"="Grandes cultures",
                                "2829"="Maraîchage, horticulture",
@@ -1762,29 +1816,29 @@ exploit_vaches_otex_clair <- exploit_vaches_otex %>%
 # Calculer par département et statut 
 # le nombre d’exploitations ayant des vaches,
 # l’effectif de vaches et la pbs
-exploit_vaches_statut <- exploit_bovins_c %>% 
-  filter(cheptq_111000>0) %>% 
+exploit_vaches_statut <- exploit_bovins_c |> 
+  filter(cheptq_111000>0) |> 
   mutate(statut_libelle = recode(statut,
                                  "01"="1 - Exploitant individuel",
                                  "02"="2 - GAEC",
                                  "03"="3 - EARL",
                                  .default = "4 - Autres statuts"))
 
-nb_exploit_vaches_statut <- exploit_vaches_statut %>% 
-  group_by(siege_dep,statut_libelle) %>% 
+nb_exploit_vaches_statut <- exploit_vaches_statut |> 
+  group_by(siege_dep,statut_libelle) |> 
   summarise(nb_expl=n(),
             vaches=sum(cheptq_111000),
-            pbs=sum(pbstot_coef17)) %>% 
-  ungroup() %>% 
+            pbs=sum(pbstot_coef17)) |> 
+  ungroup() |> 
   arrange(siege_dep)
 
 # ajout de la comparaison au niveau reg et au niveau FM (en %)
-recolte_bois_dep_reg <- recolte_bois_dep_reg %>%
+recolte_bois_dep_reg <- recolte_bois_dep_reg |>
   mutate(valeur_dep_percent_reg = valeur_dep/valeur_reg*100,
          valeur_dep_percent_fm = valeur_dep/valeur_fm*100,
          valeur_reg_percent_fm = valeur_reg/valeur_fm*100,
-         .after=dep) %>% 
-  mutate(across(contains("percent"), ~ arrondi(.,digits=3)))
+         .after=dep) |> 
+  mutate(across(contains("percent"), ~ round_half_up(.,digits=3)))
 
 ```
 ### avec `ifelse()`
@@ -1807,15 +1861,15 @@ On peut créer une nouvelle variable, commençant par un caractère commun à pl
 
 ```{r , eval = FALSE}
 # Filtrer les enregistrements concernant les pommes
-bio_pdl_pommes_yc_terre <- bio_pdl %>% 
-  mutate(libelle_ab_2 = ifelse(startsWith(libelleonab, "Pomme"), "Pommes", "hors_pommes")) %>% 
+bio_pdl_pommes_yc_terre <- bio_pdl |> 
+  mutate(libelle_ab_2 = ifelse(startsWith(libelleonab, "Pomme"), "Pommes", "hors_pommes")) |> 
   filter(libelle_ab_2 %in% c("Pommes"))
 
 unique(bio_pdl_pommes$bio_pdl_pommes_yc_terre)
 # "Pommes de table" "Pommes de terre (hors féculière)" "Pommes à cidre et à jus" "Pommes (sans précision)"  
 
-bio_pdl_pommes <- bio_pdl %>% 
-  mutate(libelle_ab_2 = ifelse(startsWith(libelleonab, "Pomme"), "Pommes", libelleonab)) %>% 
+bio_pdl_pommes <- bio_pdl |> 
+  mutate(libelle_ab_2 = ifelse(startsWith(libelleonab, "Pomme"), "Pommes", libelleonab)) |> 
   filter(libelle_ab_2 %in% c("Pommes") & libelleonab != "Pommes de terre (hors féculière)")
 ```
 
@@ -1839,7 +1893,7 @@ analyseb <- mutate(analyse, classe_resultat_analyse = case_when(
 
 ```{r , eval = FALSE}
 # nomenclature cultures
-agri_bio_vegetal_fr_cultures <- agri_bio_vegetal_fr %>%   
+agri_bio_vegetal_fr_cultures <- agri_bio_vegetal_fr |>   
     mutate(cultures_2 = case_when(
     groupe_de_productions %in% c("Toutes productions") ~ "1_Surface totale",
     sous_groupe_de_productions %in% c("Céréales") ~ "2_Céréales",
@@ -1857,7 +1911,7 @@ agri_bio_vegetal_fr_cultures <- agri_bio_vegetal_fr %>%
   )
 
 # nomenclature animaux
-agri_bio_animal_fr_animaux <- agri_bio_animal_fr %>%   
+agri_bio_animal_fr_animaux <- agri_bio_animal_fr |>   
   mutate(animaux_2 = case_when(
     groupe_de_productions %in% c("Vaches laitières") ~ "1_Vaches laitières",
     groupe_de_productions %in% c("Vaches allaitantes") ~ "2_Vaches viande",
@@ -1872,7 +1926,7 @@ agri_bio_animal_fr_animaux <- agri_bio_animal_fr %>%
   
 # Modification de la nomenclature agrégée libelle_ab_regroupt pour les animaux avec les regroupements :
 # On conserve le détail pour les autres animaux
-bio_pdl_nomenclature_animaux <- bio_pdl_nomenclature %>% 
+bio_pdl_nomenclature_animaux <- bio_pdl_nomenclature |> 
   mutate(libelle_ab_regroupt = case_when(
     libelle_ab_regroupt %in% c("Vaches allaitantes","Vaches laitières") ~ "Vaches",
     libelle_ab_regroupt %in% c("Brebis viande","Brebis laitières") ~ "Brebis",
@@ -1885,17 +1939,17 @@ bio_pdl_nomenclature_animaux <- bio_pdl_nomenclature %>%
 sort(unique(bio_pdl_nomenclature_animaux$libelle_ab_regroupt))
   
 # nb chefs et coexploitants
-stats_chefcoexpl_statutdirig <- mo_2020 %>% 
+stats_chefcoexpl_statutdirig <- mo_2020 |> 
   mutate(statut_dirig=case_when(statutdirig=="1" ~ "Chef d'exploitation",
                                statutdirig=="2" ~ "Coexploitant",
-                               TRUE ~ statutdirig)) %>% 
-  group_by (statut_dirig) %>% 
-  summarise(nb=n()) %>% 
+                               TRUE ~ statutdirig)) |> 
+  group_by (statut_dirig) |> 
+  summarise(nb=n()) |> 
   adorn_totals(where=c("row"))
 
 # Formation des chefs et coexploitants des exploitations
 # si niveau égal, on indique dipl_max agricole
-mo_2020_diplome_max <-  mo_2020_install2010 %>% 
+mo_2020_diplome_max <-  mo_2020_install2010 |> 
   mutate(filiere_dipl_max = case_when(as.numeric(mofgene) > as.numeric(mofagri) ~ "general",
                                    TRUE ~ "agricole"),
           dipl_max=case_when(filiere_dipl_max=="general" ~ mofgene,
@@ -1933,15 +1987,15 @@ mo_2020_diplome_max <-  mo_2020_install2010 %>%
 
 ifelse
 ```{r , eval = FALSE}
-laits_mensuel_chevre_cerise <- laits_mensuel_2 %>%
-  filter(type %in% c("CNB","CB")) %>% 
+laits_mensuel_chevre_cerise <- laits_mensuel_2 |>
+  filter(type %in% c("CNB","CB")) |> 
   mutate(reg_etab = ifelse(dep_etab %in% c("44","49","53","72","85"),
                            yes = "PDL", no = "hors PDL"),
          reg_prod = ifelse(dep_prod %in% c("44","49","53","72","85"),
                            yes = "PDL", no = "hors PDL"))
 
 # en fonction du numéro de ligne
-produits_laitiers_3 <- produits_laitiers_2 %>% 
+produits_laitiers_3 <- produits_laitiers_2 |> 
   mutate(code_produit = case_when( 
     code_produit %in% c("062999 et 072999") ~ "062999_072999",
     code_produit %in% c("144221, 223, 224") ~ "144221_144223_144224",
@@ -1957,14 +2011,14 @@ case_when(), comparativement à recode() et ifelse()
 # Créer un type_regroupement à partir de la variable 'type'
 unique(exploit_lait2_production$type)
 # 1- Créer un type_regroupement, avec la méthode 'case_when'
-exploit_lait2_production <- exploit_lait2_production %>%
+exploit_lait2_production <- exploit_lait2_production |>
   mutate(type_regroupement = case_when(     
     type %in% c("VB","VNB") ~ "Vaches",
     type %in% c("CB","CNB") ~ "Chevres",
     type %in% c("BB","BNB") ~ "Brebis",
     TRUE ~ "autre"))
 # 2- Créer un type_regroupement_1, avec la méthode 'recode'
-exploit_lait2_production <- exploit_lait2_production %>%
+exploit_lait2_production <- exploit_lait2_production |>
   mutate(type_regroupement_1 = recode(type,
                                "VB"="Vaches",
                                "VNB"="Vaches",
@@ -1974,7 +2028,7 @@ exploit_lait2_production <- exploit_lait2_production %>%
                                "BNB"="Brebis",
                                .default = "autre"))
 # 3- Créer un type_regroupement_2, avec la méthode 'ifelse'
-exploit_lait2_production <- exploit_lait2_production %>%
+exploit_lait2_production <- exploit_lait2_production |>
   mutate(type_regroupement_2 = ifelse(type %in% c("VB","VNB"),yes = "Vaches",no = type),
          type_regroupement_2 = ifelse(type %in% c("CB","CNB"),yes = "Chevres",no = type_regroupement_2),
          type_regroupement_2 = ifelse(type %in% c("BB","BNB"),yes = "Brebis",no = type_regroupement_2))
@@ -1982,8 +2036,7 @@ exploit_lait2_production <- exploit_lait2_production %>%
 ```
 
 ### avec `fct_collapse()`
-fct_collapse pour les facteurs, autrement dit des valeurs catégorielles
-Cette fonction transforme les niveaux d’un facteur, soit pour les renommer soit pour les regrouper.
+La fonction fct_collapse du package `forcats` transforme les niveaux d’un facteur, soit pour les renommer soit pour les regrouper. Les facteurs en R sont une structure de données qui permettent de représenter des variables catégorielles. 
 
 ```{r , eval = FALSE}
 library(forcats)  # fonction "fct_collapse"
@@ -2029,7 +2082,7 @@ Exemple : cut(variable_quanti, seq(from = 0, to = 120, by = 5)) => de 0 à 120 p
 Il convient parfois de préciser l’argument `include.lowest = TRUE` pour ne pas oublier d’inclure l’observation avec la valeur minimale (ou maximale, pour right = FALSE ), puisque par défaut les intervalles ont des bornes ouvertes (c’est-à-dire n’incluant pas) à gauche. 
 
 ```{r , eval = FALSE}
-exploit_anim_produit_grand_pdl <- exploit_anim_produit_grand_pdl %>% 
+exploit_anim_produit_grand_pdl <- exploit_anim_produit_grand_pdl |> 
   mutate(tr_sau = cut(sau_tot, 
                       breaks = c(0, 10, 20, 50, 100, 200, 250, Inf), 
                       right = FALSE,
@@ -2042,8 +2095,8 @@ exploit_anim_produit_grand_pdl <- exploit_anim_produit_grand_pdl %>%
                                  "07_250 ha ou plus")),
          .after=nom_dossier) 
 
-exploitants_2010 <- fam_2010 %>% 
-  filter(famlien %in% c("10", "11", "12", "13"))  %>% 
+exploitants_2010 <- fam_2010 |> 
+  filter(famlien %in% c("10", "11", "12", "13"))  |> 
   mutate(nom_dossier = id_dossier,
          annee = annee_ra_2010,
          age = annee_ra_2010 - as.integer(famanais), 
@@ -2075,7 +2128,7 @@ La fonction `summarise()` permet d'agréger des données, en appliquant une fonc
 ```{r , eval=FALSE}
 summarise(table_entree, NomVariableAgregee = Fonction(NomVariableEtude))
 
-base_med <- base_extrait %>%
+base_med <- base_extrait |>
   summarise(population_med = median(P14_POP, na.rm = TRUE))
 ```
 
@@ -2094,8 +2147,8 @@ summarise(TableauGroupes, NomVariableAgregee = Fonction (NomVariableEtude))
 
 Par exemple, si on souhaite avoir la médiane de la variable P14_POP, pour chaque ZE et chaque région :
 ```{r , eval=FALSE}
-base_reg_ann <- base_extrait %>% 
-  group_by(ZE, REG) %>%
+base_reg_ann <- base_extrait |> 
+  group_by(ZE, REG) |>
   summarise(population_med = median (P14_POP, na.rm = TRUE))
 ```
 
@@ -2107,94 +2160,95 @@ On peut avoir des NA car les valeurs manquantes sont absorbantes. Pour éviter c
 `distinct` filtre les lignes du tableau pour ne conserver que les lignes distinctes, en supprimant toutes les lignes en double.
 
 ```{r , eval = FALSE}
+library(janitor) # pour round_half_up
 
 # nb exploitations par dep
-nb_exploit_2020 <- exploit_2020 %>% 
-              mutate(annee=annee_ra_2020) %>% 
+nb_exploit_2020 <- exploit_2020 |> 
+              mutate(annee=annee_ra_2020) |> 
               select(nom_dossier,
                      dep_2020=siege_dep,
-                     annee) %>% 
+                     annee) |> 
   group_by(annee = factor(annee, levels = c(annee_ra_2020)),dep_2020,
-           .drop = FALSE) %>% 
+           .drop = FALSE) |> 
   summarise(`nombre total d'exploitations` = n() )
 
 # nb exploitations par dep
-nb_exploit_2020_reg <- exploit_2020 %>% 
-  select(nom_dossier,siege_dep) %>% 
+nb_exploit_2020_reg <- exploit_2020 |> 
+  select(nom_dossier,siege_dep) |> 
   mutate(territoire = "Pays de la Loire",
-         nb_total_exploitations = n() ) %>% 
+         nb_total_exploitations = n() ) |> 
   distinct(territoire,nb_total_exploitations)
 
 # nb exploitations par dep
-nb_exploit_2010_2020 <- exploit_2010 %>% 
-  mutate(annee=annee_ra_2010) %>% 
+nb_exploit_2010_2020 <- exploit_2010 |> 
+  mutate(annee=annee_ra_2010) |> 
   select(annee,
          dep_2020=siege_dep_2020,
          nom_dossier = id_dossier,
-  ) %>% 
-  bind_rows(exploit_2020 %>% 
-              mutate(annee=annee_ra_2020) %>% 
+  ) |> 
+  bind_rows(exploit_2020 |> 
+              mutate(annee=annee_ra_2020) |> 
               select(nom_dossier,
                      dep_2020=siege_dep,
-                     annee)) %>% 
+                     annee)) |> 
   group_by(annee = factor(annee, levels = c(annee_ra_2010, annee_ra_2020)),dep_2020,
-           .drop = FALSE) %>% 
+           .drop = FALSE) |> 
   summarise(`nombre total d'exploitations` = n() )
 
 # somme des regroupements par type de volailles
-volailles_pdl1 <- volailles_pdl %>%   
-            group_by(reg,espece_regrpt1) %>%     
-            mutate(tec_regrpt = sum(total_poids / 1000) ) %>% 
+volailles_pdl1 <- volailles_pdl |>   
+            group_by(reg,espece_regrpt1) |>     
+            mutate(tec_regrpt = sum(total_poids / 1000) ) |> 
             ungroup()
 
 # somme des regroupements par abattoir par type de volailles
-volailles_abattoir <- volailles_pdl %>%   
-  group_by(siret,espece_regrpt1) %>%     
-  filter(espece_regrpt1 %in% c("b11-poulets","c12-dindes","d14-canards","e17-lapins"))  %>% 
-  mutate(tec_regrpt = sum(poids / 1000, na.rm = TRUE ) ) %>% 
-  filter(!is.na(tec_regrpt) & tec_regrpt != 0)  %>% 
-  select(reg,dep,siret,rsoc,espece_regrpt1,tec_regrpt) %>% 
+volailles_abattoir <- volailles_pdl |>   
+  group_by(siret,espece_regrpt1) |>     
+  filter(espece_regrpt1 %in% c("b11-poulets","c12-dindes","d14-canards","e17-lapins"))  |> 
+  mutate(tec_regrpt = sum(poids / 1000, na.rm = TRUE ) ) |> 
+  filter(!is.na(tec_regrpt) & tec_regrpt != 0)  |> 
+  select(reg,dep,siret,rsoc,espece_regrpt1,tec_regrpt) |> 
   distinct()
 
-volailles_abattoir_44 <- volailles_pdl %>%   
-  group_by(siret,espece_regrpt1) %>%     
-  filter(espece_regrpt1 %in% c("b11-poulets","c12-dindes","d14-canards","e17-lapins")  & dep=='44')  %>% 
-  mutate(tec_regrpt = sum(poids / 1000, na.rm = TRUE ) ) %>% 
-  filter(!is.na(tec_regrpt) & tec_regrpt != 0)  %>% 
-  select(reg,dep,siret,rsoc,espece_regrpt1,tec_regrpt) %>% 
+volailles_abattoir_44 <- volailles_pdl |>   
+  group_by(siret,espece_regrpt1) |>     
+  filter(espece_regrpt1 %in% c("b11-poulets","c12-dindes","d14-canards","e17-lapins")  & dep=='44')  |> 
+  mutate(tec_regrpt = sum(poids / 1000, na.rm = TRUE ) ) |> 
+  filter(!is.na(tec_regrpt) & tec_regrpt != 0)  |> 
+  select(reg,dep,siret,rsoc,espece_regrpt1,tec_regrpt) |> 
   distinct()
 
 # calcul somme pdl fm + evolution
-viande_volaille_sum <- viande_volaille_tec_lib %>% 
-  group_by(reg) %>%
-  summarise(an_2021 = sum(an_2021), an_2020 = sum(an_2020)) %>%
-  mutate(espece = "07_Total") %>% 
+viande_volaille_sum <- viande_volaille_tec_lib |> 
+  group_by(reg) |>
+  summarise(an_2021 = sum(an_2021), an_2020 = sum(an_2020)) |>
+  mutate(espece = "07_Total") |> 
   ungroup()
 
-viande_volaille_evol <- viande_volaille_tec_lib %>% 
-  bind_rows(viande_volaille_sum) %>% 
-  mutate(evol_2021_2020 = paste0(arrondi((((an_2021/an_2020)-1)*100),0)," %"),
-         an_2021 = (arrondi(an_2021/1000,0) )
-  ) %>% 
+viande_volaille_evol <- viande_volaille_tec_lib |> 
+  bind_rows(viande_volaille_sum) |> 
+  mutate(evol_2021_2020 = paste0(round_half_up((((an_2021/an_2020)-1)*100),0)," %"),
+         an_2021 = (round_half_up(an_2021/1000,0) )
+  ) |> 
   arrange(desc(reg),espece) 
 
 # moyenne
 # age moyen
-age_moyen <- exploitants_2010 %>% 
+age_moyen <- exploitants_2010 |> 
             mutate(annee = annee_ra_2010,
-                  age = annee_ra_2010 - as.integer(famanais) ) %>%
-  bind_rows(mo_2020 %>% 
+                  age = annee_ra_2010 - as.integer(famanais) ) |>
+  bind_rows(mo_2020 |> 
             mutate(annee = annee_ra_2020,
                   anais = replace(anais, which(anais == 0 | anais == 9999), NA), 
                   # il existe des valeurs nulles d'années de naissance (2 dans la Manche !)
-                  age = annee_ra_2020 - anais) ) %>% 
+                  age = annee_ra_2020 - anais) ) |> 
   group_by(annee = factor(annee, levels = c(annee_ra_2010, annee_ra_2020)),
            nom = "âge moyen des chefs d'exploitation et coexploitants",
-           .drop = FALSE) %>% 
+           .drop = FALSE) |> 
   summarise(age_moy = mean(age, na.rm = TRUE) )
   
 # calcul moyenne semestrielle
-oeufs_cot_det_2022_2021_an_mois <- oeufs_cot_det_2022_2021_an_mois %>%   
+oeufs_cot_det_2022_2021_an_mois <- oeufs_cot_det_2022_2021_an_mois |>   
   mutate(moy_sem_1_2021 = rowMeans((across(an_2021_01:an_2021_06)),na.rm = TRUE),
          moy_sem_1_2022 = rowMeans((across(an_2022_01:an_2022_06)),na.rm = TRUE),
          moy_sem_2_2021 = rowMeans((across(an_2021_07:an_2021_12)),na.rm = TRUE),
@@ -2205,16 +2259,16 @@ oeufs_cot_det_2022_2021_an_mois <- oeufs_cot_det_2022_2021_an_mois %>%
 # calcul moyenne semestrielle
 # avec rowwise() (fonction dplyr) et c_across() 
 # pour travailler dans les lignes, en combinaison avec rowwise()
-vol_2022_mois <- vol_2022_mois %>%  
-  mutate(moy_an = mois_total /12) %>% 
-  rowwise() %>%
+vol_2022_mois <- vol_2022_mois |>  
+  mutate(moy_an = mois_total /12) |> 
+  rowwise() |>
   mutate(moy_sem_1 = mean(c_across(mois_01:mois_06), na.rm = TRUE),
          moy_sem_2 = mean(c_across(mois_07:mois_12), na.rm = TRUE),
          moy_an_b = mean(c_across(mois_01:mois_12), na.rm = TRUE))
 # rowwise() est juste une forme spéciale de regroupement,
 # donc pour l'annuler, ajouter à la fin ungroup()
 # avec rowMeans (fonction base R) et across()
-vol_2021_mois <- vol_2021_mois %>%   
+vol_2021_mois <- vol_2021_mois |>   
             mutate(moy_sem_1 = rowMeans(across(mois_01:mois_06), na.rm = TRUE),
                    moy_sem_2 = rowMeans(across(mois_07:mois_12), na.rm = TRUE),
                    moy_an = mois_total /12,
@@ -2224,7 +2278,7 @@ vol_2021_mois <- vol_2021_mois %>%
 **La fonction `summarise()` permet de calculer une ou plusieurs statistiques à partir de la table de données.** Cette fonction est souvent utilisée après la fonction `group_by()` pour calculer des statistiques par groupe, et elle conduit à une agrégation de la table en fonction des groupes définis par la fonction `group_by` (par défaut une agrégation sur l'ensemble de la table). Le code suivant calcule le nombre total d'équipements dans la BPE `sum(NB_EQUIP, na.rm = TRUE)`, et le nombre total de boulangeries `sum(NB_EQUIP * (TYPEQU == "B203"), na.rm = TRUE)`.
 
 ```{r , eval = FALSE}
-bpe_ens_2018_tbl %>% 
+bpe_ens_2018_tbl |> 
   summarise(
     NB_EQUIP_TOT = sum(NB_EQUIP, na.rm = TRUE),
     NB_BOULANGERIES_TOT = sum(NB_EQUIP * (TYPEQU == "B203"), na.rm = TRUE)
@@ -2254,31 +2308,31 @@ Les fonctions `mutate()` et `summarise()` calculent toutes les deux de nouvelles
 - Si on souhaite résumer une information contenue dans une table, il faut utiliser `summarise()`. Exemple : calculer le nombre total d'équipements pour chaque commune.
 
   ```{r, eval = FALSE, warning= FALSE}
-  bpe_ens_2018_tbl %>%  
-    group_by(DEPCOM) %>% 
+  bpe_ens_2018_tbl |>  
+    group_by(DEPCOM) |> 
     summarise(NB_EQUIP_TOT = sum(NB_EQUIP, na.rm = TRUE))
   ```
 
 - Si on souhaite ajouter une information dans une table (en conservant toutes les autres variables), il faut utiliser `mutate()`. Exemple : ajouter dans la table `bpe_ens_2018_tbl` une colonne donnant le nombre total d'équipements pour chaque commune.
 
   ```{r, eval = FALSE, warning= FALSE}
-  bpe_ens_2018_tbl %>%  
-  group_by(DEPCOM) %>% 
+  bpe_ens_2018_tbl |>  
+  group_by(DEPCOM) |> 
   mutate(NB_EQUIP_TOT = sum(NB_EQUIP, na.rm = TRUE))
   ```
 Avec 'distinct' en fin d'un traitement utilisant 'mutate', on obtient un résumé équivalent à 'summarise'.
 ```{r, eval = FALSE, warning= FALSE}
 # méthode 1 nb exploitations pour la région
-nb_ha_sau_2020_reg_a <- exploit_2020 %>% 
-  select(nom_dossier,siege_dep,sau_tot) %>% 
-  summarise(sau_ha = sum(sau_tot, na.rm = TRUE) ) %>% 
+nb_ha_sau_2020_reg_a <- exploit_2020 |> 
+  select(nom_dossier,siege_dep,sau_tot) |> 
+  summarise(sau_ha = sum(sau_tot, na.rm = TRUE) ) |> 
   mutate(territoire = "Pays de la Loire") 
 
 # méthode 2 nb exploitations pour la région
-nb_ha_sau_2020_reg_b <- exploit_2020 %>% 
-  select(nom_dossier,siege_dep,sau_tot) %>% 
+nb_ha_sau_2020_reg_b <- exploit_2020 |> 
+  select(nom_dossier,siege_dep,sau_tot) |> 
   mutate(territoire = "Pays de la Loire",
-         sau_ha = sum(sau_tot, na.rm = TRUE) ) %>% 
+         sau_ha = sum(sau_tot, na.rm = TRUE) ) |> 
   distinct(territoire,sau_ha)
 
 # Réaliser un tableau sommant la livraison de lait de chèvre 
@@ -2289,21 +2343,21 @@ nb_ha_sau_2020_reg_b <- exploit_2020 %>%
 
 # En 2 étapes
 # étape 1
-exploit_laits_mensuel_chevre_pdl <- exploit_laits_mensuel_chevre %>% 
-  filter(reg_prod == "PDL") %>% 
-  group_by(annee,mois) %>% 
-  mutate(livraison=sum(colldiff/100, na.rm = TRUE)) %>% 
+exploit_laits_mensuel_chevre_pdl <- exploit_laits_mensuel_chevre |> 
+  filter(reg_prod == "PDL") |> 
+  group_by(annee,mois) |> 
+  mutate(livraison=sum(colldiff/100, na.rm = TRUE)) |> 
   ungroup()
 
 # étape 2
-laits_mensuel_chevre_production_pdl <- exploit_laits_mensuel_chevre_pdl %>% 
+laits_mensuel_chevre_production_pdl <- exploit_laits_mensuel_chevre_pdl |> 
   distinct(reg_prod,annee, mois,livraison)
 
 # En 1 étape
-laits_mensuel_chevre_production_pdl_2 <- exploit_laits_mensuel_chevre %>% 
-  filter(reg_prod == "PDL") %>% 
-  group_by(annee,mois) %>% 
-  summarise(livraison=sum(colldiff/100, na.rm = TRUE)) %>% 
+laits_mensuel_chevre_production_pdl_2 <- exploit_laits_mensuel_chevre |> 
+  filter(reg_prod == "PDL") |> 
+  group_by(annee,mois) |> 
+  summarise(livraison=sum(colldiff/100, na.rm = TRUE)) |> 
   ungroup()
 
 ```
@@ -2316,19 +2370,19 @@ laits_mensuel_chevre_production_pdl_2 <- exploit_laits_mensuel_chevre %>%
 # Les variables collectées en échantillon uniquement sont suffixées _ech
 # mopfamfil_ech : Emploi de la main d'oeuvre familiale de manière permanente
 # mopnfamfil_ech : Emploi de la main d'oeuvre non familiale de manière permanente
-nb_exploit_2020_mop_fam_reg <- exploit_2020 %>% 
-  select(nom_dossier,siege_dep,mopfamfil_ech,mopnfamfil_ech,poids=coef_f) %>% 
-  filter(!poids == 0 & mopfamfil_ech == 1) %>% 
-  mutate(nb_exploit_mop_fam = sum(poids) ) %>% 
+nb_exploit_2020_mop_fam_reg <- exploit_2020 |> 
+  select(nom_dossier,siege_dep,mopfamfil_ech,mopnfamfil_ech,poids=coef_f) |> 
+  filter(!poids == 0 & mopfamfil_ech == 1) |> 
+  mutate(nb_exploit_mop_fam = sum(poids) ) |> 
  distinct(nb_exploit_mop_fam)
 
-nb_exploit_2020_mop_non_fam_reg <- exploit_2020 %>% 
-  select(nom_dossier,siege_dep,mopfamfil_ech,mopnfamfil_ech,poids=coef_f) %>% 
-  mutate(nb_exploit = n() ) %>% 
-  filter(!poids == 0) %>% 
-  mutate(nb_exploit_ech = n() ) %>%
-  filter(mopnfamfil_ech == 1) %>% 
-  mutate(nb_exploit_mop_non_fam = sum(poids) ) %>% 
+nb_exploit_2020_mop_non_fam_reg <- exploit_2020 |> 
+  select(nom_dossier,siege_dep,mopfamfil_ech,mopnfamfil_ech,poids=coef_f) |> 
+  mutate(nb_exploit = n() ) |> 
+  filter(!poids == 0) |> 
+  mutate(nb_exploit_ech = n() ) |>
+  filter(mopnfamfil_ech == 1) |> 
+  mutate(nb_exploit_mop_non_fam = sum(poids) ) |> 
   distinct(nb_exploit,nb_exploit_ech,nb_exploit_mop_non_fam)
 ```
 
@@ -2337,8 +2391,8 @@ nb_exploit_2020_mop_non_fam_reg <- exploit_2020 %>%
 **La fonction `group_by()` permet de définir des groupes dans la table de données pour faire des opérations par groupe.** L'utilisation de `group_by()` rend très utiles les opérations avec `summarise()`. Le code suivant groupe les données de la BPE par département `group_by(DEP)` puis calcule le nombre total d'équipements `sum(NB_EQUIP, na.rm = TRUE)` et le nombre total de boulangeries `sum(NB_EQUIP * (TYPEQU == "B203"), na.rm = TRUE)`.
  
 ```{r , eval = FALSE}
-bpe_ens_2018_tbl %>% 
-  group_by(DEP) %>%
+bpe_ens_2018_tbl |> 
+  group_by(DEP) |>
   summarise(NB_EQUIP_TOT = sum(NB_EQUIP, na.rm = TRUE),
             NB_BOULANGERIES_TOT = sum(NB_EQUIP * (TYPEQU == "B203"), na.rm = TRUE))
 ```
@@ -2346,16 +2400,16 @@ bpe_ens_2018_tbl %>%
 La fonction `group_by` peut également modifier le comportement des fonctions `filter` ou `mutate`, comme pour `summarise`. L'instruction suivante permet ainsi d'ajouter à la BPE une variable égale au nombre total de boulangeries dans le département.
 
 ```{r , eval = FALSE}
-bpe_ens_2018_tbl %>% 
-  group_by(DEP) %>%
+bpe_ens_2018_tbl |> 
+  group_by(DEP) |>
   mutate(NB_BOULANGERIES_DEP = sum(NB_EQUIP * (TYPEQU == "B203"), na.rm = TRUE))
 ```
 
 L'instruction suivante permet de ne conserver que les communes pour lesquelles le nombre d'équipements est le plus important de leur région.
 
 ```{r , eval = FALSE}
-bpe_ens_2018_tbl %>% 
-  group_by(REG) %>%
+bpe_ens_2018_tbl |> 
+  group_by(REG) |>
   filter(NB_EQUIP == max(NB_EQUIP))
 ```
 
@@ -2366,11 +2420,11 @@ On peut aussi directement renommer une variable dans l'opération `group_by()`
 
 ```{r , eval = FALSE}
 # dimension économique par département
-dim_eco_dep <-  exploit_2020 %>% 
+dim_eco_dep <-  exploit_2020 |> 
   group_by(dep = siege_dep,
-           dim = dimeco_coef2017) %>% 
+           dim = dimeco_coef2017) |> 
   summarise(n_exploit = n(),
-            sau_ha = sum(sau_tot, na.rm = TRUE)) %>% 
+            sau_ha = sum(sau_tot, na.rm = TRUE)) |> 
   ungroup()
 ```
 
@@ -2387,7 +2441,7 @@ Trois remarques sur l'utilisation de `group_by()` :
 Avec dplyr 1.1.0, on peut éviter d'utiliser group_by, en utilisant seulement .by :
 ```{r , eval = FALSE}
 library(dplyr)
-x %>%  
+x |>  
   summarise(Frequency = sum(Frequency), .by = Category)
 ```
 
@@ -2398,7 +2452,7 @@ x %>%
 **Le verbe `arrange()` permet de trier les observations de la table selon une ou plusieurs colonnes.** Par défaut, `arrange` trie par ordre croissant. Il faut utiliser `desc(nom_de_variable)` pour trier par ordre décroissant. Le code suivant trie la BPE selon le code commune et le type d'équipement.
 
 ```{r , eval = FALSE}
-bpe_ens_2018_tbl %>% 
+bpe_ens_2018_tbl |> 
   arrange(DEPCOM, TYPEQU)
 ```
 
@@ -2412,19 +2466,19 @@ Voici quelques utilisations fréquentes de `arrange()` :
 
 
 ```{r , eval = FALSE}
-agri_bio_vegetal_fr_tab2 <- agri_bio_vegetal_fr_cultures %>% 
-  filter(cultures_2 %not_in% c("autre cas - doublon") ) %>% 
-  group_by(annee_2=annee,territoire,cultures_2) %>% 
-  summarise(surface_bio_conversion_en_ha=sum(surface_bio_et_en_conversion_en_ha, na.rm = TRUE) ) %>% 
+agri_bio_vegetal_fr_tab2 <- agri_bio_vegetal_fr_cultures |> 
+  filter(cultures_2 %not_in% c("autre cas - doublon") ) |> 
+  group_by(annee_2=annee,territoire,cultures_2) |> 
+  summarise(surface_bio_conversion_en_ha=sum(surface_bio_et_en_conversion_en_ha, na.rm = TRUE) ) |> 
   arrange(desc(territoire),cultures_2)
 ```
 
 Spécificité pour les vecteurs 'factor', le tri se réalise avec l'instruction levels
 ```{r , eval = FALSE}
 # regroupements et pivot_wider
-volailles_sum <- rbind(volailles_dep_sum,volailles_pdl_sum) %>% 
+volailles_sum <- rbind(volailles_dep_sum,volailles_pdl_sum) |> 
   pivot_wider(names_from=dep,
-              values_from =tec_regrpt) %>% 
+              values_from =tec_regrpt) |> 
   mutate(espece_ordre=factor(espece,levels= c("a10-volailles",
                                               "b11-poulets",
                                               "c12-dindes", 
@@ -2436,26 +2490,28 @@ volailles_sum <- rbind(volailles_dep_sum,volailles_pdl_sum) %>%
 
 relocate
 ```{r , eval = FALSE}
+library(janitor) # pour round_half_up
+
 # la fonction relocate() pour réorganiser les colonnes.
 # Le comportement par défaut est de déplacer la ou les colonnes nommées vers la première position.
-otex_regroupe <- otex_regroupe %>%
-  mutate(otex_lib_det = substr(otex_lib,8,60) ) %>%
+otex_regroupe <- otex_regroupe |>
+  mutate(otex_lib_det = substr(otex_lib,8,60) ) |>
   relocate(otex_lib, otex_lib_det, .after = otex_code_regr )
 
-eff_volailles_evol_part <- eff_volailles_evol %>% 
-  select(-c(evo_percent,region,an_2020)) %>% 
+eff_volailles_evol_part <- eff_volailles_evol |> 
+  select(-c(evo_percent,region,an_2020)) |> 
   pivot_wider(names_from =reg,
               names_prefix='',
               names_sep = "_",
-              values_from= c(an_2021,evol_2021_2020) ) %>% 
-  mutate(part_pdl_france_2021=paste0(arrondi(an_2021_pdl/an_2021_fm*100,0)," %") ) %>%
+              values_from= c(an_2021,evol_2021_2020) ) |> 
+  mutate(part_pdl_france_2021=paste0(round_half_up(an_2021_pdl/an_2021_fm*100,0)," %") ) |>
   relocate(an_2021_pdl,evol_2021_2020_pdl,an_2021_fm,
            evol_2021_2020_fm,part_pdl_france_2021, .after = espece )
 
 # succession de relocate
-lait_chevre_dep_2021_donnees <- lait_chevre_dep3 %>% 
-  select(-c(reg_dep_prod,dep_libdep,producteurs_2020_old,livraisons_2020_old,lait)) %>% 
-  relocate(Code_département,Département, .before = producteurs_2010) %>% 
+lait_chevre_dep_2021_donnees <- lait_chevre_dep3 |> 
+  select(-c(reg_dep_prod,dep_libdep,producteurs_2020_old,livraisons_2020_old,lait)) |> 
+  relocate(Code_département,Département, .before = producteurs_2010) |> 
   relocate(producteurs_2020,livraisons_2020,
            producteurs_2021,livraisons_2021, .after = livraisons_2019)
 
@@ -2466,8 +2522,8 @@ sum avec rowwise() au préalable
 
 ```{r , eval = FALSE}
 # somme de chaque ligne
-volailles_pdl_espece_siqo_col <- volailles_pdl_espece_siqo_col %>% 
-  rowwise() %>% 
+volailles_pdl_espece_siqo_col <- volailles_pdl_espece_siqo_col |> 
+  rowwise() |> 
   mutate(autres_siqo=sum(aoc_aop,aut_signe_off,aut_demarche, na.rm = TRUE),
          total_qualite=sum(label_rouge,aoc_aop,agri_bio,aut_signe_off,aut_demarche, na.rm = TRUE))
          
@@ -2478,15 +2534,15 @@ volailles_pdl_espece_siqo_col <- volailles_pdl_espece_siqo_col %>%
 ## et non par colonne (calcul par défaut) d'où l'instruction rowwise()
 ## avant le calcul 
 
-bio_pdl_poires_pommes_abconv_v2 <- bio_pdl_poires_pommes %>% 
-  rowwise() %>% 
+bio_pdl_poires_pommes_abconv_v2 <- bio_pdl_poires_pommes |> 
+  rowwise() |> 
   mutate(surface_tot=sum(surfab,surfc1,surfc2,surfc3))
   
 ## calcul surface total bio et conv avec + pour éviter rowwise et sum
-surf_bio_pdl_poires_pommes_abconv <- bio_pdl_poires_pommes %>% 
-  mutate(surface_tot=surfab+surfc1+surfc2+surfc3) %>% 
-  group_by(dep) %>% 
-  summarise(surface_ab_conversion=sum(surface_tot)) %>% 
+surf_bio_pdl_poires_pommes_abconv <- bio_pdl_poires_pommes |> 
+  mutate(surface_tot=surfab+surfc1+surfc2+surfc3) |> 
+  group_by(dep) |> 
+  summarise(surface_ab_conversion=sum(surface_tot)) |> 
   ungroup()
   
 # regroupement par espece
@@ -2498,11 +2554,11 @@ surf_bio_pdl_poires_pommes_abconv <- bio_pdl_poires_pommes %>%
 # Quant notre tableau est groupé via un rowwise(), 
 # les opérations s’effectuent sur un tableau constitué uniquement de la ligne courante.
 # ungroup() pour quitter rowwise()
-exploit_volailles_regroupt <- exploit_dont_volailles_2020 %>% 
+exploit_volailles_regroupt <- exploit_dont_volailles_2020 |> 
   rename(eff_05_poulettes=cheptq_711130,
          # eff_03_poulets_chair=cheptq_711140,
-         eff_08_autres_volailles=cheptq_719010) %>% 
-  rowwise() %>%
+         eff_08_autres_volailles=cheptq_719010) |> 
+  rowwise() |>
   mutate(eff_03_poulets_chair_poules_pondeuses = sum(cheptq_711140,cheptq_711110,
                                                      cheptq_711120, na.rm = TRUE),
          eff_02_dindes = sum(cheptq_711151,cheptq_711152, na.rm = TRUE),
@@ -2510,8 +2566,8 @@ exploit_volailles_regroupt <- exploit_dont_volailles_2020 %>%
                            cheptq_711320, na.rm = TRUE),
          eff_01_canards = sum(cheptq_711410,cheptq_711411,
                               cheptq_711421,cheptq_711422, na.rm = TRUE),
-         eff_07_pintades= sum(cheptq_711510,cheptq_711520, na.rm = TRUE)) %>% 
-  ungroup() %>% 
+         eff_07_pintades= sum(cheptq_711510,cheptq_711520, na.rm = TRUE)) |> 
+  ungroup() |> 
   mutate(elevage_01_canards=ifelse(eff_01_canards > 0,1,0),
          elevage_02_dindes=ifelse(eff_02_dindes > 0,1,0),
          elevage_03_poulets_chair_poules_pondeuses=ifelse(eff_03_poulets_chair_poules_pondeuses > 0,1,0),
@@ -2533,44 +2589,46 @@ exploit_volailles_regroupt <- exploit_dont_volailles_2020 %>%
 **La fonction `across()` permet de sélectionner un groupe de colonnes sur lequel on souhaite appliquer une fonction dplyr.** Ainsi on peut appliquer une fonction sur des colonnes en les sélectionnant comme le fait `select()`. Si on souhaite sélectionner des colonnes en fonction de leur type, on utilise en outre `where()`. Le code suivant groupe les données de la BPE avec les deux colonnes dont le nom commence par "DEP", puis effectue la somme de toutes les colonnes de type numérique.
  
 ```{r , eval = FALSE}
-bpe_ens_2018_tbl %>% 
-  group_by(across(starts_with('DEP'))) %>%
+bpe_ens_2018_tbl |> 
+  group_by(across(starts_with('DEP'))) |>
   summarise(across(where(is.numeric), sum, na.rm = TRUE)) 
 
 ```
 across()
 ```{r , eval = FALSE}
+library(janitor) # pour round_half_up
+
 # Ajout de la variable livraison_dep_perc (pourcentage par rapport au niveau régional)
-lait_production_vache_2 <- lait_production_vache_1 %>% 
-  mutate(livraison_dep_perc =  livraison_dep / livraison_reg *100) %>% 
-  mutate(across(livraison_dep_perc, ~ arrondi(.,digits=3))) %>% 
+lait_production_vache_2 <- lait_production_vache_1 |> 
+  mutate(livraison_dep_perc =  livraison_dep / livraison_reg *100) |> 
+  mutate(across(livraison_dep_perc, ~ round_half_up(.,digits=3))) |> 
   arrange(type,dep_prod)
 
 # Calcul de l'évolution de la production de lait de chèvre et 
 # de la collecte de lait de chèvre entre 2020 et 2021, en hl et en %
-laits_mensuel_chevre_livr_coll_large_2 <- laits_mensuel_chevre_livr_coll_large_1 %>% 
+laits_mensuel_chevre_livr_coll_large_2 <- laits_mensuel_chevre_livr_coll_large_1 |> 
   mutate(livr2021_evol = livraison_2021 - livraison_2020,
          livr2021_evol_perc = (livraison_2021 / livraison_2020 - 1) *100,
          coll2021_evol = collecte_2021 - collecte_2020,
-         coll2021_evol_perc = (collecte_2021 / collecte_2020 - 1) *100) %>% 
-  mutate(across(c(livr2021_evol_perc,coll2021_evol_perc), ~ arrondi(.,digits=3))) %>% 
+         coll2021_evol_perc = (collecte_2021 / collecte_2020 - 1) *100) |> 
+  mutate(across(c(livr2021_evol_perc,coll2021_evol_perc), ~ round_half_up(.,digits=3))) |> 
   mutate(across(c(livraison_2020,livraison_2021,collecte_2020,collecte_2021,
-                  livr2021_evol,coll2021_evol), ~ arrondi(.,digits=0)))
+                  livr2021_evol,coll2021_evol), ~ round_half_up(.,digits=0)))
   
 # lait_chevre_mensuel, sélection des 13 premières lignes
 lait_chevre <- read.xlsx(xlsxFile=paste0(chemin_entree,fichier_entree), 
-                        sheet = "lait chevre",colNames = TRUE,startRow = 8) %>% 
-  as_tibble(.name_repair = make_clean_names) %>% 
-  slice_head(n=13) %>% 
+                        sheet = "lait chevre",colNames = TRUE,startRow = 8) |> 
+  as_tibble(.name_repair = make_clean_names) |> 
+  slice_head(n=13) |> 
   mutate(across(-x1, as.numeric) )
 
-produits_laitiers_2021_2 <- produits_laitiers_2021_1b %>% 
+produits_laitiers_2021_2 <- produits_laitiers_2021_1b |> 
   mutate(across(c(finiqte,finiqte1), as.numeric))
 
 # affichage des lignes en doublon pour l'ensemble des variables
-bio_pdl_test_doublons <- bio_pdl %>% 
-  group_by(across(everything())) %>%
-  filter(n()>1) %>%
+bio_pdl_test_doublons <- bio_pdl |> 
+  group_by(across(everything())) |>
+  filter(n()>1) |>
   ungroup()
 
 ```
@@ -2579,10 +2637,19 @@ bio_pdl_test_doublons <- bio_pdl %>%
 
 ```{r , eval = FALSE}
 # ajout prefixe annee pour Total
-vol_2022 <- vol_2022 %>%
+vol_2022 <- vol_2022 |>
+  rename(total_nombre = paste0("x2022_", total_nombre), 
+         total_poids = paste0("x2022_", total_poids))
+
+# autre méthode
+vol_2022 <- vol_2022 |>
   rename_with(.cols = c(total_nombre,total_poids), function(x){paste0("x2022_", x)})
-vol_2021 <- vol_2021 %>%
-  rename_with(.cols = c(total_nombre,total_poids), function(x){paste0("x2021_", x)})
+
+# On peut simplifier le code en utilisant une fonction anonyme plus courte avec ~.
+# Le . est une variable qui représente chaque élément des colonnes spécifiées. 
+vol_2022 <- vol_2022 |>
+  rename_with(.cols = c(total_nombre,total_poids), ~ paste0("x2022_", .))
+
 ```
 
 ## Ajouter un suffixe à un nom de variable
@@ -2591,8 +2658,8 @@ vol_2021 <- vol_2021 %>%
 # ajout suffixe annee aux variables
 bio_2023 <- read.xlsx(xlsxFile=paste0(chemin,fichier_2023), 
                       sheet = "Feuil1",
-                      colNames = TRUE,startRow = 1) %>% 
-  as_tibble(.name_repair = make_clean_names) %>%
+                      colNames = TRUE,startRow = 1) |> 
+  as_tibble(.name_repair = make_clean_names) |>
   rename_with(.cols = c(nombre_dassocies_gaec,quantite_declaree), 
               function(x){paste0(x,"_2023")})
 ```
@@ -2615,13 +2682,13 @@ str(agri_bio_vegetal_tab1_final)
 
 # exploitants
 exploitants_tot_2020 <- bind_cols(
-  mo_2020 %>% 
+  mo_2020 |> 
     summarise(annee = annee_ra_2020,
               nom = "nombre de chefs d'exploitation et coexploitants",
               n_exploit = n() ),
-  mo_2020 %>% 
-    filter(sex == "FALSE") %>% 
-    summarise(femmes = n() ) ) %>% 
+  mo_2020 |> 
+    filter(sex == "FALSE") |> 
+    summarise(femmes = n() ) ) |> 
     mutate(pcent_f = femmes / n_exploit *100 ) 
 
 ```
@@ -2637,26 +2704,28 @@ La fonction `bind_cols()` permet de juxtaposer des tables (qui doivent avoir le 
 
 adorn_totals
 ```{r , eval = FALSE}
+library(janitor) # pour round_half_up
+
 # nb exploitations par département et pour la région
-nb_exploit_2020_dep_reg <- exploit_2020 %>% 
-  select(nom_dossier,siege_dep) %>% 
-  group_by(territoire = siege_dep) %>% 
-  summarise(nb_total_exploitations = n() ) %>% 
-  ungroup() %>% 
+nb_exploit_2020_dep_reg <- exploit_2020 |> 
+  select(nom_dossier,siege_dep) |> 
+  group_by(territoire = siege_dep) |> 
+  summarise(nb_total_exploitations = n() ) |> 
+  ungroup() |> 
   adorn_totals(where = c("row"), name="Pays de la Loire" )
 
 # ajout ligne Total
-nb_exploitants_age_sau_2010_2020 <- exploitants_age_sau_2010_2020 %>% 
+nb_exploitants_age_sau_2010_2020 <- exploitants_age_sau_2010_2020 |> 
   pivot_wider(names_from =annee,
               names_prefix='an_',
               names_sep = "_",
               values_from= c(n_exploit,
-                             sau_ha) ) %>% 
-  mutate(n_exploit_an_2010_percent = arrondi(n_exploit_an_2010 / sum(n_exploit_an_2010)*100, 2),
-         sau_ha_an_2010_percent = arrondi(sau_ha_an_2010 / sum(sau_ha_an_2010)*100, 2),
-         n_exploit_an_2020_percent = arrondi(n_exploit_an_2020 / sum(n_exploit_an_2020)*100, 2),
-         sau_ha_an_2020_percent = arrondi(sau_ha_an_2020 / sum(sau_ha_an_2020)*100, 2)) %>% 
-  adorn_totals(where = c("row"), name="Ensemble" ) %>% 
+                             sau_ha) ) |> 
+  mutate(n_exploit_an_2010_percent = round_half_up(n_exploit_an_2010 / sum(n_exploit_an_2010)*100, 2),
+         sau_ha_an_2010_percent = round_half_up(sau_ha_an_2010 / sum(sau_ha_an_2010)*100, 2),
+         n_exploit_an_2020_percent = round_half_up(n_exploit_an_2020 / sum(n_exploit_an_2020)*100, 2),
+         sau_ha_an_2020_percent = round_half_up(sau_ha_an_2020 / sum(sau_ha_an_2020)*100, 2)) |> 
+  adorn_totals(where = c("row"), name="Ensemble" ) |> 
   relocate(tr_age_10,
            sau_ha_an_2010_percent,
            sau_ha_an_2020_percent,
@@ -2667,19 +2736,19 @@ nb_exploitants_age_sau_2010_2020 <- exploitants_age_sau_2010_2020 %>%
            n_exploit_an_2010,
            n_exploit_an_2020)
 
-laits_mensuel_chevre_livr_coll_large <- laits_mensuel_chevre_livr_coll %>% 
+laits_mensuel_chevre_livr_coll_large <- laits_mensuel_chevre_livr_coll |> 
   pivot_wider(names_from = annee,
               names_sep = "_",
-              values_from = c(livraison,collecte)) %>% 
+              values_from = c(livraison,collecte)) |> 
   adorn_totals(where = "row",
                name = "Total")
                
 # à partir du tableau transposé, ajout du total régional
-lait_production_vache_large <- lait_production_vache_2 %>% 
-  select(-annee) %>% 
+lait_production_vache_large <- lait_production_vache_2 |> 
+  select(-annee) |> 
   pivot_wider(names_from = type,
-              values_from = c(livraison_reg,livraison_dep,livraison_dep_perc)) %>% 
-  adorn_totals(where = "row", name = "Pays de la Loire" ) %>% 
+              values_from = c(livraison_reg,livraison_dep,livraison_dep_perc)) |> 
+  adorn_totals(where = "row", name = "Pays de la Loire" ) |> 
   select(-c(starts_with("livraison_reg")))
 
 ```
@@ -2693,6 +2762,8 @@ lait_production_vache_large <- lait_production_vache_2 %>%
 La fonction `filter()` permet de sélectionner les observations, selon une condition (ou plusieurs).
 
 ```{r, eval=FALSE}
+library(janitor) # pour round_half_up
+
 table_sortie <- filter(table_entree, Condition1, ..., ConditionN)
 
 # Par exemple :
@@ -2712,37 +2783,39 @@ S6 <- filter(selection, DEP == "62" | densite > 100) # le PdC et l'urbain
 
 filter
 ```{r , eval = FALSE}
-agri_bio_vegetal_fr_tab1 <- agri_bio_vegetal_fr %>%   
-  filter(groupe_de_productions %in% c("Toutes productions") ) %>% 
+library(janitor) # pour round_half_up
+
+agri_bio_vegetal_fr_tab1 <- agri_bio_vegetal_fr |>   
+  filter(groupe_de_productions %in% c("Toutes productions") ) |> 
   select(annee,territoire,nombre_de_producteurs,
          surface_bio_et_en_conversion_en_ha,surface_en_conversion_en_ha,surface_bio_en_ha,
-         part_bio_de_la_sau_en_percent) %>%  
+         part_bio_de_la_sau_en_percent) |>  
   mutate(part_bio_sau_plus_percent = paste0(part_bio_de_la_sau_en_percent," %") )
 
 # filtre des exploitations dont la ligne est differente de zero
-pa_2020_canards_total_ligne_positif <-  pa_2020_canards_total_ligne %>% 
+pa_2020_canards_total_ligne_positif <-  pa_2020_canards_total_ligne |> 
   filter(!total_ligne == 0)
 
-statut_percent <- statut %>% 
-  select(statut_jur="Statut.juridique",an_2010='2010',an_2019='2019',an_2020='2020') %>% 
-  filter(statut_jur %not_in% c("Tous statuts") ) %>% 
-  mutate(an_2010_percent = arrondi((an_2010/sum(an_2010)*100),2),
-         an_2019_percent = arrondi((an_2019/sum(an_2019)*100),2),
-         an_2020_percent = arrondi((an_2020/sum(an_2020)*100),2)) 
+statut_percent <- statut |> 
+  select(statut_jur="Statut.juridique",an_2010='2010',an_2019='2019',an_2020='2020') |> 
+  filter(statut_jur %not_in% c("Tous statuts") ) |> 
+  mutate(an_2010_percent = round_half_up((an_2010/sum(an_2010)*100),2),
+         an_2019_percent = round_half_up((an_2019/sum(an_2019)*100),2),
+         an_2020_percent = round_half_up((an_2020/sum(an_2020)*100),2)) 
 
 # exploitants - coexploitants (age) + dim eco 
-exploitants_age_dim_hors_micro_2010_2020 <- bind_rows(exploitants_2010,exploitants_2020) %>% 
-  filter(dimeco_coef2017 %not_in% c("1-micros"))  %>% 
+exploitants_age_dim_hors_micro_2010_2020 <- bind_rows(exploitants_2010,exploitants_2020) |> 
+  filter(dimeco_coef2017 %not_in% c("1-micros"))  |> 
   group_by(annee = factor(annee, levels = c(annee_ra_2010, annee_ra_2020)),
-           tr_age_10) %>%
+           tr_age_10) |>
   summarise(n_exploit = n(),
             .groups = "drop_last")
 
 # Créer le sous-tableau contenant l'établissement de collecte ou le producteur en Pays de la Loire
 # Pour des conditions non cumulatives (au moins une des conditions doit être remplie), le ou “|”
-laits_mensuel_3 <- laits_mensuel_2 %>% 
+laits_mensuel_3 <- laits_mensuel_2 |> 
   mutate(dep_etab=substr(sircodpost,1,2),
-         dep_prod=substr(dep,2,3) ) %>% 
+         dep_prod=substr(dep,2,3) ) |> 
  filter(dep_etab %in% c("44","49","53","72","85") | dep_prod %in% c("44","49","53","72","85"))
 
 ```
@@ -2790,7 +2863,7 @@ ni_ars_ni_fredon <- filter(prelevement, !(code_reseau %in% c("ARS", "FREDON")))
 **Le verbe `filter()` permet de sélectionner des observations selon une ou plusieurs conditions logiques.** Voici un exemple de code qui sélectionne les magasins de chaussures (`TYPEQU == "B304"`) dans le premier arrondissement de Paris (`DEPCOM == "75101"`) dans la BPE.
 
 ```{r , eval = FALSE}
-bpe_ens_2018_tbl %>% 
+bpe_ens_2018_tbl |> 
   filter(DEPCOM == "75101" & TYPEQU == "B304")
 ```
  
@@ -2813,9 +2886,9 @@ slice_head
 ```{r , eval = FALSE}
 # lait_chevre_mensuel, sélection des 13 premières lignes
 lait_chevre <- read.xlsx(xlsxFile=paste0(chemin_entree,fichier_entree), 
-                        sheet = "lait chevre",colNames = TRUE,startRow = 8) %>% 
-  as_tibble(.name_repair = make_clean_names) %>% 
-  slice_head(n=13) %>% 
+                        sheet = "lait chevre",colNames = TRUE,startRow = 8) |> 
+  as_tibble(.name_repair = make_clean_names) |> 
+  slice_head(n=13) |> 
   mutate(across(-x1, as.numeric) ) 
 ```
 
@@ -2827,25 +2900,27 @@ Le package `dplyr` propose la fonction `bind_rows()` pour superposer deux ou plu
 - si une colonne est manquante dans une des tables, alors des valeurs manquantes sont générées dans la table de sortie.
 
 ```{r , eval = FALSE}
+library(janitor) # pour round_half_up
+
 # 1- Dans ce tableau ne conserver que l'année, le département de la production, 
 # le type (VB et VNB), les totaux départementaux et régionaux
-lait_production_vache_type <- exploit_lait_production_vache_type %>%
-  group_by(type) %>%
-  mutate(livraison_reg=sum(colldiff, na.rm=TRUE)) %>%
-  ungroup() %>% 
-  group_by(type,dep_prod) %>% 
-  mutate(livraison_dep=sum(colldiff, na.rm=TRUE)) %>%
-  ungroup() %>% 
+lait_production_vache_type <- exploit_lait_production_vache_type |>
+  group_by(type) |>
+  mutate(livraison_reg=sum(colldiff, na.rm=TRUE)) |>
+  ungroup() |> 
+  group_by(type,dep_prod) |> 
+  mutate(livraison_dep=sum(colldiff, na.rm=TRUE)) |>
+  ungroup() |> 
   distinct(annee,dep_prod,type,livraison_reg,livraison_dep)
   
 # 2- Réaliser un tableau similaire pour l'ensemble des vaches 
 # (sans distinguer VB et VNB, en indiquant type="vache")
-lait_production_vache_ensemble <- lait_production_vache_1 %>%
+lait_production_vache_ensemble <- lait_production_vache_1 |>
   mutate(type="vache",
-         livraison_reg=sum(colldiff / 100, na.rm=TRUE)) %>%
-  group_by(dep_prod) %>% 
-  mutate(livraison_dep=sum(colldiff / 100, na.rm=TRUE)) %>%
-  ungroup() %>% 
+         livraison_reg=sum(colldiff / 100, na.rm=TRUE)) |>
+  group_by(dep_prod) |> 
+  mutate(livraison_dep=sum(colldiff / 100, na.rm=TRUE)) |>
+  ungroup() |> 
   distinct(annee,dep_prod,type,livraison_reg,livraison_dep)
 
 # 3- Regrouper les 2 tableaux agrégés : tableau pour l'ensemble des vaches 
@@ -2853,17 +2928,17 @@ lait_production_vache_ensemble <- lait_production_vache_1 %>%
 lait_production_vache <-  bind_rows(lait_production_vache_ensemble,lait_production_vache_type) 
 
 # statut
-statut_percent <- statut %>% 
-  select(statut_jur="Statut.juridique",an_2010='2010',an_2019='2019',an_2020='2020') %>% 
-  filter(statut_jur %not_in% c("Tous statuts") ) %>% 
-  mutate(an_2010_percent = arrondi((an_2010/sum(an_2010)*100),2),
-         an_2019_percent = arrondi((an_2019/sum(an_2019)*100),2),
-         an_2020_percent = arrondi((an_2020/sum(an_2020)*100),2)) 
+statut_percent <- statut |> 
+  select(statut_jur="Statut.juridique",an_2010='2010',an_2019='2019',an_2020='2020') |> 
+  filter(statut_jur %not_in% c("Tous statuts") ) |> 
+  mutate(an_2010_percent = round_half_up((an_2010/sum(an_2010)*100),2),
+         an_2019_percent = round_half_up((an_2019/sum(an_2019)*100),2),
+         an_2020_percent = round_half_up((an_2020/sum(an_2020)*100),2)) 
 
-statut_complet <- statut_percent %>% 
-  bind_rows(statut %>% 
-              select(statut_jur="Statut.juridique",an_2010='2010',an_2019='2019',an_2020='2020') %>% 
-              filter(statut_jur %in% c("Tous statuts") ) %>% 
+statut_complet <- statut_percent |> 
+  bind_rows(statut |> 
+              select(statut_jur="Statut.juridique",an_2010='2010',an_2019='2019',an_2020='2020') |> 
+              filter(statut_jur %in% c("Tous statuts") ) |> 
               mutate(an_2010_percent = 100,an_2019_percent = 100,an_2020_percent = 100)  
   )
 
@@ -2883,7 +2958,7 @@ volailles_sum <- rbind(volailles_dep_sum,volailles_pdl_sum)
 
 ```{r , eval = FALSE}
 # ajout 0 pour R52 pour RUB144500	Fromages de vache à pâte persillée     
-produits_laitiers_2021_1b <- produits_laitiers_2021_1 %>% 
+produits_laitiers_2021_1b <- produits_laitiers_2021_1 |> 
   add_row(sir_regn=52,rub="144500",
           lib="Fromages de vache à pâte persillée",
           finiqte=0,finiqte1=0,nbfiniqte=0,nbfiniqte1=0)
@@ -2919,26 +2994,26 @@ library(tidyr) # pour pivot
 
 # pivot_longer
 # colonnes donnees en ligne
-agri_bio_vegetal_fr_tab1_long <- agri_bio_vegetal_fr_tab1_car %>%   
+agri_bio_vegetal_fr_tab1_long <- agri_bio_vegetal_fr_tab1_car |>   
   pivot_longer(cols=c("nombre_de_producteurs","surface_bio_et_en_conversion_en_ha",
                       "surface_en_conversion_en_ha","surface_bio_en_ha",
                       "part_bio_sau_plus_percent"),
                names_to = c("vegetal"),
-               values_to = "donnees" ) %>% 
+               values_to = "donnees" ) |> 
   arrange(desc(territoire) )
 
 # colonne espece en ligne
-volailles_pdl_espece <- volailles_pdl_siqo2 %>%   
+volailles_pdl_espece <- volailles_pdl_siqo2 |>   
   pivot_longer(cols=starts_with("espece_"),
                names_to = c("espece","siqo"),
                names_sep = "_siqo_",
                names_prefix="espece_",
                values_to = "tec" )
-volailles_pdl_espece <- volailles_pdl_espece %>% 
+volailles_pdl_espece <- volailles_pdl_espece |> 
   mutate(tec=tec/1000)
 
 # nouvelles variables mois, type(avec nombre, poids) en enlevant suffixe mois, type par transposition
-vol_2022 <- vol_2022 %>%   
+vol_2022 <- vol_2022 |>   
              pivot_longer(cols = starts_with('x2022'), 
                           names_prefix = "x2022_", 
                           names_to = c("mois", "type"), 
@@ -2949,7 +3024,7 @@ vol_2022 <- vol_2022 %>%
 # nouvelle variable 'montant' en mettant la liste des montants par trimestre par transposition
 # crée variables "trimestre"(modalités 'x1','x2','x3','x4') et 
 # "annee" à partir de c('x4t2018','x1t2019'...)  
-produits_long <- produits %>%   
+produits_long <- produits |>   
              pivot_longer(cols = c('x4t2018','x1t2019','x2t2019','x3t2019','x4t2019',
                                    'x1t2020','x2t2020','x3t2020','x4t2020',
                                    'x1t2021','x2t2021','x3t2021','x4t2021',
@@ -2960,7 +3035,7 @@ produits_long <- produits %>%
 
 # une seule espece en colonne
 # nouvelle variable espece en mettant la liste des especes par transposition
-itavi_2022_2021_espece <- itavi_2022_2021 %>%   
+itavi_2022_2021_espece <- itavi_2022_2021 |>   
              pivot_longer(cols = c(poulet_standard,poulet_label_rouge,dinde,pintade,
                                    poule_pondeuse,canard_rotir,canard_gras,lapin,
                                    poulet_label_rouge_non_ogm,poule_pondeuse_label_rouge_non_ogm), 
@@ -2970,8 +3045,8 @@ itavi_2022_2021_espece <- itavi_2022_2021 %>%
 # colonnes donnees en ligne
 # names_pattern = "(.*)_dep" pour enlever suffixe "_dep"
 # names_pattern = paste0("(.*)_", suffixe)
-agreg_anim_produit_petit_dep_1 <- agreg_anim_produit_petit_pdl %>% 
-  select(-contains("reg")) %>% 
+agreg_anim_produit_petit_dep_1 <- agreg_anim_produit_petit_pdl |> 
+  select(-contains("reg")) |> 
   pivot_longer(cols=contains("_dep"),
                names_to = "indicateur",
                values_to = "donnees_dep",
@@ -2983,7 +3058,7 @@ Nous souhaitons obtenir une nouvelle table, avec une observation par EPCI et par
 
 
 ```{r , eval = FALSE}
-donnees_pauvrete_long <- filosofi_epci_2016_tbl %>% 
+donnees_pauvrete_long <- filosofi_epci_2016_tbl |> 
   pivot_longer(cols = starts_with("TP"), 
                names_to = "tranche_age", 
                values_to = "taux_pauvrete")
@@ -3005,26 +3080,27 @@ Par ailleurs, l'option `names_prefix` permet de définir le préfixe du nom des 
 
 ```{r , eval = FALSE}
 library(tidyr) # pour pivot
+library(janitor) # pour round_half_up
 
-bpe_ens_2018_tbl %>%
-	group_by(REG, TYPEQU) %>%
-	summarise(NB_EQUIP_TOT = sum(NB_EQUIP)) %>%
+bpe_ens_2018_tbl |>
+	group_by(REG, TYPEQU) |>
+	summarise(NB_EQUIP_TOT = sum(NB_EQUIP)) |>
 	pivot_wider(id_cols =TYPEQU,  
 	            names_from = REG, 
 	            values_from = NB_EQUIP_TOT, 
 	            names_prefix = "nb_equip_reg")
 
 # pivot_wider
-volailles_sum <- rbind(volailles_dep_sum,volailles_pdl_sum) %>% 
+volailles_sum <- rbind(volailles_dep_sum,volailles_pdl_sum) |> 
   pivot_wider(names_from=dep,
               values_from =tec_regrpt) 
 
 # transposition lignes vers colonnes
-produits_a17_large <- produits_a17 %>%
+produits_a17_large <- produits_a17 |>
    pivot_wider(names_from = c(annee,flux,semestre), 
                values_from = valeur, 
                names_prefix = "an_"
-               ) %>%
+               ) |>
    mutate(an_2021_imports = an_2021_I_sem1 + an_2021_I_sem2,
           an_2022_imports = an_2022_I_sem1 + an_2022_I_sem2,
           an_2021_exports = an_2021_E_sem1 + an_2021_E_sem2,
@@ -3032,81 +3108,81 @@ produits_a17_large <- produits_a17 %>%
           .after=a17_lib_detail)
 
 # territoire en colonne 
-agri_bio_vegetal_fr_tab1_final <- agri_bio_vegetal_fr_tab1_long %>%   
+agri_bio_vegetal_fr_tab1_final <- agri_bio_vegetal_fr_tab1_long |>   
   pivot_wider( names_from = "territoire", 
                names_prefix="",
                values_from = "donnees" ) 
 
 # Transposer le tableau en format plus large, à partir de la variable type
-lait_production_vache_large <- lait_production_vache_2 %>% 
+lait_production_vache_large <- lait_production_vache_2 |> 
  pivot_wider(names_from = type,
              values_from = c(livraison_reg,livraison_dep,livraison_dep_perc))
 
 # Le format large est approprié pour calculer des évolutions
 # Calculer l'évolution de la production de lait et de la collecte de lait 
 # entre 2020 et 2021, en hl et en %
-laits_mensuel_chevre_livr_coll_large_2 <- laits_mensuel_chevre_livr_coll_large_1 %>% 
+laits_mensuel_chevre_livr_coll_large_2 <- laits_mensuel_chevre_livr_coll_large_1 |> 
   mutate(livr2021_evol = livraison_2021 - livraison_2020,
          livr2021_evol_perc = (livraison_2021 / livraison_2020 - 1) *100,
          coll2021_evol = collecte_2021 - collecte_2020,
-         coll2021_evol_perc = (collecte_2021 / collecte_2020 - 1) *100) %>% 
-  mutate(across(c(livr2021_evol_perc,coll2021_evol_perc), ~ arrondi(.,digits=3))) %>% 
+         coll2021_evol_perc = (collecte_2021 / collecte_2020 - 1) *100) |> 
+  mutate(across(c(livr2021_evol_perc,coll2021_evol_perc), ~ round_half_up(.,digits=3))) |> 
   mutate(across(c(livraison_2020,livraison_2021,
-                  collecte_2020,collecte_2021,livr2021_evol,coll2021_evol), ~ arrondi(.,digits=3)))
+                  collecte_2020,collecte_2021,livr2021_evol,coll2021_evol), ~ round_half_up(.,digits=3)))
   
 # colonne an_mois en colonne
-oeufs_2022_2021_an_mois <- oeufs_2022_2021 %>%   
+oeufs_2022_2021_an_mois <- oeufs_2022_2021 |>   
              pivot_wider( names_from = c(Année,mois),
                           names_prefix="an_",
                           values_from = c(Exportation_Nombre,Importation_Nombre,solde) )
 
-eff_volailles_evol_part <- eff_volailles_evol %>% 
-  select(-c(evo_percent,region,an_2020)) %>% 
+eff_volailles_evol_part <- eff_volailles_evol |> 
+  select(-c(evo_percent,region,an_2020)) |> 
   pivot_wider(names_from =reg,
               names_prefix='',
               names_sep = "_",
-              values_from= c(an_2021,evol_2021_2020) ) %>% 
-  mutate(part_pdl_france_2021=paste0(arrondi(an_2021_pdl/an_2021_fm*100,0)," %") ) %>%
+              values_from= c(an_2021,evol_2021_2020) ) |> 
+  mutate(part_pdl_france_2021=paste0(round_half_up(an_2021_pdl/an_2021_fm*100,0)," %") ) |>
   relocate(an_2021_pdl,evol_2021_2020_pdl,an_2021_fm,evol_2021_2020_fm,
            part_pdl_france_2021, .after = espece )
 
-laits_mensuel_chevre_livr_coll_large <- laits_mensuel_chevre_livr_coll %>% 
+laits_mensuel_chevre_livr_coll_large <- laits_mensuel_chevre_livr_coll |> 
   pivot_wider(names_from = annee,
               names_sep = "_",
-              values_from = c(livraison,collecte)) %>% 
+              values_from = c(livraison,collecte)) |> 
   adorn_totals(where = "row",
                name = "Total")
 
 # passage au format large pour dep
-exploit_otex_dep <- exploit_pdl %>%
-  arrange(desc(dep),otex_regroup) %>% 
+exploit_otex_dep <- exploit_pdl |>
+  arrange(desc(dep),otex_regroup) |> 
   pivot_wider(id_cols =otex_regroup,  
               names_from = dep, 
               values_from = c03_n_exploit_dep, 
               names_prefix = "dep_")
 
 # on transpose cult_pdl_2020 pour avoir une seule ligne par exploitation (nom_dossier)
-nom_dossier_cult_pdl <- cult_pdl_2020 %>% 
+nom_dossier_cult_pdl <- cult_pdl_2020 |> 
   pivot_wider(id_cols = nom_dossier,  
               names_from = cult_ra_code, 
               values_from = c(cultsur,irrisur), 
               names_prefix = "")
 
 # enchainement de pivots
-otex_regroupe <- otex_transp  %>% 
-  select(-c(ends_with('temp'),otex_4813,otex_4840,otex_5100,otex_5374) ) %>% 
+otex_regroupe <- otex_transp  |> 
+  select(-c(ends_with('temp'),otex_4813,otex_4840,otex_5100,otex_5374) ) |> 
   pivot_longer(cols = -c(annee), 
                names_to = c("otex_code_regr"),
-               values_to = "etp") %>% 
+               values_to = "etp") |> 
   pivot_wider(names_from =annee,
               values_from= c(etp) )
 
 # on remet temporairement import export en colonne pour calculer le solde
-produits_large <- produits_long_AZ_C1 %>%   
+produits_large <- produits_long_AZ_C1 |>   
    pivot_wider( names_from = flux, 
-                values_from = montant) %>% 
+                values_from = montant) |> 
    mutate(solde = Export - Import)
-produits_long_AZ_C1 <- produits_large %>%   
+produits_long_AZ_C1 <- produits_large |>   
              pivot_longer(cols = c('Export','Import','solde'), 
                           names_to = 'flux',
                           values_to = "montant")
@@ -3134,71 +3210,71 @@ left_join(x,y, by=c("A","B"))
 
 ```{r , eval = FALSE}
 # jointure des tableaux exploit et prod_anim, avec nom_dossier
-exploit_anim <- exploit %>% 
+exploit_anim <- exploit |> 
   left_join(prod_anim,
           by ="nom_dossier")
 
 # ajout au fichier historique des années 2020 et 2021
-lait_chevre_historiq <- lait_chevre3  %>%
+lait_chevre_historiq <- lait_chevre3  |>
   left_join(laits_mensuel_chevre_livr_coll_large,
             by="code_mois") 
 
-oeufs_annee <- oeufs_2021  %>%
+oeufs_annee <- oeufs_2021  |>
   left_join(oeufs_2020,
             by = c("reg","libelle_culture") )
 
-laits_mensuel_chevre_livr_coll <- laits_mensuel_chevre_livraison %>% 
+laits_mensuel_chevre_livr_coll <- laits_mensuel_chevre_livraison |> 
   left_join(laits_mensuel_chevre_collecte,
-            by=c("annee","code_mois")) %>% 
+            by=c("annee","code_mois")) |> 
   select(-c(reg_etab,reg_prod))
 
 # ajout au fichier historique des années 2020 et 2021
-produits_laitiers_historiq <- produits_laitiers  %>%
-  left_join(groupe_produits_laitiers_2021 %>% 
+produits_laitiers_historiq <- produits_laitiers  |>
+  left_join(groupe_produits_laitiers_2021 |> 
               select(-libellé_produit),
             by=c("territoire","code_produit") )
 
 # regroupement dep reg  avec left_join 
-agreg_anim_produit_petit_dep_reg <- agreg_anim_produit_petit_dep_2 %>% 
+agreg_anim_produit_petit_dep_reg <- agreg_anim_produit_petit_dep_2 |> 
   left_join(agreg_anim_produit_petit_reg, 
-            by = "indicateur") %>% 
+            by = "indicateur") |> 
   mutate(across(where(is.numeric), ~ round_half_up(.,digits=0)))
 
 # on enleve avec collectiffil les pacages communs (Brière par exemple)
-exploit_2010 <- exploit_2010_fm %>% 
-  left_join(ra_2010_geo_2020 %>%
+exploit_2010 <- exploit_2010_fm |> 
+  left_join(ra_2010_geo_2020 |>
               select(id_dossier,
                      siege_dep_2020,       
                      siege_reg_2020),
-              by = c("id_dossier") )  %>% 
+              by = c("id_dossier") )  |> 
   filter(siege_reg_2020 == "52" & collectiffil == "0") 
 
 # enchainement de left_join
-exploitants_2010 <- fam_2010 %>% 
-  filter(famlien %in% c("10", "11", "12", "13"))  %>% 
+exploitants_2010 <- fam_2010 |> 
+  filter(famlien %in% c("10", "11", "12", "13"))  |> 
   mutate(nom_dossier = id_dossier,
          annee = annee_ra_2010,
          age = annee_ra_2010 - as.integer(famanais), 
-         tr_age_10 = cut(age, c(0, seq(40, 60, by = 10), Inf), right = FALSE ) ) %>% 
-  left_join(exploit_2010 %>% 
-              mutate(sau_tot = sau / 100) %>% 
+         tr_age_10 = cut(age, c(0, seq(40, 60, by = 10), Inf), right = FALSE ) ) |> 
+  left_join(exploit_2010 |> 
+              mutate(sau_tot = sau / 100) |> 
               select(nom_dossier = id_dossier,
                      sau_tot), 
-             by = "nom_dossier") %>% 
-  left_join(pbs_2010 %>% 
+             by = "nom_dossier") |> 
+  left_join(pbs_2010 |> 
               select(nom_dossier = id_dossier,
                      dimeco_coef2017,
                      pbstot_coef17), 
             by = "nom_dossier")
 
 # on ajoute le libelle des nomenclatures a129, cpf4 et a17
-produits <- produits %>% 
+produits <- produits |> 
    left_join(y = a129, 
-             by = "a_129") %>% 
+             by = "a_129") |> 
    left_join(y = cpf4, 
-             by = "cpf4") %>% 
+             by = "cpf4") |> 
    left_join(y = table_NAF, 
-             by = "a_129") %>% 
+             by = "a_129") |> 
    left_join(y = secteur_a17, 
              by = "a_17")
 
@@ -3221,7 +3297,7 @@ cog_com_2019_tbl <- as_tibble(doremifasolData::cog_com_2019)
 Voici un exemple dans lequel on utilise la fonction `left_join` pour réaliser une jointure à gauche entre la table des données Filosofi et la table des communes du COG.
 
 ```{r , eval = FALSE}
-table_jointe_tbl <- filosofi_com_2016_tbl %>% 
+table_jointe_tbl <- filosofi_com_2016_tbl |> 
 left_join(y = cog_com_2019_tbl, 
 by = c("CODGEO" = "com"))
 head(table_jointe_tbl)
@@ -3238,29 +3314,29 @@ Parfois, il peut être utile de réaliser une jointure de la table avec elle-mê
 # pour l'ensemble des cas 
 # jointure de l'ensemble des lignes avec la ligne contenant valeur_dep_rang1 (le 1er dep) 
 # ligne par ligne
-recolte_bois_dep_reg <-  recolte_bois_dep_reg %>% 
+recolte_bois_dep_reg <-  recolte_bois_dep_reg |> 
   mutate(commun = 1) 
 
 # en 2 étapes
-recolte_bois_dep_reg_rang1_etape1 <-  recolte_bois_dep_reg %>%
+recolte_bois_dep_reg_rang1_etape1 <-  recolte_bois_dep_reg |>
   select(categorie,commun,
          valeur_dep_rang_y=valeur_dep_rang,
-         valeur_dep_rang1=valeur_dep_rang1_a) %>%
+         valeur_dep_rang1=valeur_dep_rang1_a) |>
   filter(valeur_dep_rang_y == 1)
 
-recolte_bois_dep_reg_2_etape2 <-  recolte_bois_dep_reg %>%
+recolte_bois_dep_reg_2_etape2 <-  recolte_bois_dep_reg |>
   left_join(recolte_bois_dep_reg_rang1_etape1,
-            by=c("categorie","commun")) %>% 
+            by=c("categorie","commun")) |> 
   select(-c(valeur_dep_rang1_a,valeur_dep_rang_y))
 
 # en une étape
-recolte_bois_dep_reg_2 <-  recolte_bois_dep_reg %>%
-  left_join(recolte_bois_dep_reg %>% 
+recolte_bois_dep_reg_2 <-  recolte_bois_dep_reg |>
+  left_join(recolte_bois_dep_reg |> 
               select(categorie,commun,
                      valeur_dep_rang_y=valeur_dep_rang,
-                     valeur_dep_rang1=valeur_dep_rang1_a) %>%
+                     valeur_dep_rang1=valeur_dep_rang1_a) |>
               filter(valeur_dep_rang_y == 1),
-            by=c("categorie","commun")) %>% 
+            by=c("categorie","commun")) |> 
   select(-c(valeur_dep_rang1_a,valeur_dep_rang_y))
 
 ```
@@ -3273,24 +3349,24 @@ Utilisation de la numérotation de lignes comme identifiant commun pour la conca
 
 # Ajout d’une colonne “numéro de ligne”
 # creation d'une variable identifiant reprenant le numéro de ligne 
-bio_pdl_numero_ligne <- bio_pdl %>% 
+bio_pdl_numero_ligne <- bio_pdl |> 
   mutate(ident=row.names(bio_pdl), .before=1)
 
 # Filtrer les enregistrements concernant les pommes
-bio_pdl_pommes_2 <- bio_pdl_numero_ligne %>% 
-  mutate(libelle_ab_2 = ifelse(startsWith(libelleonab, "Pomme"), "Pommes", libelleonab)) %>% 
+bio_pdl_pommes_2 <- bio_pdl_numero_ligne |> 
+  mutate(libelle_ab_2 = ifelse(startsWith(libelleonab, "Pomme"), "Pommes", libelleonab)) |> 
   filter(libelle_ab_2 %in% c("Pommes") & libelleonab != "Pommes de terre (hors féculière)")
 
 # jointure des tableaux bio_pdl_numero_ligne et bio_pdl_pommes_2,
-bio_pdl_nomenclature_numero_ligne <- bio_pdl_numero_ligne %>% 
-  left_join(bio_pdl_pommes_2 %>% 
+bio_pdl_nomenclature_numero_ligne <- bio_pdl_numero_ligne |> 
+  left_join(bio_pdl_pommes_2 |> 
               select(ident,libelle_ab_2),
             by = "ident")
-recolte_bois_pdl_indic <- recolte_bois_pdl_indic %>%
-  mutate(identifiant=row.names(recolte_bois_pdl_indic), .before=1) %>% 
+recolte_bois_pdl_indic <- recolte_bois_pdl_indic |>
+  mutate(identifiant=row.names(recolte_bois_pdl_indic), .before=1) |> 
   mutate(identifiant = as.numeric(identifiant) + 10)
 
-recolte_bois_pdl_indic <- recolte_bois_pdl_indic %>%
+recolte_bois_pdl_indic <- recolte_bois_pdl_indic |>
   mutate(identifiant = case_when(
     indicateur == "Récolte de bois" ~ 62,
     TRUE ~ identifiant), 
@@ -3320,7 +3396,7 @@ full_join(x,y,by=c("C"="D"))
 
 ```{r , eval = FALSE}
 # jointure des tableaux, avec pacage
-surface_bio_2022_2023 <- bio_2023 %>% 
+surface_bio_2022_2023 <- bio_2023 |> 
   full_join(bio_2022,
           by ="pacage") 
 
@@ -3329,7 +3405,7 @@ surface_bio_2022_2023 <- bio_2023 %>%
 # present_2023_absent_2022
 # absent_2023_present_2022
 # creation variable surface supplémentaire en 2023
-surface_bio_2022_2023 <- surface_bio_2022_2023 %>% 
+surface_bio_2022_2023 <- surface_bio_2022_2023 |> 
   mutate(present_2023_present_2022 = ifelse(!is.na(quantite_declaree_2023) & !is.na(quantite_declaree_2022),
                                             yes = 1, no = 0),
          present_2023_absent_2022 = ifelse(!is.na(quantite_declaree_2023) & is.na(quantite_declaree_2022),
@@ -3350,12 +3426,12 @@ unique(surface_bio_2022_2023$indicateur_presence)
 # jointure des tables des différents millésimes et de la table de passage
 # plusieurs lignes par commune en geo 2022 
 # filtre pour récupérer uniquement les communes des Pays de la Loire
-pop <- pop_1990 %>% 
-  full_join(pop_1999, by = c("COM")) %>%
-  full_join(pop_2010, by = c("COM")) %>%
-  full_join(pop_2019, by = c("COM")) %>%
-  full_join(comdepuis1943_com2022, by = c("COM"="depcom_initial")) %>%
-  filter(dep_2022 %in% c("44","49","53","72","85")) %>%
+pop <- pop_1990 |> 
+  full_join(pop_1999, by = c("COM")) |>
+  full_join(pop_2010, by = c("COM")) |>
+  full_join(pop_2019, by = c("COM")) |>
+  full_join(comdepuis1943_com2022, by = c("COM"="depcom_initial")) |>
+  filter(dep_2022 %in% c("44","49","53","72","85")) |>
   select(depcom_2022,libcom_2022,PSDC90,PSDC99,PMUN10,PMUN19)
 ```
 
@@ -3387,16 +3463,16 @@ Avant de procéder à une jointure, il est essentiel de **vérifier la qualité 
   Si les variables de jointure contiennent un grand nombre de fois les mêmes valeurs, la jointure peut devenir très gourmande en ressources, voire irréalisable. Il est donc indispensable de repérer les doublons, et de les traiter si nécessaire. Les deux codes suivants calculent le nombre d'observations dans la table pour chaque valeur des variables de jointure, et affichent les premières lignes par nombre d'observations décroissant. Si la variable `nb_obs` est supérieure ou égale à 2, alors il y a des doublons.
 
   ```{r, eval=FALSE}
-  doublons <- filosofi_com_2016_tbl %>% 
-                group_by(CODGEO) %>% 
-                summarise(nb_obs = n()) %>% 
-                filter(nb_obs > 1) %>% 
+  doublons <- filosofi_com_2016_tbl |> 
+                group_by(CODGEO) |> 
+                summarise(nb_obs = n()) |> 
+                filter(nb_obs > 1) |> 
                 arrange(-nb_obs)
   doublons
   ```
   Une présence de doublons rend nécessaire une analyse de la table avant de réaliser la jointure. 
 
-Le fait que les variables de jointure contiennent des valeurs manquantes ou des doublons n'est pas nécessairement un problème. C'est à vous de déterminer si cela pose un problème. Voici deux questions que vous pouvez vous poser pour analyser la situation :
+Le fait que les variables de jointure contiennent des valeurs manquantes ou des doublons n'est pas nécessairement un problème. C'est à vous de déterminer si cela pose un problème. Voici deux questions à se poser pour analyser la situation :
 
 - La (ou les) variable(s) de jointure doi(ven)t-elle(s) impérativement être renseignée(s) pour chaque observation ? Si oui, il ne doit pas y avoir de valeurs manquantes.
 - La (ou les) variable(s) de jointure doi(ven)t-elle(s) identifier de façon unique chaque observation ? Si oui, il ne doit pas y avoir de doublons.
@@ -3408,24 +3484,24 @@ On peut aussi utiliser la numérotation de lignes comme identifiant commun pour 
 
 ```{r , eval = FALSE}
 # afficher les lignes en doublon pour l'ensemble des variables
-bio_pdl_test_doublons <- bio_pdl %>% 
-  group_by(across(everything())) %>%
-  filter(n()>1) %>%
+bio_pdl_test_doublons <- bio_pdl |> 
+  group_by(across(everything())) |>
+  filter(n()>1) |>
   ungroup()
 
 # afficher les lignes en doublon pour l'ensemble des variables servant d'identifiant
-bio_pdl_test_doublons_var_ok <- bio_pdl %>% 
-  group_by(raisonsociale,numeropacage,numerobio,libelleonab,ss_groupe_onab_libelle,nomoc) %>%
-  filter(n()>1) %>%
-  arrange(raisonsociale,numeropacage,numerobio,libelleonab,ss_groupe_onab_libelle,nomoc) %>%
+bio_pdl_test_doublons_var_ok <- bio_pdl |> 
+  group_by(raisonsociale,numeropacage,numerobio,libelleonab,ss_groupe_onab_libelle,nomoc) |>
+  filter(n()>1) |>
+  arrange(raisonsociale,numeropacage,numerobio,libelleonab,ss_groupe_onab_libelle,nomoc) |>
   ungroup()
 
 # afficher les lignes en doublon pour l'ensemble des variables servant d'identifiant sans nomoc
 # il reste 11 lignes en double, soit 22 observations
-bio_pdl_test_doublons_var_doubl <- bio_pdl %>% 
-  group_by(raisonsociale,numeropacage,numerobio,libelleonab,ss_groupe_onab_libelle) %>%
-  filter(n()>1) %>%
-  arrange(raisonsociale,numeropacage,numerobio,libelleonab,ss_groupe_onab_libelle) %>%
+bio_pdl_test_doublons_var_doubl <- bio_pdl |> 
+  group_by(raisonsociale,numeropacage,numerobio,libelleonab,ss_groupe_onab_libelle) |>
+  filter(n()>1) |>
+  arrange(raisonsociale,numeropacage,numerobio,libelleonab,ss_groupe_onab_libelle) |>
   ungroup()
   
 ```
@@ -3469,7 +3545,7 @@ Après une jointure, il est essentiel de **vérifier que la jointure a bien prod
   On peut par exemple utiliser la fonction `is.na()` qui permet de repérer les observations manquantes dans les variables provenant de la table de droite. S'il y a des valeurs manquantes, cela peut indiquer que cette variable contient des valeurs manquantes dans la table de droite, ou que certaines observations de la table de gauche n'ont pas de correspondances dans la table de droite.
 
   ```{r, eval=FALSE}
-  table_jointe_tbl %>% filter(is.na(dep))
+  table_jointe_tbl |> filter(is.na(dep))
   ```
   
 ## Compléments sur les différentes jointures
@@ -3635,12 +3711,12 @@ On peut aussi gérer les types au moment de l'importation (par exemple avec le p
 ### Travail sur les dates
 
 ```{r , eval = FALSE}
-itavi <- itavi %>%
+itavi <- itavi |>
   mutate(an_mois_date = convertToDate(an_mois))
-# itavi <- itavi %>% mutate(an_mois = substr(as.character(an_mois_date),1,7) ) 
-# itavi <- itavi %>% gsub("-","_",itavi$an_mois)
-# itavi <- itavi %>% str_replace_all("-","_")
-itavi <- itavi %>% 
+# itavi <- itavi |> mutate(an_mois = substr(as.character(an_mois_date),1,7) ) 
+# itavi <- itavi |> gsub("-","_",itavi$an_mois)
+# itavi <- itavi |> str_replace_all("-","_")
+itavi <- itavi |> 
   mutate(annee = year(an_mois_date),
          mois = month(an_mois_date),
          an_mois =paste0(annee,"_",mois) ) 
@@ -3742,8 +3818,10 @@ La fonction `coalesce(x, y)` permet de remplacer les valeurs manquantes de x par
 ## Travailler avec les valeurs manquantes
 
 ```{r , eval = FALSE}
+library(janitor) # pour round_half_up
+
 # mettre NA pour variable d'évolution avec regroupement
-otex_regroupe <- otex_regroupe %>% 
+otex_regroupe <- otex_regroupe |> 
   mutate(evol_2020_2019 = case_when(
     otex_code_regr %in% c("otex_5374_5100","otex_4813_4840") ~ as.numeric(NA), 
     TRUE   ~ evol_2020_2019),
@@ -3752,34 +3830,34 @@ otex_regroupe <- otex_regroupe %>%
       TRUE   ~ evol_2020_2010_par_an )
     )
 # calcul evolution
-otex_regroupe <- otex_regroupe %>%
-  mutate(tx_evol_2020_2010_par_an = arrondi((((an_2020/an_2010)**(1/10)-1)*100),3),
-         tx_evol_2020_2019 = arrondi(((an_2020/an_2019 -1)*100),3),
-         otex_code = substr(otex_code_regr,6,10) ) %>%
-  arrange(otex_code_regr) %>%
-  left_join(otex %>% 
+otex_regroupe <- otex_regroupe |>
+  mutate(tx_evol_2020_2010_par_an = round_half_up((((an_2020/an_2010)**(1/10)-1)*100),3),
+         tx_evol_2020_2019 = round_half_up(((an_2020/an_2019 -1)*100),3),
+         otex_code = substr(otex_code_regr,6,10) ) |>
+  arrange(otex_code_regr) |>
+  left_join(otex |> 
               select(otex_code,otex_lib),
             by = "otex_code") 
 
 # remplacement valeurs NA pour regroupements
-otex_regroupe <- otex_regroupe %>% 
+otex_regroupe <- otex_regroupe |> 
   mutate(evol_2020_2010_par_an = case_when(
-    is.na(evol_2020_2010_par_an) ~ arrondi(tx_evol_2020_2010_par_an,1),
+    is.na(evol_2020_2010_par_an) ~ round_half_up(tx_evol_2020_2010_par_an,1),
     TRUE   ~ evol_2020_2010_par_an),
     evol_2020_2019 = case_when(
-      is.na(evol_2020_2019) ~ arrondi(tx_evol_2020_2019,1),
+      is.na(evol_2020_2019) ~ round_half_up(tx_evol_2020_2019,1),
       TRUE   ~ evol_2020_2019) )
 
 # remplacement valeurs NA
 unique(vab_agri_2020_2$libreg)
-vab_agri_2020_3 <- vab_agri_2020_2 %>% 
-  filter(libreg != "France métropolitaine hors Ile-de-France") %>% 
+vab_agri_2020_3 <- vab_agri_2020_2 |> 
+  filter(libreg != "France métropolitaine hors Ile-de-France") |> 
   mutate(reg = case_when(
       is.na(reg) ~ "FM",
     TRUE ~ reg))
 
 # transformation des valeurs numériques manquantes par des zéros 
-exploit_prod_anim_pdl <- exploit_prod_anim_pdl %>% 
+exploit_prod_anim_pdl <- exploit_prod_anim_pdl |> 
   mutate(across(where(is.numeric), ~ replace(., is.na(.), 0)))
 ```
 
@@ -3795,16 +3873,15 @@ df
 Premier usage : on remplace les valeurs manquantes **dans une colonne** d'un `data.frame`. Dans ce cas, la fonction prend deux arguments : le nom de la variable et la valeur utilisée pour remplacer les valeurs manquantes. Voici un exemple :
 
 ```{r replace_na2}
-library(magrittr) # pour utilisation %>%
 library(tidyr) # pour replace_na
-df %>% 
+df |> 
   dplyr::mutate(x = replace_na(x, 888))
 ```
 
 Second usage : on remplace les valeurs manquantes **dans toutes les colonnes** d'un `data.frame`. Dans ce cas, la fonction prend deux arguments : le nom du `data.frame`, et une liste donnant pour chaque variable la valeur à utiliser pour remplacer les valeurs manquantes. Voici un exemple :
 
 ```{r replace_na3}
-df %>% 
+df |> 
   replace_na(list(x = 888, y = "zzz"))
 ```
 
@@ -3815,25 +3892,25 @@ replace_na()
 # si libelle_ab_2 correspond à "Pommes" et sur libelleonab sinon
 
 # pb avec == si présence de valeurs manquantes
-bio_pdl_nomenclature_pb_na <- bio_pdl_nomenclature %>% 
+bio_pdl_nomenclature_pb_na <- bio_pdl_nomenclature |> 
   mutate(libelle_ab_regroupt = ifelse(libelle_ab_2=="Pommes", yes=libelle_ab_2, no=libelleonab))
 unique(bio_pdl_nomenclature_pb_na$libelle_ab_regroupt)
 
 # %in% permet de gérer la présence de valeurs manquantes
-bio_pdl_nomenclature <- bio_pdl_nomenclature %>% 
+bio_pdl_nomenclature <- bio_pdl_nomenclature |> 
   mutate(libelle_ab_regroupt = ifelse(libelle_ab_2 %in% c("Pommes"), 
                                       yes=libelle_ab_2, 
                                       no=libelleonab))
 unique(bio_pdl_nomenclature$libelle_ab_regroupt)
 
 # on remplace au préalable les valeurs manquantes si on souhaite utiliser ==
-bio_pdl_nomenclature_renommage_na <- bio_pdl_nomenclature %>% 
+bio_pdl_nomenclature_renommage_na <- bio_pdl_nomenclature |> 
   mutate(libelle_ab_2 = replace_na(libelle_ab_2, "hors_pommes"))
 
 # Créer une nomenclature agrégée libelle_ab_regroupt à partir de libelleonab et libelle_ab_2
 # La valeur de libelle_ab_regroupt est basée sur libelle_ab_2 
 # si libelle_ab_2=="Pommes" et sur libelleonab sinon
-bio_pdl_nomenclature_gestion_na <- bio_pdl_nomenclature_renommage_na %>% 
+bio_pdl_nomenclature_gestion_na <- bio_pdl_nomenclature_renommage_na |> 
   mutate(libelle_ab_regroupt = ifelse(libelle_ab_2=="Pommes", 
                                       yes=libelle_ab_2, 
                                       no=libelleonab))
@@ -3857,87 +3934,89 @@ D'appliquer cela en articulation avec `group_by()` qui change la façon d'interp
 
 ## Qu'est-ce que l'opérateur `pipe` ?
 
-Lorsqu'on enchaîne les manipulations sur une table de données, un problème est que le code devient peu lisible car il y a beaucoup d'opérations imbriquées les unes dans les autres, avec un grand nombre de parenthèses ou de crochets. **L'opérateur `pipe` (noté `%>%`) du package `magrittr` permet de résoudre ce problème en réécrivant les opérations de façon plus lisible.** Le principe de l'opérateur `pipe` est très simple :
+Lorsqu'on enchaîne les manipulations sur une table de données, un problème est que le code devient peu lisible car il y a beaucoup d'opérations imbriquées les unes dans les autres, avec un grand nombre de parenthèses ou de crochets. **L'opérateur `pipe` (noté `|>`) permet de résoudre ce problème en réécrivant les opérations de façon plus lisible.** Le principe de l'opérateur `pipe` est très simple :
 
 * le terme qui précède l'opérateur est utilisé comme **premier** argument de la fonction qui suit l'opérateur ;
 * les opérations peuvent être enchaînées en enchaînant les opérateurs `pipe` ;
 * l'opérateur `pipe` fonctionne quelle que soit la nature de l'argument ;
 * l'opérateur `pipe` fonctionne également à l'intérieur de parenthèses.
 
-Voici un petit tableau qui vous donne des exemples : 
+Voici un petit tableau qui donne des exemples : 
 
 | **Ce code est équivalent à...**      | **... ce code**                                     |
 |--------------------------------------|-----------------------------------------------------|
-| `fonction(x)`                        | `x %>% fonction()`                                  |
-| `fonction3(fonction2(fonction1(x)))` | `x %>% fonction1() %>% fonction2() %>% fonction3()` |
-| `mutate(tibble, y = log(x))`        | `tibble %>% mutate(y = x %>% log())`               |
+| `fonction(x)`                        | `x |> fonction()`                                  |
+| `fonction3(fonction2(fonction1(x)))` | `x |> fonction1() |> fonction2() |> fonction3()` |
+| `mutate(tibble, y = log(x))`        | `tibble |> mutate(y = x |> log())`               |
 
 Avec l'usage du pipe, le premier argument -qui devrait être une table- disparaît de l'appel aux fonctions 'dplyr' (filter, arrange...) En effet, le pipe envoie le résultat de la ligne précédente comme premier argument de la ligne suivante.
 
 ### Comment utiliser l'opérateur `pipe` avec le `tidyverse`
 
-**Un traitement statistique avec les _packages_ du `tidyverse` prend généralement la forme d'une succession de verbes séparés par l'opérateur `pipe` (`%>%`).** Il est possible d'aller à la ligne en mettant le `pipe` en bout de ligne (mais pas en début de ligne).
+**Un traitement statistique avec les _packages_ du `tidyverse` prend généralement la forme d'une succession de verbes séparés par l'opérateur `pipe` (`|>`).** Il est possible d'aller à la ligne en mettant le `pipe` en bout de ligne (mais pas en début de ligne).
 
 Voici un exemple détaillé pour comprendre l'utilisation du `pipe`. Ce code se lit comme ceci : on part de la base permanente des équipements 2018, puis on la transforme en `tibble`, puis on conserve uniquement les stations services `TYPEQU == "B316"`, puis on groupe les observations par département `group_by(DEP)`, puis on calcule la somme du nombre de stations-services par département `summarise(nb_equip_total = sum(NB_EQUIP, na.rm = TRUE))`.
 
 ```{r, eval = FALSE}
-nombre <- bpe_ens_2018 %>%
-  as_tibble() %>%
-  filter(TYPEQU == "B316") %>% 
-  group_by(DEP) %>% 
+library(janitor) # pour round_half_up
+
+nombre <- bpe_ens_2018 |>
+  as_tibble() |>
+  filter(TYPEQU == "B316") |> 
+  group_by(DEP) |> 
   summarise(nombre_station_serv = sum(NB_EQUIP, na.rm = TRUE)) 
 
 # on ne conserve que les exploitations avec des bovins
-exploit_bovins_a <- exploit_anim_sel %>%  
+exploit_bovins_a <- exploit_anim_sel |>  
   filter(bovinfil == 1)
 
 # Calculer par département, le nombre d’exploitations ayant des vaches, avec l’effectif de vaches
-nb_exploit_vaches_pdl <- exploit_bovins_c %>%
-  filter(cheptq_111000>0) %>% 
-  group_by(siege_dep) %>% 
+nb_exploit_vaches_pdl <- exploit_bovins_c |>
+  filter(cheptq_111000>0) |> 
+  group_by(siege_dep) |> 
   summarise(nb_expl=n(),
-            vaches=sum(cheptq_111000)) %>% 
-  ungroup() %>% 
+            vaches=sum(cheptq_111000)) |> 
+  ungroup() |> 
   adorn_totals(where = c("row"), name="Pays de la Loire" )
 
 # Calculer par département, le nombre d’exploitations ayant des vaches, avec l’effectif de vaches
 # La fonction summarise() permet d’agréger des données, en appliquant une fonction sur les variables 
 # pour construire une statistique sur les observations de la table.
 # C’est une fonction dite de “résumé”.
-nb_exploit_vaches_dep <- exploit_bovins_c %>%
-  filter(cheptq_111000>0) %>% 
-  group_by(siege_dep) %>% 
+nb_exploit_vaches_dep <- exploit_bovins_c |>
+  filter(cheptq_111000>0) |> 
+  group_by(siege_dep) |> 
   summarise(nb_expl=n(),
-            vaches=sum(cheptq_111000)) %>% 
+            vaches=sum(cheptq_111000)) |> 
   ungroup()
   
 # ajouter la part par rapport à l'ensemble de la région
-nb_exploit_vaches_dep_reg <- nb_exploit_vaches_dep %>%
+nb_exploit_vaches_dep_reg <- nb_exploit_vaches_dep |>
   mutate(nb_expl_reg=sum(nb_expl),
          vaches_reg=sum(vaches),
          part_expl = nb_expl / nb_expl_reg * 100,
-         part_vaches = vaches / vaches_reg * 100) %>% 
-  adorn_totals(where = c("row"), name="Pays de la Loire" ) %>% 
-  mutate(across(c(part_expl,part_vaches), ~ arrondi(.,digits=3)))
+         part_vaches = vaches / vaches_reg * 100) |> 
+  adorn_totals(where = c("row"), name="Pays de la Loire" ) |> 
+  mutate(across(c(part_expl,part_vaches), ~ round_half_up(.,digits=3)))
 
 ```
 https://www.book.utilitr.org/03_fiches_thematiques/fiche_tidyverse#encha%C3%AEner-les-manipulations-avec-lop%C3%A9rateur-pipe
 
-### Exemple d'utilisation du pipe `%>%`
-On peut combiner les opérations à l'aide de l'opérateur pipe `%>%` :
+### Exemple d'utilisation du pipe `|>`
+On peut combiner les opérations à l'aide de l'opérateur pipe `|>` :
 
 ```{r, eval = FALSE}
-selection_62 <- base %>%
+selection_62 <- base |>
   mutate(densite = P14_POP / SUPERF,
          tx_natal = 1000 * NAISD15 / P14_POP,
-         tx_mort = 1000 * DECESD15 / P14_POP) %>%
-  select(CODGEO, ZAU, REG, DEP, densite, tx_natal) %>%
+         tx_mort = 1000 * DECESD15 / P14_POP) |>
+  select(CODGEO, ZAU, REG, DEP, densite, tx_natal) |>
   filter(DEP == "62")
 ```
 Cette écriture permet d'enchaîner les opérations telles qu'on les décrirait à l'oral.
 L'objet auquel s'applique chaque nouvelle opération est le résultat de l'opération précédente.
 
-Sans le pipe `%>%`, pour enchaîner des opérations, on peut créer des variables successives :
+Sans le pipe `|>`, pour enchaîner des opérations, on peut créer des variables successives :
 ```{r,  eval = FALSE}
 df <- mutate(base, densite = P14_POP / SUPERF,
              tx_natal = 1000 * NAISD15 / P14_POP,
@@ -3946,7 +4025,7 @@ selection <- select(df, CODGEO, ZAU, REG, DEP, densite, tx_natal)
 filtre_62 <- filter(selection, DEP == "62")
 ```
 
-Sans le pipe `%>%`, on peut emboîter les fonctions avec des () :
+Sans le pipe `|>`, on peut emboîter les fonctions avec des () :
 ```{r,  eval = FALSE}
 selection_62 <- filter(select(mutate(base, densite = P14_POP / SUPERF,
                                      tx_natal = 1000 * NAISD15 / P14_POP,
@@ -3982,7 +4061,7 @@ table_sortie <- filter(table_entree, x==a | y==b) # x vaut a **OU** y vaut b (ba
 ## La question des arrondis
 
 La fonction 'round' arrondit selon le principe de la parité.
-Pour arrondir systématiquement à l'excès (en valeur absolue) au-delà de 5, il convient d'utiliser une fonction spécifique (à placer en début de programme), comme la fonction round_half_up() du package `janitor`.
+Pour arrondir systématiquement à l'excès (en valeur absolue) au-delà de 5, on peut utiliser une fonction spécifique, comme la fonction round_half_up() du package `janitor`.
 
 La fonction 'round' standard de R applique la norme IEC 60559 qui indique que pour l'arrondi de 5 on arrondit au chiffre pair le plus proche (ce qui évite de surestimer systématiquement les valeurs en arrondissant toujours au dessus).
 
@@ -3990,6 +4069,8 @@ https://fr.wikipedia.org/wiki/Arrondi_(math%C3%A9matiques)
 
 
 ```{r fonctions arrondi, eval = TRUE}
+library(janitor) # pour round_half_up
+
 # floor : l'entier le plus proche inférieur ou égal à l'argument (partie entière) 
 # ceiling : l'entier le plus proche supérieur ou égal à l'argument
 # trunc : équivalent de floor pour les valeurs positives et de ceiling pour les valeurs négatives
@@ -4004,11 +4085,11 @@ arrondi <- function(x, digits = 0) {
   z * posneg
 }
 
-# Avec 'arrondi', si le nombre se situe à mi-chemin, 
+# Avec 'round_half_up', si le nombre se situe à mi-chemin, 
 # il est arrondi à la valeur la plus proche au-dessus (pour les nombres positifs)
 # ou en dessous (pour les nombres négatifs).
 
-# Comparaison des fonctions 'round' et 'arrondi'
+# Comparaison des fonctions 'round' et 'round_half_up'
 # L'aide de la fonction 'round' indique que les arrondis respectent la norme IEC 60559 
 # qui prévoit que l'arrondi soit à la valeur de décimale paire la plus proche 
 # donc round (3.5,digits=0) donne 4 tout comme round(4.5,digits=0). 
@@ -4024,8 +4105,8 @@ r1 <- round(v1)
 r1
 # [1]  0  2  2  4  4  6  6  8  8 10
 
-# fonction 'arrondi' vers le plus loin de zéro 
-a1 <- arrondi(v1)
+# fonction 'round_half_up' vers le plus loin de zéro 
+a1 <- round_half_up(v1)
 # arrondi au supérieur (vers le haut en valeur absolue) 
 a1
 # [1]  1  2  3  4  5  6  7  8  9 10
@@ -4040,9 +4121,9 @@ r_neg <- round(v1neg)
 r_neg
 # [1]   0  -2  -2  -4  -4  -6  -6  -8  -8 -10
 
-# fonction 'arrondi'
-a_neg <- arrondi(v1neg)
-# 'arrondi' pour valeurs négatives
+# fonction 'round_half_up'
+a_neg <- round_half_up(v1neg)
+# 'round_half_up' pour valeurs négatives
 a_neg
 # [1]  -1  -2  -3  -4  -5  -6  -7  -8  -9 -10
 
@@ -4053,7 +4134,7 @@ v2
 r2 <- round(v2)
 r2
 # [1] -2 -2 -1  0  0  0  1  2  2
-a2 <- arrondi(v2)
+a2 <- round_half_up(v2)
 a2
 # [1] -2 -2 -1 -1  0  1  1  2  2
 
@@ -4061,27 +4142,29 @@ a2
 # Les noms des colonnes peuvent être appelés avec la syntaxe `nomtable$nomvariable`. 
 # L’indexation des colonnes de tables (le “$”) permet d'appeler une variable.
 
-# volailles_pdl_sum$tec_regrpt <- arrondi(volailles_pdl_sum$tec_regrpt,digits=2)
+# volailles_pdl_sum$tec_regrpt <- round_half_up(volailles_pdl_sum$tec_regrpt,digits=2)
 
-# eff_volailles_evol <- eff_volailles_annee %>% 
-#   mutate(evol_2021_2020 = paste0(arrondi((((an_2021/an_2020)-1)*100),0)," %"),
+# eff_volailles_evol <- eff_volailles_annee |> 
+#   mutate(evol_2021_2020 = paste0(round_half_up((((an_2021/an_2020)-1)*100),0)," %"),
 #          reg = case_when(
 #            region %in% c("52  -  Pays de la Loire") ~ "pdl",
 #            region %in% c("98  -  Total France métropolitaine") ~ "fm") )
 
 
 ```
-Application de la fonction `arrondi` à plusieurs variables, en utilisant la fonction `across`
+Application de la fonction `round_half_up` à plusieurs variables, en utilisant la fonction `across`
 
 ```{r, eval=FALSE}
+library(janitor) # pour round_half_up
+
 # ajout de la comparaison au niveau reg et au niveau FM (en %)
 names(recolte_bois_dep_reg)
-recolte_bois_dep_reg <- recolte_bois_dep_reg %>%
+recolte_bois_dep_reg <- recolte_bois_dep_reg |>
   mutate(valeur_dep_percent_reg = valeur_dep/valeur_reg*100,
          valeur_dep_percent_fm = valeur_dep/valeur_fm*100,
          valeur_reg_percent_fm = valeur_reg/valeur_fm*100,
-         .after=dep) %>% 
-  mutate(across(contains("percent"), ~ arrondi(.,digits=2)))
+         .after=dep) |> 
+  mutate(across(contains("percent"), ~ round_half_up(.,digits=2)))
 
 ```
 
@@ -4092,18 +4175,18 @@ recolte_bois_dep_reg <- recolte_bois_dep_reg %>%
 # messages non contraignants Warning messages:
 # 1: Problem while computing as.numeric(producteurs_2020) 
 # i NAs introduits lors de la conversion automatique 
-lait_vache_reg_dep_2021_donnees_secret_1 <- lait_vache_reg_dep_2021_donnees %>% 
-  mutate(livraisons_2021=as.character(livraisons_2021) ) %>% 
+lait_vache_reg_dep_2021_donnees_secret_1 <- lait_vache_reg_dep_2021_donnees |> 
+  mutate(livraisons_2021=as.character(livraisons_2021) ) |> 
   mutate(livraisons_2021=ifelse(as.numeric(producteurs_2021) > 0 & 
-                                as.numeric(producteurs_2021) < 3,"Secret",livraisons_2021) ) %>%
+                                as.numeric(producteurs_2021) < 3,"Secret",livraisons_2021) ) |>
   mutate(producteurs_2021=ifelse(as.numeric(producteurs_2021) > 0 & 
-                                as.numeric(producteurs_2021) < 3,"Secret",producteurs_2021) ) %>% 
-  mutate(livraisons_2021=ifelse(Département=="Hérault","Secret",livraisons_2021) ) %>%
+                                as.numeric(producteurs_2021) < 3,"Secret",producteurs_2021) ) |> 
+  mutate(livraisons_2021=ifelse(Département=="Hérault","Secret",livraisons_2021) ) |>
   mutate(producteurs_2021=ifelse(Département=="Hérault","Secret",producteurs_2021) )
   
 # gestion secret
 # au moins 3 établissements 
-exploit_volailles_com_secret_1 <- exploit_volailles_com %>% 
+exploit_volailles_com_secret_1 <- exploit_volailles_com |> 
   mutate(secret_eff_01_canards_com=ifelse(nb_exploit_01_canards_com > 0 & 
                                           nb_exploit_01_canards_com < 3,"Secret",eff_01_canards_com),   
   secret_nb_exploit_01_canards_com=ifelse(nb_exploit_01_canards_com > 0 & 
@@ -4116,20 +4199,20 @@ exploit_volailles_com_secret_1 <- exploit_volailles_com %>%
                                          nb_exploit_02_dindes_com < 3,"Secret",nb_exploit_02_dindes_com))
 # 1 établissement < 85 % total
 # recherche plus gros établissement
-# gros_exploit_volailles <- exploit_volailles_com %>% 
-#   group_by(depcom_2022) %>% 
+# gros_exploit_volailles <- exploit_volailles_com |> 
+#   group_by(depcom_2022) |> 
 #   slice(which.max(eff_01_canards))
 # division par zéro crée NaN, qu'on va remplacer par 0
-exploit_volailles_com_secret_2 <- exploit_volailles_com_secret_1 %>%
-  group_by(depcom_2022) %>% 
+exploit_volailles_com_secret_2 <- exploit_volailles_com_secret_1 |>
+  group_by(depcom_2022) |> 
   mutate(max_eff_01_canards_com=max(eff_01_canards),
-         max_eff_02_dindes_com=max(eff_02_dindes)) %>% 
-  mutate(part_max_eff_01_canards_com=max_eff_01_canards_com/eff_01_canards_com*100 %>% arrondi(digits=2),
-         part_max_eff_02_dindes_com=max_eff_02_dindes_com/eff_02_dindes_com*100 %>%
-           arrondi(digits=2)) %>%  
+         max_eff_02_dindes_com=max(eff_02_dindes)) |> 
+  mutate(part_max_eff_01_canards_com=max_eff_01_canards_com/eff_01_canards_com*100 |> round_half_up(digits=2),
+         part_max_eff_02_dindes_com=max_eff_02_dindes_com/eff_02_dindes_com*100 |>
+           round_half_up(digits=2)) |>  
   mutate(across(everything(), ~ replace(., is.nan(.), 0)))
   
-exploit_volailles_com_secret_3 <- exploit_volailles_com_secret_2 %>% 
+exploit_volailles_com_secret_3 <- exploit_volailles_com_secret_2 |> 
   mutate(secret_eff_01_canards_com=ifelse(part_max_eff_01_canards_com >= 85,
                                           "Secret",
                                           secret_eff_01_canards_com),         
@@ -4179,16 +4262,16 @@ La première méthode consiste à utiliser la fonction 'adorn_totals' du package
 ```{r,  eval = FALSE}
 # nb exploitations par département et pour la région
 # méthode 1 avec adorn_totals
-nb_exploit_2020_dep_reg <- exploit_2020 %>% 
-  select(nom_dossier,siege_dep) %>% 
-  group_by(territoire = siege_dep) %>% 
-  summarise(nb_total_exploitations = n() ) %>% 
-  ungroup() %>% 
+nb_exploit_2020_dep_reg <- exploit_2020 |> 
+  select(nom_dossier,siege_dep) |> 
+  group_by(territoire = siege_dep) |> 
+  summarise(nb_total_exploitations = n() ) |> 
+  ungroup() |> 
   adorn_totals(where = c("row"), name="Pays de la Loire" )
 
 # ajouter le total régional (sauf pour les variables avec %)
-bio_pdl_dep <- bio_pdl_dep %>%
-  select(-c(contains("_pct"))) %>% 
+bio_pdl_dep <- bio_pdl_dep |>
+  select(-c(contains("_pct"))) |> 
   adorn_totals(where = c("row"), name="Pays de la Loire")
 
 ```
@@ -4198,25 +4281,25 @@ La deuxième méthode consiste à réaliser les sommes (ou moyennes) pour le niv
 ```{r,  eval = FALSE}
 # méthode 2 avec ajout variable territoire commune (pour département et région)
 # nb exploitations par département
-nb_exploit_2020_dep <- exploit_2020 %>% 
-  select(nom_dossier,siege_dep,sau_tot) %>% 
-  group_by(territoire = siege_dep) %>% 
+nb_exploit_2020_dep <- exploit_2020 |> 
+  select(nom_dossier,siege_dep,sau_tot) |> 
+  group_by(territoire = siege_dep) |> 
   summarise(nb_total_exploitations = n(),
-            SAU_moyenne_ha = sum(sau_tot, na.rm = TRUE) / n() ) %>% 
+            SAU_moyenne_ha = sum(sau_tot, na.rm = TRUE) / n() ) |> 
   ungroup()      
 
 # méthode 2.1 nb exploitations pour la région
-nb_exploit_2020_reg_a <- exploit_2020 %>% 
-  select(nom_dossier,siege_dep,sau_tot) %>% 
+nb_exploit_2020_reg_a <- exploit_2020 |> 
+  select(nom_dossier,siege_dep,sau_tot) |> 
   summarise(nb_total_exploitations = n(),
-         SAU_moyenne_ha = sum(sau_tot, na.rm = TRUE) / n() ) %>% 
+         SAU_moyenne_ha = sum(sau_tot, na.rm = TRUE) / n() ) |> 
   mutate(territoire = "Pays de la Loire") 
 # méthode 2.2 nb exploitations pour la région
-nb_exploit_2020_reg_b <- exploit_2020 %>% 
-  select(nom_dossier,siege_dep,sau_tot) %>% 
+nb_exploit_2020_reg_b <- exploit_2020 |> 
+  select(nom_dossier,siege_dep,sau_tot) |> 
   mutate(territoire = "Pays de la Loire",
          nb_total_exploitations = n(),
-         SAU_moyenne_ha = sum(sau_tot, na.rm = TRUE) / n() ) %>% 
+         SAU_moyenne_ha = sum(sau_tot, na.rm = TRUE) / n() ) |> 
   distinct(territoire,nb_total_exploitations,SAU_moyenne_ha)
 
 # nb exploitations par département et pour la région par concaténation des lignes
@@ -4237,13 +4320,13 @@ présent dans https://draaf.pays-de-la-loire.agriculture.gouv.fr/dossier-territo
 # arrondi à l'entier le plus petit avec floor 
 # floor Retourne la valeur du plus grand entier inférieur ou égal au nombre spécifié.
 # partie entière : nombre entier immédiatement inférieur ou égal au nombre spécifié. 
-recolte_bois_dep_reg <- recolte_bois_dep_reg %>%
-  group_by(categorie) %>%
+recolte_bois_dep_reg <- recolte_bois_dep_reg |>
+  group_by(categorie) |>
   mutate(valeur_dep_rang = rank(-valeur_dep),
-         .before=1) %>%
+         .before=1) |>
   mutate(valeur_dep_rang1_a=ifelse(valeur_dep_rang==1,yes=libdep,no=""),
-         .after=valeur_dep_rang) %>% 
-  mutate(across(ends_with("rang"),floor)) %>% 
+         .after=valeur_dep_rang) |> 
+  mutate(across(ends_with("rang"),floor)) |> 
   ungroup()
 
 # Calcul de rangs 2 ----  
@@ -4257,29 +4340,29 @@ recolte_bois_dep_reg <- recolte_bois_dep_reg %>%
 # pour l'ensemble des cas 
 # jointure de l'ensemble des lignes avec la ligne contenant valeur_dep_rang1 (le 1er dep)
 # ligne par ligne
-recolte_bois_dep_reg <-  recolte_bois_dep_reg %>% 
+recolte_bois_dep_reg <-  recolte_bois_dep_reg |> 
   mutate(commun = 1) 
 
 # en 2 étapes
-recolte_bois_dep_reg_rang1_etape1 <-  recolte_bois_dep_reg %>%
+recolte_bois_dep_reg_rang1_etape1 <-  recolte_bois_dep_reg |>
   select(categorie,commun,
          valeur_dep_rang_y=valeur_dep_rang,
-         valeur_dep_rang1=valeur_dep_rang1_a) %>%
+         valeur_dep_rang1=valeur_dep_rang1_a) |>
   filter(valeur_dep_rang_y == 1)
 
-recolte_bois_dep_reg_2_etape2 <-  recolte_bois_dep_reg %>%
+recolte_bois_dep_reg_2_etape2 <-  recolte_bois_dep_reg |>
   left_join(recolte_bois_dep_reg_rang1_etape1,
-            by=c("categorie","commun")) %>% 
+            by=c("categorie","commun")) |> 
   select(-c(valeur_dep_rang1_a,valeur_dep_rang_y))
 
 # en une étape
-recolte_bois_dep_reg_2 <-  recolte_bois_dep_reg %>%
-  left_join(recolte_bois_dep_reg %>% 
+recolte_bois_dep_reg_2 <-  recolte_bois_dep_reg |>
+  left_join(recolte_bois_dep_reg |> 
               select(categorie,commun,
                      valeur_dep_rang_y=valeur_dep_rang,
-                     valeur_dep_rang1=valeur_dep_rang1_a) %>%
+                     valeur_dep_rang1=valeur_dep_rang1_a) |>
               filter(valeur_dep_rang_y == 1),
-            by=c("categorie","commun")) %>% 
+            by=c("categorie","commun")) |> 
   select(-c(valeur_dep_rang1_a,valeur_dep_rang_y))
   
 ```
@@ -4311,7 +4394,7 @@ install.packages("nom_package")
 
 ### erreur avec `mutate` associé à `case_when`
 ```{r, eval=FALSE}
-> rp_individu_pdl_age_actif <-  rp_individu_pdl_var %>% 
+> rp_individu_pdl_age_actif <-  rp_individu_pdl_var |> 
 +   mutate(age=case_when(agerevq %in% c("20","25","30","35","40","45","50","55","60") ~ "a_20_64_ans",
 +                        TRUE ~ agerevq),
 +          actif=case_when(tact %in% c(11,12) ~ "actifs",
@@ -4328,7 +4411,7 @@ En effet, la valeur associée à TRUE ~ doit être de même type que la variable
 En associant, TRUE ~ à un élément de type "caractère", cela a résolu le problème.
 
 ```{r, eval=FALSE}
-> rp_individu_pdl_age_actif <-  rp_individu_pdl_var %>% 
+> rp_individu_pdl_age_actif <-  rp_individu_pdl_var |> 
 +   mutate(age=case_when(agerevq %in%
                            c("020","025","030","035","040","045","050","055","060") ~ "a_20_64_ans",
 +                        TRUE ~ agerevq),
@@ -4345,8 +4428,8 @@ En associant, TRUE ~ à un élément de type "caractère", cela a résolu le pro
 
 La fonction `table()` calcule les effectifs d'un tableau croisé :
 ```{r, eval = FALSE}
-t <- base_extrait %>% 
-  select(ZAU, REG) %>% 
+t <- base_extrait |> 
+  select(ZAU, REG) |> 
   table()
 print(t)
 ```
@@ -4357,13 +4440,13 @@ La fonction `prop.table()` prend en entrée un objet `table` (tableau de conting
 
 ```{r, eval = FALSE}
 # Calcule la fréquence en % (la somme de tous les pourcentages vaut 100)
-(prop.table(t) * 100) %>% 
+(prop.table(t) * 100) |> 
   round(digits = 1)
 ```
 
 ```{r, eval = FALSE}
 # Calcule la fréquence en % par région (la somme de tous les pourcentages d'une colonne vaut 100)
-(prop.table(t,"REG") * 100) %>% 
+(prop.table(t,"REG") * 100) |> 
   round(digits = 1)
 ```
 
@@ -4413,7 +4496,7 @@ str_length("abc")
 ```{r, eval = FALSE}
 library(stringr) # pour str_replace
 # remplacement point par virgule
-lait_vache_reg_dep_2021_donnees_secret_2 <- lait_vache_reg_dep_2021_donnees_secret_1 %>% 
+lait_vache_reg_dep_2021_donnees_secret_2 <- lait_vache_reg_dep_2021_donnees_secret_1 |> 
   mutate(across(
     .cols=everything(),
     ~ str_replace(., "[.]", ",")))
@@ -4449,15 +4532,17 @@ calcul_IMC (poids = 60, taille = 1.55)
 ```
 
 ```{r, eval = FALSE}
+library(janitor) # pour round_half_up
+
 # fonction secteurs
 secteur_1 <- function(df)  {
-  df %>% 
-    select(region,'2019','2020') %>% 
+  df |> 
+    select(region,'2019','2020') |> 
     filter(region %in% c("France métropolitaine","Pays de la Loire")) 
 }
 # nouvelle variable emploi_salarie en mettant la liste des especes par transposition
 secteur_2 <- function(df)  {
-  df %>%   
+  df |>   
     pivot_longer(cols = c('2019','2020'), 
                  names_to = c("annee"),
                  values_to = "nb_emploi_salarie")
@@ -4466,12 +4551,12 @@ secteur_2 <- function(df)  {
 # utilisation fonction secteur
 b_iaa <- secteur_1(b_iaa)
 # ajout colonne secteur
-b_iaa_long <- secteur_2(b_iaa)  %>% 
+b_iaa_long <- secteur_2(b_iaa)  |> 
   mutate(secteur = "b2_iaa")
 
 # fonction pour an_semestre en colonne
 an_sem_col <- function(df)  {
-   df %>% 
+   df |> 
    pivot_wider( names_from = c(annee,semestre), names_prefix="an_",
                 values_from = montant)
    }
@@ -4480,7 +4565,7 @@ produits_AZ_C1_reg <- an_sem_col(produits_long_AZ_C1_reg)
 
 # fonction pour calcul évolutions et / semestre précédent
 calcul_evol <- function(df)  {
-   df %>% 
+   df |> 
       mutate(diff2022_sem1_evol = an_2022_sem1 - an_2021_sem1,
              diff2022_sem1_evol_perc = (an_2022_sem1/an_2021_sem1-1)*100,
              diff2021_sem2_evol_prec = an_2021_sem2-an_2021_sem1,
@@ -4494,10 +4579,10 @@ produits_AZ_C1_reg <- calcul_evol(produits_AZ_C1_reg)
 
 # fonction pour arrondi évolutions 
 arrondi_evol <- function(df)  {
-  df %>% 
-  mutate(diff2022_sem1_evol_perc=arrondi(diff2022_sem1_evol_perc, digits=2),
-  diff2021_sem2_evol_prec_perc=arrondi(diff2021_sem2_evol_prec_perc, digits=2),
-  diff2022_sem1_evol_prec_perc=arrondi(diff2022_sem1_evol_prec_perc, digits=2) )
+  df |> 
+  mutate(diff2022_sem1_evol_perc=round_half_up(diff2022_sem1_evol_perc, digits=2),
+  diff2021_sem2_evol_prec_perc=round_half_up(diff2021_sem2_evol_prec_perc, digits=2),
+  diff2022_sem1_evol_prec_perc=round_half_up(diff2022_sem1_evol_prec_perc, digits=2) )
 }
 # utilisation fonction arrondi évolutions 
 produits_AZ_C1_reg <- arrondi_evol(produits_AZ_C1_reg) 
@@ -4508,27 +4593,27 @@ produits_AZ_C1_reg <- arrondi_evol(produits_AZ_C1_reg)
 # traitement récurrent
 # fonction pour effectuer la transformation des données dep + reg
 transform_data <- function(data_entree) {
-  data_dep_1 <- data_entree %>%
-    select(-contains("reg")) %>% 
+  data_dep_1 <- data_entree |>
+    select(-contains("reg")) |> 
     pivot_longer(cols = contains("_dep"), 
                  names_to = "indicateur", 
                  values_to = "donnees_dep", 
                  names_pattern = "(.*)_dep")
   
-  data_dep_2 <- data_dep_1 %>%
+  data_dep_2 <- data_dep_1 |>
     pivot_wider(names_from = depart, 
                 values_from = donnees_dep)
   
-  data_reg <- data_entree %>% 
-    select(-contains("dep")) %>% 
+  data_reg <- data_entree |> 
+    select(-contains("dep")) |> 
     pivot_longer(cols = contains("_reg"),
                  names_to = "indicateur",
                  values_to = "ensemble",
-                 names_pattern = "(.*)_reg") %>% 
+                 names_pattern = "(.*)_reg") |> 
     distinct()
   
   # regroupement dep reg avec left_join 
-  agreg_data_dep_reg <- data_dep_2 %>% 
+  agreg_data_dep_reg <- data_dep_2 |> 
     left_join(data_reg, 
               by = c("indicateur","modalites"))
   
@@ -4597,7 +4682,7 @@ secteur_a17 <- data.frame(a_17 = c("AZ","DE","C1","C2","C3","C4","C5","FZ","GZ",
 
 # otex en clair
 # recode(x, old = new)
-exploit_vaches_otex_clair <- exploit_vaches_otex %>% 
+exploit_vaches_otex_clair <- exploit_vaches_otex |> 
   mutate(otex_libelle = recode(otefda_coef17,
                                "1516"="Grandes cultures",
                                "2829"="Maraîchage, horticulture",
