@@ -150,14 +150,27 @@ Pour changer de version, aller en haut à droite et cocher la version souhaitée
 ### Sessions R
 
 Il est possible d'avoir plusieurs sessions R ouvertes.
-On peut choisir la version de R utilisée au lancement de la session, en allant en haut à droite, via :
+On peut choisir la version de R utilisée au lancement de la session, en allant en haut à droite.
 
-<center>![](images/Cerise_ouvrir_session_R.png){width=50%}</center>
+On peut aussi créer une nouvelle session, en cliquant sur le '+'  en haut à droite, via :
 
-puis choisir la version de R à travers la fenêtre :
+<center>![](images/Cerise_ouvrir_nouvelle_session_R.png){width=50%}</center>
 
-<center>![](images/Cerise_nouvelle_session_R.png){width=50%}</center>
+puis choisir de l'associer à un projet ou à un dossier :
 
+<center>![](images/Cerise_nouvelle_session_R_directory.png){width=50%}</center>
+
+'~' (obtenu par AltGr+2 puis espace) permet d’indiquer le répertoire racine dans Cerise, relatif au répertoire personnel de l'utilisateur (correspond à ~/CERISE/00-Espace-Personnel/prenom.nom/).
+
+On peut préciser le chemin du dossier en cliquant sur 'Parcourir', puis cliquer sur 'Choisissez'
+
+<center>![](images/Cerise_nouvelle_session_R_directory_pdl.png){width=50%}</center>
+
+Puis choisir la version de R à travers la fenêtre :
+
+<center>![](images/Cerise_nouvelle_session_version_R.png){width=50%}</center>
+
+et enfin cliquer sur 'Start'.
 
 ### Comment récupérer un chemin pour l'utiliser dans un programme R
 
@@ -177,7 +190,7 @@ Pour l'utilisateur muni de ce chemin, il convient de cliquer sur les trois petit
 Dans la fenêtre qui apparaît, on colle le chemin vers le dossier d'intérêt, par exemple  
 ~/CERISE/01-Espace-de-Partage/SRISE/Pays-De-La-Loire/Partage_R
 
-~(AltGr+2) permet d'indiquer le répertoire racine dans Cerise.
+~ (obtenu par AltGr+2 puis espace) permet d’indiquer le répertoire racine dans Cerise, relatif au répertoire personnel de l'utilisateur (correspond à ~/CERISE/00-Espace-Personnel/prenom.nom/).
 
 On clique enfin sur OK, nous voici dans le bon dossier.
 
@@ -355,7 +368,8 @@ Pour gagner du temps, il est important d'utiliser les raccourcis pour les comman
 
 https://orion.agriculture/confluence/display/CER/Ergonomie+et+raccourcis+dans+RStudio
 
-https://www.book.utilitr.org/03_fiches_thematiques/fiche_rprojects#raccourcis-utiles-pour-l%C3%A9dition-de-code
+https://book.utilitr.org/03_Fiches_thematiques/Fiche_rprojects.html#utiliser-les-fonctionnalit%C3%A9s-de-rstudio
+
 
 ### L'espace de travail - le 'workspace'
 
@@ -908,7 +922,8 @@ laits_reg_dep_2021 <- read.xlsx(xlsxFile=paste0(chemin_entree_2021,fichier_entre
          dep_prod=substr(depprod,2,3))  
 ```
 
-https://www.book.utilitr.org/03_fiches_thematiques/fiche_import_tableurs#importer-un-fichier-xlsx-avec-le-package-openxlsx
+https://book.utilitr.org/03_Fiches_thematiques/Fiche_import_tableurs.html#importer-un-fichier-xlsx-avec-le-package-openxlsx
+
 
 ### Importer des fichiers xls
 
@@ -955,7 +970,7 @@ volailles_pdl_espece_siqo <- read_xls(path = paste0(chemin,fichier),
 
 * **Gestion des `NA` ** : il est possible de préciser les valeurs qu'on souhaite considérer comme des `NA` avec le paramètre `na`. Par défaut, la valeur `""` est considérée comme `NA`.
 
-https://www.book.utilitr.org/03_fiches_thematiques/fiche_import_tableurs#importer-un-fichier-xls-avec-le-package-readxl
+https://book.utilitr.org/03_Fiches_thematiques/Fiche_import_tableurs.html#importer-un-fichier-xls-avec-le-package-readxl
 
 
 ### Importer des fichiers ods
@@ -1069,7 +1084,9 @@ La fonction `read_delim()` de `readr` permet d'importer les données d'un fichie
 
 `read_csv()`, `read_csv2()` et `read_tsv()` sont des implémentations pré-renseignées de `read_delim` pour lire des fichiers plats avec séparateurs (caractère délimiteur de colonne) **,** **;** et **tabulaire**.
 
-https://www.book.utilitr.org/03_fiches_thematiques/fiche_import_fichiers_plats#utiliser-la-fonction-read_delim
+https://book.utilitr.org/03_Fiches_thematiques/Fiche_import_fichiers_plats.html
+
+https://book.utilitr.org/03_Fiches_thematiques/Fiche_import_fichiers_plats.html#utiliser-la-fonction-read_delim
 
 
 ### Importer des fichiers SPSS (.sav)
@@ -3483,7 +3500,7 @@ pop <- pop_1990 |>
 
 
 ## Quelques bonnes pratiques sur les jointures
-Pour plus de précisions, consulter la fiche https://www.book.utilitr.org/03_fiches_thematiques/fiche_joindre_donnees#jointure-avec-dplyr qui présente un certain nombre de règles et de bonnes pratiques sur les jointures.
+Pour plus de précisions, consulter la fiche https://book.utilitr.org/03_Fiches_thematiques/Fiche_joindre_donnees.html#quelques-bonnes-pratiques-sur-les-jointures qui présente un certain nombre de règles et de bonnes pratiques sur les jointures.
 
 ### Avant la jointure
 
@@ -3517,6 +3534,20 @@ Avant de procéder à une jointure, il est essentiel de **vérifier la qualité 
                 arrange(-nb_obs)
                 
   doublons
+
+# On vérife l’unité d’observation des deux dataframes avant la jointure.
+# La fonction eeptools::isid permet de vérifier si un ensemble de variables
+# forme un identifiant unique pour les différentes observations dans un dataframe. 
+# Elle renvoie un booléen (TRUE/FALSE) indiquant si les variables identifient 
+# de manière unique une ligne dans le dataframe.
+
+  eeptools::isid(laits_mensuel_chevre_livraison, 
+  var=c("annee","mois"),
+  verbose = TRUE)
+  
+  eeptools::isid(laits_mensuel_chevre_collecte, 
+  var=c("annee","mois"))
+  
   ```
   Une présence de doublons rend nécessaire une analyse de la table avant de réaliser la jointure. 
 
@@ -3589,6 +3620,30 @@ Après une jointure, il est essentiel de **vérifier que la jointure a bien prod
                                 by = c("CODGEO" = "com"))
                                 
   dim(table_jointe_tbl)
+  
+  # L'argument relationship permet de vérifier que le nombre de correspondances 
+  # est bien conforme aux attentes (one-to-one, one-to-many...).
+  # L’utilisation de relationship = "one-to-one" dans la jointure permet de garantir 
+  # qu’un enregistrement dans une table est associé à un, et un seul, enregistrement dans une autre table 
+  laits_mensuel_chevre_livraison_collecte <- laits_mensuel_chevre_livraison |> 
+    full_join(laits_mensuel_chevre_collecte,
+              join_by(annee,mois),
+              relationship = "one-to-one")
+
+  # Si la valeur transmise à l’argument relationship est différente du réel lien 
+  # entre les deux clés des tableaux de données, alors une erreur surviendra. 
+  # error_laits_mensuel_chevre_livraison_collecte <- laits_mensuel_chevre_livraison |> 
+  #   full_join(laits_mensuel_chevre_collecte,
+  #             join_by(mois),
+  #             relationship = "one-to-one")
+ 
+  # Si l'on ne spécifie le type de jointure réalisé (1 to 1, 1 to many, many to 1, many to many),
+  # la commande fonctionne et exécute la jointure. 
+  # On obtient seulement un avertissement.
+  # warning_laits_mensuel_chevre_livraison_collecte <- laits_mensuel_chevre_livraison |> 
+  #   full_join(laits_mensuel_chevre_collecte,
+  #             join_by(mois))
+
   ```
 
 - **Règle n°5 : vérifier la présence éventuelle de valeurs manquantes (`NA`) dans les variables d'intérêt.** 
@@ -3684,6 +3739,8 @@ Les lettres du groupe des utilisateurs de R (GUR) sont aussi très utiles :
 
 Elles sont disponibles sur : *~/CERISE/01-Espace-de-Partage/SSP/BMIS/comment_fair*.
 
+On peut aussi s'appuyer sur le site [Introduction à R et au tidyverse](https://juba.github.io/tidyverse) et sur des [aide-mémoire](https://posit.co/resources/cheatsheets) (antisèches ou 'feuilles de triche').
+
 
 ## Comment nommer les fichiers  ?
 
@@ -3721,9 +3778,6 @@ vignette("rowwise", package="dplyr") # dans RStudio
 RShowDoc("rowwise", package="dplyr") # dans le navigateur web
 ```
 
-Les cheatsheets (ou antisèches) sont des documents visant à résumer de manière graphique la fonction et l’usage d’un package.
-Les plus utiles sont listées ici:
-https://posit.co/resources/cheatsheets/
 
 ## L'encodage
 
