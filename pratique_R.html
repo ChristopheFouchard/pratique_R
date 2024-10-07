@@ -7,7 +7,7 @@
 
         <meta name="author" content="Christophe Fouchard" />
     
-        <meta name="date" content="2024-11-04" />
+        <meta name="date" content="2024-07-10" />
     
     <title>Guide pratique R</title>
 
@@ -1101,7 +1101,7 @@ src: url(data:font/ttf;base64,AAEAAAARAQAABAAQR0RFRgs+Cz8AAjwQAAAAQEdQT1MXWeoAAA
         <style type="text/css">code{white-space: pre;}</style>
     <style type="text/css">
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -1443,7 +1443,7 @@ margin-left: 0 !important;
     </div>
     <div id="postamble" data-toggle="wy-nav-shift" class="status">
                   <p class="author"><span class="glyphicon glyphicon-user"></span> Christophe Fouchard</p>
-                        <p class="date"><span class="glyphicon glyphicon-calendar"></span> 11/04/2024</p>
+                        <p class="date"><span class="glyphicon glyphicon-calendar"></span> 07/10/2024</p>
           </div>
    </div>
      
@@ -2778,21 +2778,24 @@ La flèche d’assignation peut être écrite avec le raccourci clavier alt + �
 <div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" tabindex="-1"></a>cog_com_2019_tbl <span class="ot">&lt;-</span> doremifasolData<span class="sc">::</span>cog_com_2019 <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>()</span>
 <span id="cb46-2"><a href="#cb46-2" tabindex="-1"></a>cog_com_2019_tbl</span></code></pre></div>
 <p>Voici comment on peut utiliser <code>separate</code> pour scinder <code>com</code> en deux nouvelles colonnes <code>code_dep</code> et <code>code_com</code>. La colonne <code>com</code> disparait, car par défaut <code>separate</code> supprime la colonne scindée. Si on souhaite la conserver, il faut ajouter l’option <code>remove = FALSE</code>.</p>
-<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" tabindex="-1"></a>cog_com_2019_tbl <span class="sc">|&gt;</span> </span>
-<span id="cb47-2"><a href="#cb47-2" tabindex="-1"></a>  <span class="fu">separate</span>(com, <span class="fu">c</span>(<span class="st">&quot;code_dep&quot;</span>, <span class="st">&quot;code_com&quot;</span>), <span class="at">sep =</span> <span class="dv">2</span>)</span>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb47-2"><a href="#cb47-2" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
 <span id="cb47-3"><a href="#cb47-3" tabindex="-1"></a></span>
-<span id="cb47-4"><a href="#cb47-4" tabindex="-1"></a><span class="co"># séparation d&#39;une variable date (&quot;22-09-2022&quot;) en &quot;jour&quot;,&quot;mois&quot;,&quot;annee&quot;</span></span>
-<span id="cb47-5"><a href="#cb47-5" tabindex="-1"></a>oeufs_cot_det <span class="ot">&lt;-</span> oeufs_cot_det <span class="sc">|&gt;</span> </span>
-<span id="cb47-6"><a href="#cb47-6" tabindex="-1"></a>  <span class="fu">separate</span>(DATE,<span class="at">sep=</span><span class="st">&quot;-&quot;</span>, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">&quot;jour&quot;</span>,<span class="st">&quot;mois&quot;</span>,<span class="st">&quot;annee&quot;</span>))</span>
-<span id="cb47-7"><a href="#cb47-7" tabindex="-1"></a></span>
-<span id="cb47-8"><a href="#cb47-8" tabindex="-1"></a><span class="co"># on divise les noms de colonnes en &quot;indicateur&quot; et &quot;territoire&quot;</span></span>
-<span id="cb47-9"><a href="#cb47-9" tabindex="-1"></a><span class="co"># on transpose le niveau dep en colonnes</span></span>
-<span id="cb47-10"><a href="#cb47-10" tabindex="-1"></a>agreg_anim_produit_grand_dep_reg <span class="ot">&lt;-</span> agreg_anim_produit_grand_dep_pdl_long <span class="sc">|&gt;</span></span>
-<span id="cb47-11"><a href="#cb47-11" tabindex="-1"></a>  <span class="fu">separate</span>(indicateur_territoire, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">&quot;indicateur&quot;</span>, <span class="st">&quot;territoire&quot;</span>), <span class="at">sep =</span> <span class="st">&quot;_dep_&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb47-12"><a href="#cb47-12" tabindex="-1"></a>  <span class="fu">arrange</span>(territoire) <span class="sc">|&gt;</span> </span>
-<span id="cb47-13"><a href="#cb47-13" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> territoire, </span>
-<span id="cb47-14"><a href="#cb47-14" tabindex="-1"></a>              <span class="at">values_from =</span> donnees_territoire) <span class="sc">|&gt;</span></span>
-<span id="cb47-15"><a href="#cb47-15" tabindex="-1"></a>  <span class="fu">arrange</span>(indicateur) </span></code></pre></div>
+<span id="cb47-4"><a href="#cb47-4" tabindex="-1"></a>cog_com_2019_tbl <span class="sc">|&gt;</span> </span>
+<span id="cb47-5"><a href="#cb47-5" tabindex="-1"></a>  <span class="fu">separate</span>(com, <span class="fu">c</span>(<span class="st">&quot;code_dep&quot;</span>, <span class="st">&quot;code_com&quot;</span>), <span class="at">sep =</span> <span class="dv">2</span>)</span>
+<span id="cb47-6"><a href="#cb47-6" tabindex="-1"></a></span>
+<span id="cb47-7"><a href="#cb47-7" tabindex="-1"></a><span class="co"># séparation d&#39;une variable date (&quot;22-09-2022&quot;) en &quot;jour&quot;,&quot;mois&quot;,&quot;annee&quot;</span></span>
+<span id="cb47-8"><a href="#cb47-8" tabindex="-1"></a>oeufs_cot_det <span class="ot">&lt;-</span> oeufs_cot_det <span class="sc">|&gt;</span> </span>
+<span id="cb47-9"><a href="#cb47-9" tabindex="-1"></a>  <span class="fu">separate</span>(DATE,<span class="at">sep=</span><span class="st">&quot;-&quot;</span>, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">&quot;jour&quot;</span>,<span class="st">&quot;mois&quot;</span>,<span class="st">&quot;annee&quot;</span>))</span>
+<span id="cb47-10"><a href="#cb47-10" tabindex="-1"></a></span>
+<span id="cb47-11"><a href="#cb47-11" tabindex="-1"></a><span class="co"># on divise les noms de colonnes en &quot;indicateur&quot; et &quot;territoire&quot;</span></span>
+<span id="cb47-12"><a href="#cb47-12" tabindex="-1"></a><span class="co"># on transpose le niveau dep en colonnes</span></span>
+<span id="cb47-13"><a href="#cb47-13" tabindex="-1"></a>agreg_anim_produit_grand_dep_reg <span class="ot">&lt;-</span> agreg_anim_produit_grand_dep_pdl_long <span class="sc">|&gt;</span></span>
+<span id="cb47-14"><a href="#cb47-14" tabindex="-1"></a>  <span class="fu">separate</span>(indicateur_territoire, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">&quot;indicateur&quot;</span>, <span class="st">&quot;territoire&quot;</span>), <span class="at">sep =</span> <span class="st">&quot;_dep_&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb47-15"><a href="#cb47-15" tabindex="-1"></a>  <span class="fu">arrange</span>(territoire) <span class="sc">|&gt;</span> </span>
+<span id="cb47-16"><a href="#cb47-16" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> territoire, </span>
+<span id="cb47-17"><a href="#cb47-17" tabindex="-1"></a>              <span class="at">values_from =</span> donnees_territoire) <span class="sc">|&gt;</span></span>
+<span id="cb47-18"><a href="#cb47-18" tabindex="-1"></a>  <span class="fu">arrange</span>(indicateur) </span></code></pre></div>
 </div>
 <div id="unite-regrouper-plusieurs-colonnes-en-une-seule" class="section level3" number="4.2.2">
 <h3><span class="header-section-number">4.2.2</span> <code>unite</code> : regrouper plusieurs colonnes en une seule</h3>
@@ -3758,43 +3761,48 @@ Ainsi, (20,40] signifie « strictement supérieur à 20 et inférieur ou égal �
 <span id="cb96-4"><a href="#cb96-4" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">surface_bio_conversion_en_ha=</span><span class="fu">sum</span>(surface_bio_et_en_conversion_en_ha, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) ) <span class="sc">|&gt;</span> </span>
 <span id="cb96-5"><a href="#cb96-5" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(territoire),cultures_2)</span></code></pre></div>
 <p>Spécificité pour les vecteurs ‘factor’, le tri se réalise avec l’instruction levels</p>
-<div class="sourceCode" id="cb97"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb97-1"><a href="#cb97-1" tabindex="-1"></a><span class="co"># regroupements et pivot_wider</span></span>
-<span id="cb97-2"><a href="#cb97-2" tabindex="-1"></a>volailles_sum <span class="ot">&lt;-</span> <span class="fu">rbind</span>(volailles_dep_sum,volailles_pdl_sum) <span class="sc">|&gt;</span> </span>
-<span id="cb97-3"><a href="#cb97-3" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from=</span>dep,</span>
-<span id="cb97-4"><a href="#cb97-4" tabindex="-1"></a>              <span class="at">values_from =</span>tec_regrpt) <span class="sc">|&gt;</span> </span>
-<span id="cb97-5"><a href="#cb97-5" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">espece_ordre=</span><span class="fu">factor</span>(espece,<span class="at">levels=</span> <span class="fu">c</span>(<span class="st">&quot;a10-volailles&quot;</span>,</span>
-<span id="cb97-6"><a href="#cb97-6" tabindex="-1"></a>                                              <span class="st">&quot;b11-poulets&quot;</span>,</span>
-<span id="cb97-7"><a href="#cb97-7" tabindex="-1"></a>                                              <span class="st">&quot;c12-dindes&quot;</span>, </span>
-<span id="cb97-8"><a href="#cb97-8" tabindex="-1"></a>                                              <span class="st">&quot;d14-canards&quot;</span>, </span>
-<span id="cb97-9"><a href="#cb97-9" tabindex="-1"></a>                                              <span class="st">&quot;e17-lapins&quot;</span> ) ) )</span></code></pre></div>
+<div class="sourceCode" id="cb97"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb97-1"><a href="#cb97-1" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb97-2"><a href="#cb97-2" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb97-3"><a href="#cb97-3" tabindex="-1"></a></span>
+<span id="cb97-4"><a href="#cb97-4" tabindex="-1"></a><span class="co"># regroupements et pivot_wider</span></span>
+<span id="cb97-5"><a href="#cb97-5" tabindex="-1"></a>volailles_sum <span class="ot">&lt;-</span> <span class="fu">rbind</span>(volailles_dep_sum,volailles_pdl_sum) <span class="sc">|&gt;</span> </span>
+<span id="cb97-6"><a href="#cb97-6" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from=</span>dep,</span>
+<span id="cb97-7"><a href="#cb97-7" tabindex="-1"></a>              <span class="at">values_from =</span>tec_regrpt) <span class="sc">|&gt;</span> </span>
+<span id="cb97-8"><a href="#cb97-8" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">espece_ordre=</span><span class="fu">factor</span>(espece,<span class="at">levels=</span> <span class="fu">c</span>(<span class="st">&quot;a10-volailles&quot;</span>,</span>
+<span id="cb97-9"><a href="#cb97-9" tabindex="-1"></a>                                              <span class="st">&quot;b11-poulets&quot;</span>,</span>
+<span id="cb97-10"><a href="#cb97-10" tabindex="-1"></a>                                              <span class="st">&quot;c12-dindes&quot;</span>, </span>
+<span id="cb97-11"><a href="#cb97-11" tabindex="-1"></a>                                              <span class="st">&quot;d14-canards&quot;</span>, </span>
+<span id="cb97-12"><a href="#cb97-12" tabindex="-1"></a>                                              <span class="st">&quot;e17-lapins&quot;</span> ) ) )</span></code></pre></div>
 </div>
 <div id="changement-ordre-des-colonnes" class="section level2" number="4.13">
 <h2><span class="header-section-number">4.13</span> Changement ordre des colonnes</h2>
 <p>relocate</p>
-<div class="sourceCode" id="cb98"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb98-1"><a href="#cb98-1" tabindex="-1"></a><span class="fu">library</span>(janitor) <span class="co"># pour round_half_up</span></span>
-<span id="cb98-2"><a href="#cb98-2" tabindex="-1"></a></span>
-<span id="cb98-3"><a href="#cb98-3" tabindex="-1"></a><span class="co"># la fonction relocate() pour réorganiser les colonnes.</span></span>
-<span id="cb98-4"><a href="#cb98-4" tabindex="-1"></a><span class="co"># Le comportement par défaut est de déplacer la ou les colonnes nommées vers la première position.</span></span>
-<span id="cb98-5"><a href="#cb98-5" tabindex="-1"></a>otex_regroupe <span class="ot">&lt;-</span> otex_regroupe <span class="sc">|&gt;</span></span>
-<span id="cb98-6"><a href="#cb98-6" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">otex_lib_det =</span> <span class="fu">substr</span>(otex_lib,<span class="dv">8</span>,<span class="dv">60</span>) ) <span class="sc">|&gt;</span></span>
-<span id="cb98-7"><a href="#cb98-7" tabindex="-1"></a>  <span class="fu">relocate</span>(otex_lib, otex_lib_det, <span class="at">.after =</span> otex_code_regr )</span>
-<span id="cb98-8"><a href="#cb98-8" tabindex="-1"></a></span>
-<span id="cb98-9"><a href="#cb98-9" tabindex="-1"></a>eff_volailles_evol_part <span class="ot">&lt;-</span> eff_volailles_evol <span class="sc">|&gt;</span> </span>
-<span id="cb98-10"><a href="#cb98-10" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(evo_percent,region,an_2020)) <span class="sc">|&gt;</span> </span>
-<span id="cb98-11"><a href="#cb98-11" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span>reg,</span>
-<span id="cb98-12"><a href="#cb98-12" tabindex="-1"></a>              <span class="at">names_prefix=</span><span class="st">&#39;&#39;</span>,</span>
-<span id="cb98-13"><a href="#cb98-13" tabindex="-1"></a>              <span class="at">names_sep =</span> <span class="st">&quot;_&quot;</span>,</span>
-<span id="cb98-14"><a href="#cb98-14" tabindex="-1"></a>              <span class="at">values_from=</span> <span class="fu">c</span>(an_2021,evol_2021_2020) ) <span class="sc">|&gt;</span> </span>
-<span id="cb98-15"><a href="#cb98-15" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">part_pdl_france_2021=</span><span class="fu">paste0</span>(<span class="fu">round_half_up</span>(an_2021_pdl<span class="sc">/</span>an_2021_fm<span class="sc">*</span><span class="dv">100</span>,<span class="dv">0</span>),<span class="st">&quot; %&quot;</span>) ) <span class="sc">|&gt;</span></span>
-<span id="cb98-16"><a href="#cb98-16" tabindex="-1"></a>  <span class="fu">relocate</span>(an_2021_pdl,evol_2021_2020_pdl,an_2021_fm,</span>
-<span id="cb98-17"><a href="#cb98-17" tabindex="-1"></a>           evol_2021_2020_fm,part_pdl_france_2021, <span class="at">.after =</span> espece )</span>
-<span id="cb98-18"><a href="#cb98-18" tabindex="-1"></a></span>
-<span id="cb98-19"><a href="#cb98-19" tabindex="-1"></a><span class="co"># succession de relocate</span></span>
-<span id="cb98-20"><a href="#cb98-20" tabindex="-1"></a>lait_chevre_dep_2021_donnees <span class="ot">&lt;-</span> lait_chevre_dep3 <span class="sc">|&gt;</span> </span>
-<span id="cb98-21"><a href="#cb98-21" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(reg_dep_prod,dep_libdep,producteurs_2020_old,livraisons_2020_old,lait)) <span class="sc">|&gt;</span> </span>
-<span id="cb98-22"><a href="#cb98-22" tabindex="-1"></a>  <span class="fu">relocate</span>(Code_département,Département, <span class="at">.before =</span> producteurs_2010) <span class="sc">|&gt;</span> </span>
-<span id="cb98-23"><a href="#cb98-23" tabindex="-1"></a>  <span class="fu">relocate</span>(producteurs_2020,livraisons_2020,</span>
-<span id="cb98-24"><a href="#cb98-24" tabindex="-1"></a>           producteurs_2021,livraisons_2021, <span class="at">.after =</span> livraisons_2019)</span></code></pre></div>
+<div class="sourceCode" id="cb98"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb98-1"><a href="#cb98-1" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb98-2"><a href="#cb98-2" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb98-3"><a href="#cb98-3" tabindex="-1"></a><span class="fu">library</span>(janitor) <span class="co"># pour round_half_up</span></span>
+<span id="cb98-4"><a href="#cb98-4" tabindex="-1"></a></span>
+<span id="cb98-5"><a href="#cb98-5" tabindex="-1"></a><span class="co"># la fonction relocate() pour réorganiser les colonnes.</span></span>
+<span id="cb98-6"><a href="#cb98-6" tabindex="-1"></a><span class="co"># Le comportement par défaut est de déplacer la ou les colonnes nommées vers la première position.</span></span>
+<span id="cb98-7"><a href="#cb98-7" tabindex="-1"></a>otex_regroupe <span class="ot">&lt;-</span> otex_regroupe <span class="sc">|&gt;</span></span>
+<span id="cb98-8"><a href="#cb98-8" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">otex_lib_det =</span> <span class="fu">substr</span>(otex_lib,<span class="dv">8</span>,<span class="dv">60</span>) ) <span class="sc">|&gt;</span></span>
+<span id="cb98-9"><a href="#cb98-9" tabindex="-1"></a>  <span class="fu">relocate</span>(otex_lib, otex_lib_det, <span class="at">.after =</span> otex_code_regr )</span>
+<span id="cb98-10"><a href="#cb98-10" tabindex="-1"></a></span>
+<span id="cb98-11"><a href="#cb98-11" tabindex="-1"></a>eff_volailles_evol_part <span class="ot">&lt;-</span> eff_volailles_evol <span class="sc">|&gt;</span> </span>
+<span id="cb98-12"><a href="#cb98-12" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(evo_percent,region,an_2020)) <span class="sc">|&gt;</span> </span>
+<span id="cb98-13"><a href="#cb98-13" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span>reg,</span>
+<span id="cb98-14"><a href="#cb98-14" tabindex="-1"></a>              <span class="at">names_prefix=</span><span class="st">&#39;&#39;</span>,</span>
+<span id="cb98-15"><a href="#cb98-15" tabindex="-1"></a>              <span class="at">names_sep =</span> <span class="st">&quot;_&quot;</span>,</span>
+<span id="cb98-16"><a href="#cb98-16" tabindex="-1"></a>              <span class="at">values_from=</span> <span class="fu">c</span>(an_2021,evol_2021_2020) ) <span class="sc">|&gt;</span> </span>
+<span id="cb98-17"><a href="#cb98-17" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">part_pdl_france_2021=</span><span class="fu">paste0</span>(<span class="fu">round_half_up</span>(an_2021_pdl<span class="sc">/</span>an_2021_fm<span class="sc">*</span><span class="dv">100</span>,<span class="dv">0</span>),<span class="st">&quot; %&quot;</span>) ) <span class="sc">|&gt;</span></span>
+<span id="cb98-18"><a href="#cb98-18" tabindex="-1"></a>  <span class="fu">relocate</span>(an_2021_pdl,evol_2021_2020_pdl,an_2021_fm,</span>
+<span id="cb98-19"><a href="#cb98-19" tabindex="-1"></a>           evol_2021_2020_fm,part_pdl_france_2021, <span class="at">.after =</span> espece )</span>
+<span id="cb98-20"><a href="#cb98-20" tabindex="-1"></a></span>
+<span id="cb98-21"><a href="#cb98-21" tabindex="-1"></a><span class="co"># succession de relocate</span></span>
+<span id="cb98-22"><a href="#cb98-22" tabindex="-1"></a>lait_chevre_dep_2021_donnees <span class="ot">&lt;-</span> lait_chevre_dep3 <span class="sc">|&gt;</span> </span>
+<span id="cb98-23"><a href="#cb98-23" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(reg_dep_prod,dep_libdep,producteurs_2020_old,livraisons_2020_old,lait)) <span class="sc">|&gt;</span> </span>
+<span id="cb98-24"><a href="#cb98-24" tabindex="-1"></a>  <span class="fu">relocate</span>(Code_département,Département, <span class="at">.before =</span> producteurs_2010) <span class="sc">|&gt;</span> </span>
+<span id="cb98-25"><a href="#cb98-25" tabindex="-1"></a>  <span class="fu">relocate</span>(producteurs_2020,livraisons_2020,</span>
+<span id="cb98-26"><a href="#cb98-26" tabindex="-1"></a>           producteurs_2021,livraisons_2021, <span class="at">.after =</span> livraisons_2019)</span></code></pre></div>
 </div>
 <div id="ajout-de-colonne-total" class="section level2" number="4.14">
 <h2><span class="header-section-number">4.14</span> Ajout de colonne Total</h2>
@@ -3979,52 +3987,54 @@ Ainsi, (20,40] signifie « strictement supérieur à 20 et inférieur ou égal �
 <div id="ajout-de-ligne-total" class="section level2" number="5.1">
 <h2><span class="header-section-number">5.1</span> Ajout de ligne Total</h2>
 <p>adorn_totals</p>
-<div class="sourceCode" id="cb107"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb107-1"><a href="#cb107-1" tabindex="-1"></a><span class="fu">library</span>(janitor) <span class="co"># pour round_half_up</span></span>
-<span id="cb107-2"><a href="#cb107-2" tabindex="-1"></a></span>
-<span id="cb107-3"><a href="#cb107-3" tabindex="-1"></a><span class="co"># nb exploitations par département et pour la région</span></span>
-<span id="cb107-4"><a href="#cb107-4" tabindex="-1"></a>nb_exploit_2020_dep_reg <span class="ot">&lt;-</span> exploit_2020 <span class="sc">|&gt;</span> </span>
-<span id="cb107-5"><a href="#cb107-5" tabindex="-1"></a>  <span class="fu">select</span>(nom_dossier,siege_dep) <span class="sc">|&gt;</span> </span>
-<span id="cb107-6"><a href="#cb107-6" tabindex="-1"></a>  <span class="fu">group_by</span>(<span class="at">territoire =</span> siege_dep) <span class="sc">|&gt;</span> </span>
-<span id="cb107-7"><a href="#cb107-7" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">nb_total_exploitations =</span> <span class="fu">n</span>() ) <span class="sc">|&gt;</span> </span>
-<span id="cb107-8"><a href="#cb107-8" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb107-9"><a href="#cb107-9" tabindex="-1"></a>  <span class="fu">adorn_totals</span>(<span class="at">where =</span> <span class="fu">c</span>(<span class="st">&quot;row&quot;</span>), <span class="at">name=</span><span class="st">&quot;Pays de la Loire&quot;</span> )</span>
-<span id="cb107-10"><a href="#cb107-10" tabindex="-1"></a></span>
-<span id="cb107-11"><a href="#cb107-11" tabindex="-1"></a><span class="co"># ajout ligne Total</span></span>
-<span id="cb107-12"><a href="#cb107-12" tabindex="-1"></a>nb_exploitants_age_sau_2010_2020 <span class="ot">&lt;-</span> exploitants_age_sau_2010_2020 <span class="sc">|&gt;</span> </span>
-<span id="cb107-13"><a href="#cb107-13" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span>annee,</span>
-<span id="cb107-14"><a href="#cb107-14" tabindex="-1"></a>              <span class="at">names_prefix=</span><span class="st">&#39;an_&#39;</span>,</span>
-<span id="cb107-15"><a href="#cb107-15" tabindex="-1"></a>              <span class="at">names_sep =</span> <span class="st">&quot;_&quot;</span>,</span>
-<span id="cb107-16"><a href="#cb107-16" tabindex="-1"></a>              <span class="at">values_from=</span> <span class="fu">c</span>(n_exploit,</span>
-<span id="cb107-17"><a href="#cb107-17" tabindex="-1"></a>                             sau_ha) ) <span class="sc">|&gt;</span> </span>
-<span id="cb107-18"><a href="#cb107-18" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">n_exploit_an_2010_percent =</span> <span class="fu">round_half_up</span>(n_exploit_an_2010 <span class="sc">/</span> <span class="fu">sum</span>(n_exploit_an_2010)<span class="sc">*</span><span class="dv">100</span>, <span class="dv">2</span>),</span>
-<span id="cb107-19"><a href="#cb107-19" tabindex="-1"></a>         <span class="at">sau_ha_an_2010_percent =</span> <span class="fu">round_half_up</span>(sau_ha_an_2010 <span class="sc">/</span> <span class="fu">sum</span>(sau_ha_an_2010)<span class="sc">*</span><span class="dv">100</span>, <span class="dv">2</span>),</span>
-<span id="cb107-20"><a href="#cb107-20" tabindex="-1"></a>         <span class="at">n_exploit_an_2020_percent =</span> <span class="fu">round_half_up</span>(n_exploit_an_2020 <span class="sc">/</span> <span class="fu">sum</span>(n_exploit_an_2020)<span class="sc">*</span><span class="dv">100</span>, <span class="dv">2</span>),</span>
-<span id="cb107-21"><a href="#cb107-21" tabindex="-1"></a>         <span class="at">sau_ha_an_2020_percent =</span> <span class="fu">round_half_up</span>(sau_ha_an_2020 <span class="sc">/</span> <span class="fu">sum</span>(sau_ha_an_2020)<span class="sc">*</span><span class="dv">100</span>, <span class="dv">2</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb107-22"><a href="#cb107-22" tabindex="-1"></a>  <span class="fu">adorn_totals</span>(<span class="at">where =</span> <span class="fu">c</span>(<span class="st">&quot;row&quot;</span>), <span class="at">name=</span><span class="st">&quot;Ensemble&quot;</span> ) <span class="sc">|&gt;</span> </span>
-<span id="cb107-23"><a href="#cb107-23" tabindex="-1"></a>  <span class="fu">relocate</span>(tr_age_10,</span>
-<span id="cb107-24"><a href="#cb107-24" tabindex="-1"></a>           sau_ha_an_2010_percent,</span>
-<span id="cb107-25"><a href="#cb107-25" tabindex="-1"></a>           sau_ha_an_2020_percent,</span>
-<span id="cb107-26"><a href="#cb107-26" tabindex="-1"></a>           sau_ha_an_2010,</span>
-<span id="cb107-27"><a href="#cb107-27" tabindex="-1"></a>           sau_ha_an_2020,</span>
-<span id="cb107-28"><a href="#cb107-28" tabindex="-1"></a>           n_exploit_an_2010_percent,</span>
-<span id="cb107-29"><a href="#cb107-29" tabindex="-1"></a>           n_exploit_an_2020_percent,</span>
-<span id="cb107-30"><a href="#cb107-30" tabindex="-1"></a>           n_exploit_an_2010,</span>
-<span id="cb107-31"><a href="#cb107-31" tabindex="-1"></a>           n_exploit_an_2020)</span>
-<span id="cb107-32"><a href="#cb107-32" tabindex="-1"></a></span>
-<span id="cb107-33"><a href="#cb107-33" tabindex="-1"></a>laits_mensuel_chevre_livr_coll_large <span class="ot">&lt;-</span> laits_mensuel_chevre_livr_coll <span class="sc">|&gt;</span> </span>
-<span id="cb107-34"><a href="#cb107-34" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> annee,</span>
-<span id="cb107-35"><a href="#cb107-35" tabindex="-1"></a>              <span class="at">names_sep =</span> <span class="st">&quot;_&quot;</span>,</span>
-<span id="cb107-36"><a href="#cb107-36" tabindex="-1"></a>              <span class="at">values_from =</span> <span class="fu">c</span>(livraison,collecte)) <span class="sc">|&gt;</span> </span>
-<span id="cb107-37"><a href="#cb107-37" tabindex="-1"></a>  <span class="fu">adorn_totals</span>(<span class="at">where =</span> <span class="st">&quot;row&quot;</span>,</span>
-<span id="cb107-38"><a href="#cb107-38" tabindex="-1"></a>               <span class="at">name =</span> <span class="st">&quot;Total&quot;</span>)</span>
-<span id="cb107-39"><a href="#cb107-39" tabindex="-1"></a>               </span>
-<span id="cb107-40"><a href="#cb107-40" tabindex="-1"></a><span class="co"># à partir du tableau transposé, ajout du total régional</span></span>
-<span id="cb107-41"><a href="#cb107-41" tabindex="-1"></a>lait_production_vache_large <span class="ot">&lt;-</span> lait_production_vache_2 <span class="sc">|&gt;</span> </span>
-<span id="cb107-42"><a href="#cb107-42" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>annee) <span class="sc">|&gt;</span> </span>
-<span id="cb107-43"><a href="#cb107-43" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> type,</span>
-<span id="cb107-44"><a href="#cb107-44" tabindex="-1"></a>              <span class="at">values_from =</span> <span class="fu">c</span>(livraison_reg,livraison_dep,livraison_dep_perc)) <span class="sc">|&gt;</span> </span>
-<span id="cb107-45"><a href="#cb107-45" tabindex="-1"></a>  <span class="fu">adorn_totals</span>(<span class="at">where =</span> <span class="st">&quot;row&quot;</span>, <span class="at">name =</span> <span class="st">&quot;Pays de la Loire&quot;</span> ) <span class="sc">|&gt;</span> </span>
-<span id="cb107-46"><a href="#cb107-46" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(<span class="fu">starts_with</span>(<span class="st">&quot;livraison_reg&quot;</span>)))</span></code></pre></div>
+<div class="sourceCode" id="cb107"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb107-1"><a href="#cb107-1" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb107-2"><a href="#cb107-2" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb107-3"><a href="#cb107-3" tabindex="-1"></a><span class="fu">library</span>(janitor) <span class="co"># pour round_half_up</span></span>
+<span id="cb107-4"><a href="#cb107-4" tabindex="-1"></a></span>
+<span id="cb107-5"><a href="#cb107-5" tabindex="-1"></a><span class="co"># nb exploitations par département et pour la région</span></span>
+<span id="cb107-6"><a href="#cb107-6" tabindex="-1"></a>nb_exploit_2020_dep_reg <span class="ot">&lt;-</span> exploit_2020 <span class="sc">|&gt;</span> </span>
+<span id="cb107-7"><a href="#cb107-7" tabindex="-1"></a>  <span class="fu">select</span>(nom_dossier,siege_dep) <span class="sc">|&gt;</span> </span>
+<span id="cb107-8"><a href="#cb107-8" tabindex="-1"></a>  <span class="fu">group_by</span>(<span class="at">territoire =</span> siege_dep) <span class="sc">|&gt;</span> </span>
+<span id="cb107-9"><a href="#cb107-9" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">nb_total_exploitations =</span> <span class="fu">n</span>() ) <span class="sc">|&gt;</span> </span>
+<span id="cb107-10"><a href="#cb107-10" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb107-11"><a href="#cb107-11" tabindex="-1"></a>  <span class="fu">adorn_totals</span>(<span class="at">where =</span> <span class="fu">c</span>(<span class="st">&quot;row&quot;</span>), <span class="at">name=</span><span class="st">&quot;Pays de la Loire&quot;</span> )</span>
+<span id="cb107-12"><a href="#cb107-12" tabindex="-1"></a></span>
+<span id="cb107-13"><a href="#cb107-13" tabindex="-1"></a><span class="co"># ajout ligne Total</span></span>
+<span id="cb107-14"><a href="#cb107-14" tabindex="-1"></a>nb_exploitants_age_sau_2010_2020 <span class="ot">&lt;-</span> exploitants_age_sau_2010_2020 <span class="sc">|&gt;</span> </span>
+<span id="cb107-15"><a href="#cb107-15" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span>annee,</span>
+<span id="cb107-16"><a href="#cb107-16" tabindex="-1"></a>              <span class="at">names_prefix=</span><span class="st">&#39;an_&#39;</span>,</span>
+<span id="cb107-17"><a href="#cb107-17" tabindex="-1"></a>              <span class="at">names_sep =</span> <span class="st">&quot;_&quot;</span>,</span>
+<span id="cb107-18"><a href="#cb107-18" tabindex="-1"></a>              <span class="at">values_from=</span> <span class="fu">c</span>(n_exploit,</span>
+<span id="cb107-19"><a href="#cb107-19" tabindex="-1"></a>                             sau_ha) ) <span class="sc">|&gt;</span> </span>
+<span id="cb107-20"><a href="#cb107-20" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">n_exploit_an_2010_percent =</span> <span class="fu">round_half_up</span>(n_exploit_an_2010 <span class="sc">/</span> <span class="fu">sum</span>(n_exploit_an_2010)<span class="sc">*</span><span class="dv">100</span>, <span class="dv">2</span>),</span>
+<span id="cb107-21"><a href="#cb107-21" tabindex="-1"></a>         <span class="at">sau_ha_an_2010_percent =</span> <span class="fu">round_half_up</span>(sau_ha_an_2010 <span class="sc">/</span> <span class="fu">sum</span>(sau_ha_an_2010)<span class="sc">*</span><span class="dv">100</span>, <span class="dv">2</span>),</span>
+<span id="cb107-22"><a href="#cb107-22" tabindex="-1"></a>         <span class="at">n_exploit_an_2020_percent =</span> <span class="fu">round_half_up</span>(n_exploit_an_2020 <span class="sc">/</span> <span class="fu">sum</span>(n_exploit_an_2020)<span class="sc">*</span><span class="dv">100</span>, <span class="dv">2</span>),</span>
+<span id="cb107-23"><a href="#cb107-23" tabindex="-1"></a>         <span class="at">sau_ha_an_2020_percent =</span> <span class="fu">round_half_up</span>(sau_ha_an_2020 <span class="sc">/</span> <span class="fu">sum</span>(sau_ha_an_2020)<span class="sc">*</span><span class="dv">100</span>, <span class="dv">2</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb107-24"><a href="#cb107-24" tabindex="-1"></a>  <span class="fu">adorn_totals</span>(<span class="at">where =</span> <span class="fu">c</span>(<span class="st">&quot;row&quot;</span>), <span class="at">name=</span><span class="st">&quot;Ensemble&quot;</span> ) <span class="sc">|&gt;</span> </span>
+<span id="cb107-25"><a href="#cb107-25" tabindex="-1"></a>  <span class="fu">relocate</span>(tr_age_10,</span>
+<span id="cb107-26"><a href="#cb107-26" tabindex="-1"></a>           sau_ha_an_2010_percent,</span>
+<span id="cb107-27"><a href="#cb107-27" tabindex="-1"></a>           sau_ha_an_2020_percent,</span>
+<span id="cb107-28"><a href="#cb107-28" tabindex="-1"></a>           sau_ha_an_2010,</span>
+<span id="cb107-29"><a href="#cb107-29" tabindex="-1"></a>           sau_ha_an_2020,</span>
+<span id="cb107-30"><a href="#cb107-30" tabindex="-1"></a>           n_exploit_an_2010_percent,</span>
+<span id="cb107-31"><a href="#cb107-31" tabindex="-1"></a>           n_exploit_an_2020_percent,</span>
+<span id="cb107-32"><a href="#cb107-32" tabindex="-1"></a>           n_exploit_an_2010,</span>
+<span id="cb107-33"><a href="#cb107-33" tabindex="-1"></a>           n_exploit_an_2020)</span>
+<span id="cb107-34"><a href="#cb107-34" tabindex="-1"></a></span>
+<span id="cb107-35"><a href="#cb107-35" tabindex="-1"></a>laits_mensuel_chevre_livr_coll_large <span class="ot">&lt;-</span> laits_mensuel_chevre_livr_coll <span class="sc">|&gt;</span> </span>
+<span id="cb107-36"><a href="#cb107-36" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> annee,</span>
+<span id="cb107-37"><a href="#cb107-37" tabindex="-1"></a>              <span class="at">names_sep =</span> <span class="st">&quot;_&quot;</span>,</span>
+<span id="cb107-38"><a href="#cb107-38" tabindex="-1"></a>              <span class="at">values_from =</span> <span class="fu">c</span>(livraison,collecte)) <span class="sc">|&gt;</span> </span>
+<span id="cb107-39"><a href="#cb107-39" tabindex="-1"></a>  <span class="fu">adorn_totals</span>(<span class="at">where =</span> <span class="st">&quot;row&quot;</span>,</span>
+<span id="cb107-40"><a href="#cb107-40" tabindex="-1"></a>               <span class="at">name =</span> <span class="st">&quot;Total&quot;</span>)</span>
+<span id="cb107-41"><a href="#cb107-41" tabindex="-1"></a>               </span>
+<span id="cb107-42"><a href="#cb107-42" tabindex="-1"></a><span class="co"># à partir du tableau transposé, ajout du total régional</span></span>
+<span id="cb107-43"><a href="#cb107-43" tabindex="-1"></a>lait_production_vache_large <span class="ot">&lt;-</span> lait_production_vache_2 <span class="sc">|&gt;</span> </span>
+<span id="cb107-44"><a href="#cb107-44" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>annee) <span class="sc">|&gt;</span> </span>
+<span id="cb107-45"><a href="#cb107-45" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> type,</span>
+<span id="cb107-46"><a href="#cb107-46" tabindex="-1"></a>              <span class="at">values_from =</span> <span class="fu">c</span>(livraison_reg,livraison_dep,livraison_dep_perc)) <span class="sc">|&gt;</span> </span>
+<span id="cb107-47"><a href="#cb107-47" tabindex="-1"></a>  <span class="fu">adorn_totals</span>(<span class="at">where =</span> <span class="st">&quot;row&quot;</span>, <span class="at">name =</span> <span class="st">&quot;Pays de la Loire&quot;</span> ) <span class="sc">|&gt;</span> </span>
+<span id="cb107-48"><a href="#cb107-48" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(<span class="fu">starts_with</span>(<span class="st">&quot;livraison_reg&quot;</span>)))</span></code></pre></div>
 </div>
 <div id="filtrer-des-observations" class="section level2" number="5.2">
 <h2><span class="header-section-number">5.2</span> Filtrer des observations</h2>
@@ -4256,73 +4266,77 @@ On va ici récupérer les analyses produites par l’ARS</p>
 <li><code>names_to</code> : le nom de la nouvelle colonne qui va contenir les noms des colonnes transposées ;</li>
 <li><code>values_to</code> : le nom de la nouvelle colonne qui va contenir les valeurs des colonnes transposées.</li>
 </ul>
-<div class="sourceCode" id="cb120"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb120-1"><a href="#cb120-1" tabindex="-1"></a><span class="fu">library</span>(tidyr) <span class="co"># pour pivot</span></span>
-<span id="cb120-2"><a href="#cb120-2" tabindex="-1"></a></span>
-<span id="cb120-3"><a href="#cb120-3" tabindex="-1"></a><span class="co"># pivot_longer</span></span>
-<span id="cb120-4"><a href="#cb120-4" tabindex="-1"></a><span class="co"># colonnes donnees en ligne</span></span>
-<span id="cb120-5"><a href="#cb120-5" tabindex="-1"></a>agri_bio_vegetal_fr_tab1_long <span class="ot">&lt;-</span> agri_bio_vegetal_fr_tab1_car <span class="sc">|&gt;</span>   </span>
-<span id="cb120-6"><a href="#cb120-6" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols=</span><span class="fu">c</span>(<span class="st">&quot;nombre_de_producteurs&quot;</span>,<span class="st">&quot;surface_bio_et_en_conversion_en_ha&quot;</span>,</span>
-<span id="cb120-7"><a href="#cb120-7" tabindex="-1"></a>                      <span class="st">&quot;surface_en_conversion_en_ha&quot;</span>,<span class="st">&quot;surface_bio_en_ha&quot;</span>,</span>
-<span id="cb120-8"><a href="#cb120-8" tabindex="-1"></a>                      <span class="st">&quot;part_bio_sau_plus_percent&quot;</span>),</span>
-<span id="cb120-9"><a href="#cb120-9" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">&quot;vegetal&quot;</span>),</span>
-<span id="cb120-10"><a href="#cb120-10" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">&quot;donnees&quot;</span> ) <span class="sc">|&gt;</span> </span>
-<span id="cb120-11"><a href="#cb120-11" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(territoire) )</span>
-<span id="cb120-12"><a href="#cb120-12" tabindex="-1"></a></span>
-<span id="cb120-13"><a href="#cb120-13" tabindex="-1"></a><span class="co"># colonne espece en ligne</span></span>
-<span id="cb120-14"><a href="#cb120-14" tabindex="-1"></a>volailles_pdl_espece <span class="ot">&lt;-</span> volailles_pdl_siqo2 <span class="sc">|&gt;</span>   </span>
-<span id="cb120-15"><a href="#cb120-15" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols=</span><span class="fu">starts_with</span>(<span class="st">&quot;espece_&quot;</span>),</span>
-<span id="cb120-16"><a href="#cb120-16" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">&quot;espece&quot;</span>,<span class="st">&quot;siqo&quot;</span>),</span>
-<span id="cb120-17"><a href="#cb120-17" tabindex="-1"></a>               <span class="at">names_sep =</span> <span class="st">&quot;_siqo_&quot;</span>,</span>
-<span id="cb120-18"><a href="#cb120-18" tabindex="-1"></a>               <span class="at">names_prefix=</span><span class="st">&quot;espece_&quot;</span>,</span>
-<span id="cb120-19"><a href="#cb120-19" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">&quot;tec&quot;</span> )</span>
-<span id="cb120-20"><a href="#cb120-20" tabindex="-1"></a></span>
-<span id="cb120-21"><a href="#cb120-21" tabindex="-1"></a>volailles_pdl_espece <span class="ot">&lt;-</span> volailles_pdl_espece <span class="sc">|&gt;</span> </span>
-<span id="cb120-22"><a href="#cb120-22" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">tec=</span>tec<span class="sc">/</span><span class="dv">1000</span>)</span>
-<span id="cb120-23"><a href="#cb120-23" tabindex="-1"></a></span>
-<span id="cb120-24"><a href="#cb120-24" tabindex="-1"></a><span class="co"># nouvelles variables mois, type(avec nombre, poids) en enlevant suffixe mois, type par transposition</span></span>
-<span id="cb120-25"><a href="#cb120-25" tabindex="-1"></a>vol_2022 <span class="ot">&lt;-</span> vol_2022 <span class="sc">|&gt;</span>   </span>
-<span id="cb120-26"><a href="#cb120-26" tabindex="-1"></a>             <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">starts_with</span>(<span class="st">&#39;x2022&#39;</span>), </span>
-<span id="cb120-27"><a href="#cb120-27" tabindex="-1"></a>                          <span class="at">names_prefix =</span> <span class="st">&quot;x2022_&quot;</span>, </span>
-<span id="cb120-28"><a href="#cb120-28" tabindex="-1"></a>                          <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">&quot;mois&quot;</span>, <span class="st">&quot;type&quot;</span>), </span>
-<span id="cb120-29"><a href="#cb120-29" tabindex="-1"></a>                          <span class="at">names_sep =</span> <span class="st">&quot;_&quot;</span>,</span>
-<span id="cb120-30"><a href="#cb120-30" tabindex="-1"></a>                          <span class="at">values_to =</span> <span class="st">&quot;effectif&quot;</span>)</span>
-<span id="cb120-31"><a href="#cb120-31" tabindex="-1"></a>  </span>
-<span id="cb120-32"><a href="#cb120-32" tabindex="-1"></a><span class="co"># un seul montant en colonne</span></span>
-<span id="cb120-33"><a href="#cb120-33" tabindex="-1"></a><span class="co"># nouvelle variable &#39;montant&#39; en mettant la liste des montants par trimestre par transposition</span></span>
-<span id="cb120-34"><a href="#cb120-34" tabindex="-1"></a><span class="co"># crée variables &quot;trimestre&quot;(modalités &#39;x1&#39;,&#39;x2&#39;,&#39;x3&#39;,&#39;x4&#39;) et </span></span>
-<span id="cb120-35"><a href="#cb120-35" tabindex="-1"></a><span class="co"># &quot;annee&quot; à partir de c(&#39;x4t2018&#39;,&#39;x1t2019&#39;...)  </span></span>
-<span id="cb120-36"><a href="#cb120-36" tabindex="-1"></a>produits_long <span class="ot">&lt;-</span> produits <span class="sc">|&gt;</span>   </span>
-<span id="cb120-37"><a href="#cb120-37" tabindex="-1"></a>             <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(<span class="st">&#39;x4t2018&#39;</span>,<span class="st">&#39;x1t2019&#39;</span>,<span class="st">&#39;x2t2019&#39;</span>,<span class="st">&#39;x3t2019&#39;</span>,<span class="st">&#39;x4t2019&#39;</span>,</span>
-<span id="cb120-38"><a href="#cb120-38" tabindex="-1"></a>                                   <span class="st">&#39;x1t2020&#39;</span>,<span class="st">&#39;x2t2020&#39;</span>,<span class="st">&#39;x3t2020&#39;</span>,<span class="st">&#39;x4t2020&#39;</span>,</span>
-<span id="cb120-39"><a href="#cb120-39" tabindex="-1"></a>                                   <span class="st">&#39;x1t2021&#39;</span>,<span class="st">&#39;x2t2021&#39;</span>,<span class="st">&#39;x3t2021&#39;</span>,<span class="st">&#39;x4t2021&#39;</span>,</span>
-<span id="cb120-40"><a href="#cb120-40" tabindex="-1"></a>                                   <span class="st">&#39;x1t2022&#39;</span>,<span class="st">&#39;x2t2022&#39;</span>,<span class="st">&#39;x3t2022&#39;</span>), </span>
-<span id="cb120-41"><a href="#cb120-41" tabindex="-1"></a>                          <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">&quot;trimestre&quot;</span>,<span class="st">&quot;annee&quot;</span>),</span>
-<span id="cb120-42"><a href="#cb120-42" tabindex="-1"></a>                          <span class="at">names_sep =</span> <span class="st">&quot;t&quot;</span>,</span>
-<span id="cb120-43"><a href="#cb120-43" tabindex="-1"></a>                          <span class="at">values_to =</span> <span class="st">&quot;montant&quot;</span>)</span>
-<span id="cb120-44"><a href="#cb120-44" tabindex="-1"></a></span>
-<span id="cb120-45"><a href="#cb120-45" tabindex="-1"></a><span class="co"># une seule espece en colonne</span></span>
-<span id="cb120-46"><a href="#cb120-46" tabindex="-1"></a><span class="co"># nouvelle variable espece en mettant la liste des especes par transposition</span></span>
-<span id="cb120-47"><a href="#cb120-47" tabindex="-1"></a>itavi_2022_2021_espece <span class="ot">&lt;-</span> itavi_2022_2021 <span class="sc">|&gt;</span>   </span>
-<span id="cb120-48"><a href="#cb120-48" tabindex="-1"></a>             <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(poulet_standard,poulet_label_rouge,dinde,pintade,</span>
-<span id="cb120-49"><a href="#cb120-49" tabindex="-1"></a>                                   poule_pondeuse,canard_rotir,canard_gras,lapin,</span>
-<span id="cb120-50"><a href="#cb120-50" tabindex="-1"></a>                                   poulet_label_rouge_non_ogm,poule_pondeuse_label_rouge_non_ogm), </span>
-<span id="cb120-51"><a href="#cb120-51" tabindex="-1"></a>                          <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">&quot;espece&quot;</span>),</span>
-<span id="cb120-52"><a href="#cb120-52" tabindex="-1"></a>                          <span class="at">values_to =</span> <span class="st">&quot;indice&quot;</span>)</span>
-<span id="cb120-53"><a href="#cb120-53" tabindex="-1"></a></span>
-<span id="cb120-54"><a href="#cb120-54" tabindex="-1"></a><span class="co"># colonnes donnees en ligne</span></span>
-<span id="cb120-55"><a href="#cb120-55" tabindex="-1"></a><span class="co"># names_pattern = &quot;(.*)_dep&quot; pour enlever suffixe &quot;_dep&quot;</span></span>
-<span id="cb120-56"><a href="#cb120-56" tabindex="-1"></a><span class="co"># names_pattern = paste0(&quot;(.*)_&quot;, suffixe)</span></span>
-<span id="cb120-57"><a href="#cb120-57" tabindex="-1"></a>agreg_anim_produit_petit_dep_1 <span class="ot">&lt;-</span> agreg_anim_produit_petit_pdl <span class="sc">|&gt;</span> </span>
-<span id="cb120-58"><a href="#cb120-58" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">contains</span>(<span class="st">&quot;reg&quot;</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb120-59"><a href="#cb120-59" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols=</span><span class="fu">contains</span>(<span class="st">&quot;_dep&quot;</span>),</span>
-<span id="cb120-60"><a href="#cb120-60" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="st">&quot;indicateur&quot;</span>,</span>
-<span id="cb120-61"><a href="#cb120-61" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">&quot;donnees_dep&quot;</span>,</span>
-<span id="cb120-62"><a href="#cb120-62" tabindex="-1"></a>               <span class="at">names_pattern =</span> <span class="st">&quot;(.*)_dep&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb120"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb120-1"><a href="#cb120-1" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb120-2"><a href="#cb120-2" tabindex="-1"></a><span class="fu">library</span>(tidyr) <span class="co"># pour pivot</span></span>
+<span id="cb120-3"><a href="#cb120-3" tabindex="-1"></a></span>
+<span id="cb120-4"><a href="#cb120-4" tabindex="-1"></a><span class="co"># pivot_longer</span></span>
+<span id="cb120-5"><a href="#cb120-5" tabindex="-1"></a><span class="co"># colonnes donnees en ligne</span></span>
+<span id="cb120-6"><a href="#cb120-6" tabindex="-1"></a>agri_bio_vegetal_fr_tab1_long <span class="ot">&lt;-</span> agri_bio_vegetal_fr_tab1_car <span class="sc">|&gt;</span>   </span>
+<span id="cb120-7"><a href="#cb120-7" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols=</span><span class="fu">c</span>(<span class="st">&quot;nombre_de_producteurs&quot;</span>,<span class="st">&quot;surface_bio_et_en_conversion_en_ha&quot;</span>,</span>
+<span id="cb120-8"><a href="#cb120-8" tabindex="-1"></a>                      <span class="st">&quot;surface_en_conversion_en_ha&quot;</span>,<span class="st">&quot;surface_bio_en_ha&quot;</span>,</span>
+<span id="cb120-9"><a href="#cb120-9" tabindex="-1"></a>                      <span class="st">&quot;part_bio_sau_plus_percent&quot;</span>),</span>
+<span id="cb120-10"><a href="#cb120-10" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">&quot;vegetal&quot;</span>),</span>
+<span id="cb120-11"><a href="#cb120-11" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">&quot;donnees&quot;</span> ) <span class="sc">|&gt;</span> </span>
+<span id="cb120-12"><a href="#cb120-12" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(territoire) )</span>
+<span id="cb120-13"><a href="#cb120-13" tabindex="-1"></a></span>
+<span id="cb120-14"><a href="#cb120-14" tabindex="-1"></a><span class="co"># colonne espece en ligne</span></span>
+<span id="cb120-15"><a href="#cb120-15" tabindex="-1"></a>volailles_pdl_espece <span class="ot">&lt;-</span> volailles_pdl_siqo2 <span class="sc">|&gt;</span>   </span>
+<span id="cb120-16"><a href="#cb120-16" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols=</span><span class="fu">starts_with</span>(<span class="st">&quot;espece_&quot;</span>),</span>
+<span id="cb120-17"><a href="#cb120-17" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">&quot;espece&quot;</span>,<span class="st">&quot;siqo&quot;</span>),</span>
+<span id="cb120-18"><a href="#cb120-18" tabindex="-1"></a>               <span class="at">names_sep =</span> <span class="st">&quot;_siqo_&quot;</span>,</span>
+<span id="cb120-19"><a href="#cb120-19" tabindex="-1"></a>               <span class="at">names_prefix=</span><span class="st">&quot;espece_&quot;</span>,</span>
+<span id="cb120-20"><a href="#cb120-20" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">&quot;tec&quot;</span> )</span>
+<span id="cb120-21"><a href="#cb120-21" tabindex="-1"></a></span>
+<span id="cb120-22"><a href="#cb120-22" tabindex="-1"></a>volailles_pdl_espece <span class="ot">&lt;-</span> volailles_pdl_espece <span class="sc">|&gt;</span> </span>
+<span id="cb120-23"><a href="#cb120-23" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">tec=</span>tec<span class="sc">/</span><span class="dv">1000</span>)</span>
+<span id="cb120-24"><a href="#cb120-24" tabindex="-1"></a></span>
+<span id="cb120-25"><a href="#cb120-25" tabindex="-1"></a><span class="co"># nouvelles variables mois, type(avec nombre, poids) en enlevant suffixe mois, type par transposition</span></span>
+<span id="cb120-26"><a href="#cb120-26" tabindex="-1"></a>vol_2022 <span class="ot">&lt;-</span> vol_2022 <span class="sc">|&gt;</span>   </span>
+<span id="cb120-27"><a href="#cb120-27" tabindex="-1"></a>             <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">starts_with</span>(<span class="st">&#39;x2022&#39;</span>), </span>
+<span id="cb120-28"><a href="#cb120-28" tabindex="-1"></a>                          <span class="at">names_prefix =</span> <span class="st">&quot;x2022_&quot;</span>, </span>
+<span id="cb120-29"><a href="#cb120-29" tabindex="-1"></a>                          <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">&quot;mois&quot;</span>, <span class="st">&quot;type&quot;</span>), </span>
+<span id="cb120-30"><a href="#cb120-30" tabindex="-1"></a>                          <span class="at">names_sep =</span> <span class="st">&quot;_&quot;</span>,</span>
+<span id="cb120-31"><a href="#cb120-31" tabindex="-1"></a>                          <span class="at">values_to =</span> <span class="st">&quot;effectif&quot;</span>)</span>
+<span id="cb120-32"><a href="#cb120-32" tabindex="-1"></a>  </span>
+<span id="cb120-33"><a href="#cb120-33" tabindex="-1"></a><span class="co"># un seul montant en colonne</span></span>
+<span id="cb120-34"><a href="#cb120-34" tabindex="-1"></a><span class="co"># nouvelle variable &#39;montant&#39; en mettant la liste des montants par trimestre par transposition</span></span>
+<span id="cb120-35"><a href="#cb120-35" tabindex="-1"></a><span class="co"># crée variables &quot;trimestre&quot;(modalités &#39;x1&#39;,&#39;x2&#39;,&#39;x3&#39;,&#39;x4&#39;) et </span></span>
+<span id="cb120-36"><a href="#cb120-36" tabindex="-1"></a><span class="co"># &quot;annee&quot; à partir de c(&#39;x4t2018&#39;,&#39;x1t2019&#39;...)  </span></span>
+<span id="cb120-37"><a href="#cb120-37" tabindex="-1"></a>produits_long <span class="ot">&lt;-</span> produits <span class="sc">|&gt;</span>   </span>
+<span id="cb120-38"><a href="#cb120-38" tabindex="-1"></a>             <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(<span class="st">&#39;x4t2018&#39;</span>,<span class="st">&#39;x1t2019&#39;</span>,<span class="st">&#39;x2t2019&#39;</span>,<span class="st">&#39;x3t2019&#39;</span>,<span class="st">&#39;x4t2019&#39;</span>,</span>
+<span id="cb120-39"><a href="#cb120-39" tabindex="-1"></a>                                   <span class="st">&#39;x1t2020&#39;</span>,<span class="st">&#39;x2t2020&#39;</span>,<span class="st">&#39;x3t2020&#39;</span>,<span class="st">&#39;x4t2020&#39;</span>,</span>
+<span id="cb120-40"><a href="#cb120-40" tabindex="-1"></a>                                   <span class="st">&#39;x1t2021&#39;</span>,<span class="st">&#39;x2t2021&#39;</span>,<span class="st">&#39;x3t2021&#39;</span>,<span class="st">&#39;x4t2021&#39;</span>,</span>
+<span id="cb120-41"><a href="#cb120-41" tabindex="-1"></a>                                   <span class="st">&#39;x1t2022&#39;</span>,<span class="st">&#39;x2t2022&#39;</span>,<span class="st">&#39;x3t2022&#39;</span>), </span>
+<span id="cb120-42"><a href="#cb120-42" tabindex="-1"></a>                          <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">&quot;trimestre&quot;</span>,<span class="st">&quot;annee&quot;</span>),</span>
+<span id="cb120-43"><a href="#cb120-43" tabindex="-1"></a>                          <span class="at">names_sep =</span> <span class="st">&quot;t&quot;</span>,</span>
+<span id="cb120-44"><a href="#cb120-44" tabindex="-1"></a>                          <span class="at">values_to =</span> <span class="st">&quot;montant&quot;</span>)</span>
+<span id="cb120-45"><a href="#cb120-45" tabindex="-1"></a></span>
+<span id="cb120-46"><a href="#cb120-46" tabindex="-1"></a><span class="co"># une seule espece en colonne</span></span>
+<span id="cb120-47"><a href="#cb120-47" tabindex="-1"></a><span class="co"># nouvelle variable espece en mettant la liste des especes par transposition</span></span>
+<span id="cb120-48"><a href="#cb120-48" tabindex="-1"></a>itavi_2022_2021_espece <span class="ot">&lt;-</span> itavi_2022_2021 <span class="sc">|&gt;</span>   </span>
+<span id="cb120-49"><a href="#cb120-49" tabindex="-1"></a>             <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(poulet_standard,poulet_label_rouge,dinde,pintade,</span>
+<span id="cb120-50"><a href="#cb120-50" tabindex="-1"></a>                                   poule_pondeuse,canard_rotir,canard_gras,lapin,</span>
+<span id="cb120-51"><a href="#cb120-51" tabindex="-1"></a>                                   poulet_label_rouge_non_ogm,poule_pondeuse_label_rouge_non_ogm), </span>
+<span id="cb120-52"><a href="#cb120-52" tabindex="-1"></a>                          <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">&quot;espece&quot;</span>),</span>
+<span id="cb120-53"><a href="#cb120-53" tabindex="-1"></a>                          <span class="at">values_to =</span> <span class="st">&quot;indice&quot;</span>)</span>
+<span id="cb120-54"><a href="#cb120-54" tabindex="-1"></a></span>
+<span id="cb120-55"><a href="#cb120-55" tabindex="-1"></a><span class="co"># colonnes donnees en ligne</span></span>
+<span id="cb120-56"><a href="#cb120-56" tabindex="-1"></a><span class="co"># names_pattern = &quot;(.*)_dep&quot; pour enlever suffixe &quot;_dep&quot;</span></span>
+<span id="cb120-57"><a href="#cb120-57" tabindex="-1"></a><span class="co"># names_pattern = paste0(&quot;(.*)_&quot;, suffixe)</span></span>
+<span id="cb120-58"><a href="#cb120-58" tabindex="-1"></a>agreg_anim_produit_petit_dep_1 <span class="ot">&lt;-</span> agreg_anim_produit_petit_pdl <span class="sc">|&gt;</span> </span>
+<span id="cb120-59"><a href="#cb120-59" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">contains</span>(<span class="st">&quot;reg&quot;</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb120-60"><a href="#cb120-60" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols=</span><span class="fu">contains</span>(<span class="st">&quot;_dep&quot;</span>),</span>
+<span id="cb120-61"><a href="#cb120-61" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="st">&quot;indicateur&quot;</span>,</span>
+<span id="cb120-62"><a href="#cb120-62" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">&quot;donnees_dep&quot;</span>,</span>
+<span id="cb120-63"><a href="#cb120-63" tabindex="-1"></a>               <span class="at">names_pattern =</span> <span class="st">&quot;(.*)_dep&quot;</span>)</span></code></pre></div>
 <p>Nous souhaitons obtenir une nouvelle table, avec une observation par EPCI et par tranche d’âge. Voici le code qui permet d’obtenir cette table : on transpose les valeurs des colonnes dont le nom commence par “TP” (<code>cols = starts_with(&quot;TP&quot;)</code>), le nom des colonnes transposées sera indiquée dans la nouvelle colonne “tranche_age” (<code>names_to = &quot;tranche_age&quot;</code>) et les valeurs des colonnes transposées seront indiquées dans la colonne “taux_pauvrete” (<code>values_to = &quot;taux_pauvrete&quot;</code>).</p>
-<div class="sourceCode" id="cb121"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb121-1"><a href="#cb121-1" tabindex="-1"></a>donnees_pauvrete_long <span class="ot">&lt;-</span> filosofi_epci_2016_tbl <span class="sc">|&gt;</span> </span>
-<span id="cb121-2"><a href="#cb121-2" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">starts_with</span>(<span class="st">&quot;TP&quot;</span>), </span>
-<span id="cb121-3"><a href="#cb121-3" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="st">&quot;tranche_age&quot;</span>, </span>
-<span id="cb121-4"><a href="#cb121-4" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">&quot;taux_pauvrete&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb121"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb121-1"><a href="#cb121-1" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb121-2"><a href="#cb121-2" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb121-3"><a href="#cb121-3" tabindex="-1"></a></span>
+<span id="cb121-4"><a href="#cb121-4" tabindex="-1"></a>donnees_pauvrete_long <span class="ot">&lt;-</span> filosofi_epci_2016_tbl <span class="sc">|&gt;</span> </span>
+<span id="cb121-5"><a href="#cb121-5" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">starts_with</span>(<span class="st">&quot;TP&quot;</span>), </span>
+<span id="cb121-6"><a href="#cb121-6" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="st">&quot;tranche_age&quot;</span>, </span>
+<span id="cb121-7"><a href="#cb121-7" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">&quot;taux_pauvrete&quot;</span>)</span></code></pre></div>
 </div>
 <div id="transposition-de-lignes-en-colonnes-plus-de-colonnes" class="section level2" number="6.2">
 <h2><span class="header-section-number">6.2</span> Transposition de lignes en colonnes (plus de colonnes)</h2>
@@ -4335,113 +4349,140 @@ On va ici récupérer les analyses produites par l’ARS</p>
 <li><code>values_from</code> : un vecteur contenant le nom de la (ou des) colonne(s) dont les valeurs vont être transposées.</li>
 </ul>
 <p>Par ailleurs, l’option <code>names_prefix</code> permet de définir le préfixe du nom des nouvelles colonnes, ce qui est utile pour avoir des noms explicites.</p>
-<div class="sourceCode" id="cb122"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb122-1"><a href="#cb122-1" tabindex="-1"></a><span class="fu">library</span>(tidyr) <span class="co"># pour pivot</span></span>
-<span id="cb122-2"><a href="#cb122-2" tabindex="-1"></a><span class="fu">library</span>(janitor) <span class="co"># pour round_half_up</span></span>
-<span id="cb122-3"><a href="#cb122-3" tabindex="-1"></a></span>
-<span id="cb122-4"><a href="#cb122-4" tabindex="-1"></a>bpe_ens_2018_tbl <span class="sc">|&gt;</span></span>
-<span id="cb122-5"><a href="#cb122-5" tabindex="-1"></a>    <span class="fu">group_by</span>(REG, TYPEQU) <span class="sc">|&gt;</span></span>
-<span id="cb122-6"><a href="#cb122-6" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">NB_EQUIP_TOT =</span> <span class="fu">sum</span>(NB_EQUIP)) <span class="sc">|&gt;</span></span>
-<span id="cb122-7"><a href="#cb122-7" tabindex="-1"></a>    <span class="fu">pivot_wider</span>(<span class="at">id_cols =</span>TYPEQU,  </span>
-<span id="cb122-8"><a href="#cb122-8" tabindex="-1"></a>                <span class="at">names_from =</span> REG, </span>
-<span id="cb122-9"><a href="#cb122-9" tabindex="-1"></a>                <span class="at">values_from =</span> NB_EQUIP_TOT, </span>
-<span id="cb122-10"><a href="#cb122-10" tabindex="-1"></a>                <span class="at">names_prefix =</span> <span class="st">&quot;nb_equip_reg&quot;</span>)</span>
-<span id="cb122-11"><a href="#cb122-11" tabindex="-1"></a></span>
-<span id="cb122-12"><a href="#cb122-12" tabindex="-1"></a><span class="co"># pivot_wider</span></span>
-<span id="cb122-13"><a href="#cb122-13" tabindex="-1"></a>volailles_sum <span class="ot">&lt;-</span> <span class="fu">rbind</span>(volailles_dep_sum,volailles_pdl_sum) <span class="sc">|&gt;</span> </span>
-<span id="cb122-14"><a href="#cb122-14" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from=</span>dep,</span>
-<span id="cb122-15"><a href="#cb122-15" tabindex="-1"></a>              <span class="at">values_from =</span>tec_regrpt) </span>
-<span id="cb122-16"><a href="#cb122-16" tabindex="-1"></a></span>
-<span id="cb122-17"><a href="#cb122-17" tabindex="-1"></a><span class="co"># transposition lignes vers colonnes</span></span>
-<span id="cb122-18"><a href="#cb122-18" tabindex="-1"></a>produits_a17_large <span class="ot">&lt;-</span> produits_a17 <span class="sc">|&gt;</span></span>
-<span id="cb122-19"><a href="#cb122-19" tabindex="-1"></a>   <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> <span class="fu">c</span>(annee,flux,semestre), </span>
-<span id="cb122-20"><a href="#cb122-20" tabindex="-1"></a>               <span class="at">values_from =</span> valeur, </span>
-<span id="cb122-21"><a href="#cb122-21" tabindex="-1"></a>               <span class="at">names_prefix =</span> <span class="st">&quot;an_&quot;</span></span>
-<span id="cb122-22"><a href="#cb122-22" tabindex="-1"></a>               ) <span class="sc">|&gt;</span></span>
-<span id="cb122-23"><a href="#cb122-23" tabindex="-1"></a>   <span class="fu">mutate</span>(<span class="at">an_2021_imports =</span> an_2021_I_sem1 <span class="sc">+</span> an_2021_I_sem2,</span>
-<span id="cb122-24"><a href="#cb122-24" tabindex="-1"></a>          <span class="at">an_2022_imports =</span> an_2022_I_sem1 <span class="sc">+</span> an_2022_I_sem2,</span>
-<span id="cb122-25"><a href="#cb122-25" tabindex="-1"></a>          <span class="at">an_2021_exports =</span> an_2021_E_sem1 <span class="sc">+</span> an_2021_E_sem2,</span>
-<span id="cb122-26"><a href="#cb122-26" tabindex="-1"></a>          <span class="at">an_2022_exports =</span> an_2022_E_sem1 <span class="sc">+</span> an_2022_E_sem2,</span>
-<span id="cb122-27"><a href="#cb122-27" tabindex="-1"></a>          <span class="at">.after=</span>a17_lib_detail)</span>
-<span id="cb122-28"><a href="#cb122-28" tabindex="-1"></a></span>
-<span id="cb122-29"><a href="#cb122-29" tabindex="-1"></a><span class="co"># territoire en colonne </span></span>
-<span id="cb122-30"><a href="#cb122-30" tabindex="-1"></a>agri_bio_vegetal_fr_tab1_final <span class="ot">&lt;-</span> agri_bio_vegetal_fr_tab1_long <span class="sc">|&gt;</span>   </span>
-<span id="cb122-31"><a href="#cb122-31" tabindex="-1"></a>  <span class="fu">pivot_wider</span>( <span class="at">names_from =</span> <span class="st">&quot;territoire&quot;</span>, </span>
-<span id="cb122-32"><a href="#cb122-32" tabindex="-1"></a>               <span class="at">names_prefix=</span><span class="st">&quot;&quot;</span>,</span>
-<span id="cb122-33"><a href="#cb122-33" tabindex="-1"></a>               <span class="at">values_from =</span> <span class="st">&quot;donnees&quot;</span> ) </span>
-<span id="cb122-34"><a href="#cb122-34" tabindex="-1"></a></span>
-<span id="cb122-35"><a href="#cb122-35" tabindex="-1"></a><span class="co"># Transposer le tableau en format plus large, à partir de la variable type</span></span>
-<span id="cb122-36"><a href="#cb122-36" tabindex="-1"></a>lait_production_vache_large <span class="ot">&lt;-</span> lait_production_vache_2 <span class="sc">|&gt;</span> </span>
-<span id="cb122-37"><a href="#cb122-37" tabindex="-1"></a> <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> type,</span>
-<span id="cb122-38"><a href="#cb122-38" tabindex="-1"></a>             <span class="at">values_from =</span> <span class="fu">c</span>(livraison_reg,livraison_dep,livraison_dep_perc))</span>
-<span id="cb122-39"><a href="#cb122-39" tabindex="-1"></a></span>
-<span id="cb122-40"><a href="#cb122-40" tabindex="-1"></a><span class="co"># Le format large est approprié pour calculer des évolutions</span></span>
-<span id="cb122-41"><a href="#cb122-41" tabindex="-1"></a><span class="co"># Calculer l&#39;évolution de la production de lait et de la collecte de lait </span></span>
-<span id="cb122-42"><a href="#cb122-42" tabindex="-1"></a><span class="co"># entre 2020 et 2021, en hl et en %</span></span>
-<span id="cb122-43"><a href="#cb122-43" tabindex="-1"></a>laits_mensuel_chevre_livr_coll_large_2 <span class="ot">&lt;-</span> laits_mensuel_chevre_livr_coll_large_1 <span class="sc">|&gt;</span> </span>
-<span id="cb122-44"><a href="#cb122-44" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">livr2021_evol =</span> livraison_2021 <span class="sc">-</span> livraison_2020,</span>
-<span id="cb122-45"><a href="#cb122-45" tabindex="-1"></a>         <span class="at">livr2021_evol_perc =</span> (livraison_2021 <span class="sc">/</span> livraison_2020 <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span><span class="dv">100</span>,</span>
-<span id="cb122-46"><a href="#cb122-46" tabindex="-1"></a>         <span class="at">coll2021_evol =</span> collecte_2021 <span class="sc">-</span> collecte_2020,</span>
-<span id="cb122-47"><a href="#cb122-47" tabindex="-1"></a>         <span class="at">coll2021_evol_perc =</span> (collecte_2021 <span class="sc">/</span> collecte_2020 <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span><span class="dv">100</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb122-48"><a href="#cb122-48" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(livr2021_evol_perc,coll2021_evol_perc), <span class="sc">~</span> <span class="fu">round_half_up</span>(.,<span class="at">digits=</span><span class="dv">3</span>))) <span class="sc">|&gt;</span> </span>
-<span id="cb122-49"><a href="#cb122-49" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(livraison_2020,livraison_2021,</span>
-<span id="cb122-50"><a href="#cb122-50" tabindex="-1"></a>                  collecte_2020,collecte_2021,livr2021_evol,coll2021_evol), <span class="sc">~</span> <span class="fu">round_half_up</span>(.,<span class="at">digits=</span><span class="dv">3</span>)))</span>
-<span id="cb122-51"><a href="#cb122-51" tabindex="-1"></a>  </span>
-<span id="cb122-52"><a href="#cb122-52" tabindex="-1"></a><span class="co"># colonne an_mois en colonne</span></span>
-<span id="cb122-53"><a href="#cb122-53" tabindex="-1"></a>oeufs_2022_2021_an_mois <span class="ot">&lt;-</span> oeufs_2022_2021 <span class="sc">|&gt;</span>   </span>
-<span id="cb122-54"><a href="#cb122-54" tabindex="-1"></a>             <span class="fu">pivot_wider</span>( <span class="at">names_from =</span> <span class="fu">c</span>(Année,mois),</span>
-<span id="cb122-55"><a href="#cb122-55" tabindex="-1"></a>                          <span class="at">names_prefix=</span><span class="st">&quot;an_&quot;</span>,</span>
-<span id="cb122-56"><a href="#cb122-56" tabindex="-1"></a>                          <span class="at">values_from =</span> <span class="fu">c</span>(Exportation_Nombre,Importation_Nombre,solde))</span>
-<span id="cb122-57"><a href="#cb122-57" tabindex="-1"></a></span>
-<span id="cb122-58"><a href="#cb122-58" tabindex="-1"></a>eff_volailles_evol_part <span class="ot">&lt;-</span> eff_volailles_evol <span class="sc">|&gt;</span> </span>
-<span id="cb122-59"><a href="#cb122-59" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(evo_percent,region,an_2020)) <span class="sc">|&gt;</span> </span>
-<span id="cb122-60"><a href="#cb122-60" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span>reg,</span>
-<span id="cb122-61"><a href="#cb122-61" tabindex="-1"></a>              <span class="at">names_prefix=</span><span class="st">&#39;&#39;</span>,</span>
-<span id="cb122-62"><a href="#cb122-62" tabindex="-1"></a>              <span class="at">names_sep =</span> <span class="st">&quot;_&quot;</span>,</span>
-<span id="cb122-63"><a href="#cb122-63" tabindex="-1"></a>              <span class="at">values_from=</span> <span class="fu">c</span>(an_2021,evol_2021_2020) ) <span class="sc">|&gt;</span> </span>
-<span id="cb122-64"><a href="#cb122-64" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">part_pdl_france_2021=</span><span class="fu">paste0</span>(<span class="fu">round_half_up</span>(an_2021_pdl<span class="sc">/</span>an_2021_fm<span class="sc">*</span><span class="dv">100</span>,<span class="dv">0</span>),<span class="st">&quot; %&quot;</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb122-65"><a href="#cb122-65" tabindex="-1"></a>  <span class="fu">relocate</span>(an_2021_pdl,evol_2021_2020_pdl,an_2021_fm,evol_2021_2020_fm,</span>
-<span id="cb122-66"><a href="#cb122-66" tabindex="-1"></a>           part_pdl_france_2021, <span class="at">.after =</span> espece )</span>
-<span id="cb122-67"><a href="#cb122-67" tabindex="-1"></a></span>
-<span id="cb122-68"><a href="#cb122-68" tabindex="-1"></a>laits_mensuel_chevre_livr_coll_large <span class="ot">&lt;-</span> laits_mensuel_chevre_livr_coll <span class="sc">|&gt;</span> </span>
-<span id="cb122-69"><a href="#cb122-69" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> annee,</span>
-<span id="cb122-70"><a href="#cb122-70" tabindex="-1"></a>              <span class="at">names_sep =</span> <span class="st">&quot;_&quot;</span>,</span>
-<span id="cb122-71"><a href="#cb122-71" tabindex="-1"></a>              <span class="at">values_from =</span> <span class="fu">c</span>(livraison,collecte)) <span class="sc">|&gt;</span> </span>
-<span id="cb122-72"><a href="#cb122-72" tabindex="-1"></a>  <span class="fu">adorn_totals</span>(<span class="at">where =</span> <span class="st">&quot;row&quot;</span>,</span>
-<span id="cb122-73"><a href="#cb122-73" tabindex="-1"></a>               <span class="at">name =</span> <span class="st">&quot;Total&quot;</span>)</span>
-<span id="cb122-74"><a href="#cb122-74" tabindex="-1"></a></span>
-<span id="cb122-75"><a href="#cb122-75" tabindex="-1"></a><span class="co"># passage au format large pour dep</span></span>
-<span id="cb122-76"><a href="#cb122-76" tabindex="-1"></a>exploit_otex_dep <span class="ot">&lt;-</span> exploit_pdl <span class="sc">|&gt;</span></span>
-<span id="cb122-77"><a href="#cb122-77" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(dep),otex_regroup) <span class="sc">|&gt;</span> </span>
-<span id="cb122-78"><a href="#cb122-78" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">id_cols =</span>otex_regroup,  </span>
-<span id="cb122-79"><a href="#cb122-79" tabindex="-1"></a>              <span class="at">names_from =</span> dep, </span>
-<span id="cb122-80"><a href="#cb122-80" tabindex="-1"></a>              <span class="at">values_from =</span> c03_n_exploit_dep, </span>
-<span id="cb122-81"><a href="#cb122-81" tabindex="-1"></a>              <span class="at">names_prefix =</span> <span class="st">&quot;dep_&quot;</span>)</span>
-<span id="cb122-82"><a href="#cb122-82" tabindex="-1"></a></span>
-<span id="cb122-83"><a href="#cb122-83" tabindex="-1"></a><span class="co"># on transpose cult_pdl_2020 pour avoir une seule ligne par exploitation (nom_dossier)</span></span>
-<span id="cb122-84"><a href="#cb122-84" tabindex="-1"></a>nom_dossier_cult_pdl <span class="ot">&lt;-</span> cult_pdl_2020 <span class="sc">|&gt;</span> </span>
-<span id="cb122-85"><a href="#cb122-85" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">id_cols =</span> nom_dossier,  </span>
-<span id="cb122-86"><a href="#cb122-86" tabindex="-1"></a>              <span class="at">names_from =</span> cult_ra_code, </span>
-<span id="cb122-87"><a href="#cb122-87" tabindex="-1"></a>              <span class="at">values_from =</span> <span class="fu">c</span>(cultsur,irrisur), </span>
-<span id="cb122-88"><a href="#cb122-88" tabindex="-1"></a>              <span class="at">names_prefix =</span> <span class="st">&quot;&quot;</span>)</span>
-<span id="cb122-89"><a href="#cb122-89" tabindex="-1"></a></span>
-<span id="cb122-90"><a href="#cb122-90" tabindex="-1"></a><span class="co"># enchainement de pivots</span></span>
-<span id="cb122-91"><a href="#cb122-91" tabindex="-1"></a>otex_regroupe <span class="ot">&lt;-</span> otex_transp  <span class="sc">|&gt;</span> </span>
-<span id="cb122-92"><a href="#cb122-92" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(<span class="fu">ends_with</span>(<span class="st">&#39;temp&#39;</span>),otex_4813,otex_4840,otex_5100,otex_5374)) <span class="sc">|&gt;</span> </span>
-<span id="cb122-93"><a href="#cb122-93" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="sc">-</span><span class="fu">c</span>(annee), </span>
-<span id="cb122-94"><a href="#cb122-94" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">&quot;otex_code_regr&quot;</span>),</span>
-<span id="cb122-95"><a href="#cb122-95" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">&quot;etp&quot;</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb122-96"><a href="#cb122-96" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span>annee,</span>
-<span id="cb122-97"><a href="#cb122-97" tabindex="-1"></a>              <span class="at">values_from=</span> <span class="fu">c</span>(etp) )</span>
-<span id="cb122-98"><a href="#cb122-98" tabindex="-1"></a></span>
-<span id="cb122-99"><a href="#cb122-99" tabindex="-1"></a><span class="co"># on remet temporairement import export en colonne pour calculer le solde</span></span>
-<span id="cb122-100"><a href="#cb122-100" tabindex="-1"></a>produits_large <span class="ot">&lt;-</span> produits_long_AZ_C1 <span class="sc">|&gt;</span>   </span>
-<span id="cb122-101"><a href="#cb122-101" tabindex="-1"></a>   <span class="fu">pivot_wider</span>( <span class="at">names_from =</span> flux, </span>
-<span id="cb122-102"><a href="#cb122-102" tabindex="-1"></a>                <span class="at">values_from =</span> montant) <span class="sc">|&gt;</span> </span>
-<span id="cb122-103"><a href="#cb122-103" tabindex="-1"></a>   <span class="fu">mutate</span>(<span class="at">solde =</span> Export <span class="sc">-</span> Import)</span>
-<span id="cb122-104"><a href="#cb122-104" tabindex="-1"></a>produits_long_AZ_C1 <span class="ot">&lt;-</span> produits_large <span class="sc">|&gt;</span>   </span>
-<span id="cb122-105"><a href="#cb122-105" tabindex="-1"></a>             <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(<span class="st">&#39;Export&#39;</span>,<span class="st">&#39;Import&#39;</span>,<span class="st">&#39;solde&#39;</span>), </span>
-<span id="cb122-106"><a href="#cb122-106" tabindex="-1"></a>                          <span class="at">names_to =</span> <span class="st">&#39;flux&#39;</span>,</span>
-<span id="cb122-107"><a href="#cb122-107" tabindex="-1"></a>                          <span class="at">values_to =</span> <span class="st">&quot;montant&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb122"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb122-1"><a href="#cb122-1" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb122-2"><a href="#cb122-2" tabindex="-1"></a><span class="fu">library</span>(tidyr) <span class="co"># pour pivot</span></span>
+<span id="cb122-3"><a href="#cb122-3" tabindex="-1"></a><span class="fu">library</span>(janitor) <span class="co"># pour round_half_up</span></span>
+<span id="cb122-4"><a href="#cb122-4" tabindex="-1"></a></span>
+<span id="cb122-5"><a href="#cb122-5" tabindex="-1"></a>bpe_ens_2018_tbl <span class="sc">|&gt;</span></span>
+<span id="cb122-6"><a href="#cb122-6" tabindex="-1"></a>    <span class="fu">group_by</span>(REG, TYPEQU) <span class="sc">|&gt;</span></span>
+<span id="cb122-7"><a href="#cb122-7" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">NB_EQUIP_TOT =</span> <span class="fu">sum</span>(NB_EQUIP)) <span class="sc">|&gt;</span></span>
+<span id="cb122-8"><a href="#cb122-8" tabindex="-1"></a>    <span class="fu">pivot_wider</span>(<span class="at">id_cols =</span>TYPEQU,  </span>
+<span id="cb122-9"><a href="#cb122-9" tabindex="-1"></a>                <span class="at">names_from =</span> REG, </span>
+<span id="cb122-10"><a href="#cb122-10" tabindex="-1"></a>                <span class="at">values_from =</span> NB_EQUIP_TOT, </span>
+<span id="cb122-11"><a href="#cb122-11" tabindex="-1"></a>                <span class="at">names_prefix =</span> <span class="st">&quot;nb_equip_reg&quot;</span>)</span>
+<span id="cb122-12"><a href="#cb122-12" tabindex="-1"></a></span>
+<span id="cb122-13"><a href="#cb122-13" tabindex="-1"></a><span class="co"># pivot_wider</span></span>
+<span id="cb122-14"><a href="#cb122-14" tabindex="-1"></a>volailles_sum <span class="ot">&lt;-</span> <span class="fu">rbind</span>(volailles_dep_sum,volailles_pdl_sum) <span class="sc">|&gt;</span> </span>
+<span id="cb122-15"><a href="#cb122-15" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from=</span>dep,</span>
+<span id="cb122-16"><a href="#cb122-16" tabindex="-1"></a>              <span class="at">values_from =</span>tec_regrpt) </span>
+<span id="cb122-17"><a href="#cb122-17" tabindex="-1"></a></span>
+<span id="cb122-18"><a href="#cb122-18" tabindex="-1"></a><span class="co"># transposition lignes vers colonnes</span></span>
+<span id="cb122-19"><a href="#cb122-19" tabindex="-1"></a>produits_a17_large <span class="ot">&lt;-</span> produits_a17 <span class="sc">|&gt;</span></span>
+<span id="cb122-20"><a href="#cb122-20" tabindex="-1"></a>   <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> <span class="fu">c</span>(annee,flux,semestre), </span>
+<span id="cb122-21"><a href="#cb122-21" tabindex="-1"></a>               <span class="at">values_from =</span> valeur, </span>
+<span id="cb122-22"><a href="#cb122-22" tabindex="-1"></a>               <span class="at">names_prefix =</span> <span class="st">&quot;an_&quot;</span></span>
+<span id="cb122-23"><a href="#cb122-23" tabindex="-1"></a>               ) <span class="sc">|&gt;</span></span>
+<span id="cb122-24"><a href="#cb122-24" tabindex="-1"></a>   <span class="fu">mutate</span>(<span class="at">an_2021_imports =</span> an_2021_I_sem1 <span class="sc">+</span> an_2021_I_sem2,</span>
+<span id="cb122-25"><a href="#cb122-25" tabindex="-1"></a>          <span class="at">an_2022_imports =</span> an_2022_I_sem1 <span class="sc">+</span> an_2022_I_sem2,</span>
+<span id="cb122-26"><a href="#cb122-26" tabindex="-1"></a>          <span class="at">an_2021_exports =</span> an_2021_E_sem1 <span class="sc">+</span> an_2021_E_sem2,</span>
+<span id="cb122-27"><a href="#cb122-27" tabindex="-1"></a>          <span class="at">an_2022_exports =</span> an_2022_E_sem1 <span class="sc">+</span> an_2022_E_sem2,</span>
+<span id="cb122-28"><a href="#cb122-28" tabindex="-1"></a>          <span class="at">.after=</span>a17_lib_detail)</span>
+<span id="cb122-29"><a href="#cb122-29" tabindex="-1"></a></span>
+<span id="cb122-30"><a href="#cb122-30" tabindex="-1"></a><span class="co"># territoire en colonne </span></span>
+<span id="cb122-31"><a href="#cb122-31" tabindex="-1"></a>agri_bio_vegetal_fr_tab1_final <span class="ot">&lt;-</span> agri_bio_vegetal_fr_tab1_long <span class="sc">|&gt;</span>   </span>
+<span id="cb122-32"><a href="#cb122-32" tabindex="-1"></a>  <span class="fu">pivot_wider</span>( <span class="at">names_from =</span> <span class="st">&quot;territoire&quot;</span>, </span>
+<span id="cb122-33"><a href="#cb122-33" tabindex="-1"></a>               <span class="at">names_prefix=</span><span class="st">&quot;&quot;</span>,</span>
+<span id="cb122-34"><a href="#cb122-34" tabindex="-1"></a>               <span class="at">values_from =</span> <span class="st">&quot;donnees&quot;</span> ) </span>
+<span id="cb122-35"><a href="#cb122-35" tabindex="-1"></a></span>
+<span id="cb122-36"><a href="#cb122-36" tabindex="-1"></a><span class="co"># Transposer le tableau en format plus large, à partir de la variable type</span></span>
+<span id="cb122-37"><a href="#cb122-37" tabindex="-1"></a>lait_production_vache_large <span class="ot">&lt;-</span> lait_production_vache_2 <span class="sc">|&gt;</span> </span>
+<span id="cb122-38"><a href="#cb122-38" tabindex="-1"></a> <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> type,</span>
+<span id="cb122-39"><a href="#cb122-39" tabindex="-1"></a>             <span class="at">values_from =</span> <span class="fu">c</span>(livraison_reg,livraison_dep,livraison_dep_perc))</span>
+<span id="cb122-40"><a href="#cb122-40" tabindex="-1"></a></span>
+<span id="cb122-41"><a href="#cb122-41" tabindex="-1"></a><span class="co"># Le format large est approprié pour calculer des évolutions</span></span>
+<span id="cb122-42"><a href="#cb122-42" tabindex="-1"></a><span class="co"># Calculer l&#39;évolution de la production de lait et de la collecte de lait </span></span>
+<span id="cb122-43"><a href="#cb122-43" tabindex="-1"></a><span class="co"># entre 2020 et 2021, en hl et en %</span></span>
+<span id="cb122-44"><a href="#cb122-44" tabindex="-1"></a>laits_mensuel_chevre_livr_coll_large_2 <span class="ot">&lt;-</span> laits_mensuel_chevre_livr_coll_large_1 <span class="sc">|&gt;</span> </span>
+<span id="cb122-45"><a href="#cb122-45" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">livr2021_evol =</span> livraison_2021 <span class="sc">-</span> livraison_2020,</span>
+<span id="cb122-46"><a href="#cb122-46" tabindex="-1"></a>         <span class="at">livr2021_evol_perc =</span> (livraison_2021 <span class="sc">/</span> livraison_2020 <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span><span class="dv">100</span>,</span>
+<span id="cb122-47"><a href="#cb122-47" tabindex="-1"></a>         <span class="at">coll2021_evol =</span> collecte_2021 <span class="sc">-</span> collecte_2020,</span>
+<span id="cb122-48"><a href="#cb122-48" tabindex="-1"></a>         <span class="at">coll2021_evol_perc =</span> (collecte_2021 <span class="sc">/</span> collecte_2020 <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span><span class="dv">100</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb122-49"><a href="#cb122-49" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(livr2021_evol_perc,coll2021_evol_perc), <span class="sc">~</span> <span class="fu">round_half_up</span>(.,<span class="at">digits=</span><span class="dv">3</span>))) <span class="sc">|&gt;</span> </span>
+<span id="cb122-50"><a href="#cb122-50" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(livraison_2020,livraison_2021,</span>
+<span id="cb122-51"><a href="#cb122-51" tabindex="-1"></a>                  collecte_2020,collecte_2021,livr2021_evol,coll2021_evol), <span class="sc">~</span> <span class="fu">round_half_up</span>(.,<span class="at">digits=</span><span class="dv">3</span>)))</span>
+<span id="cb122-52"><a href="#cb122-52" tabindex="-1"></a>  </span>
+<span id="cb122-53"><a href="#cb122-53" tabindex="-1"></a><span class="co"># colonne an_mois en colonne</span></span>
+<span id="cb122-54"><a href="#cb122-54" tabindex="-1"></a>oeufs_2022_2021_an_mois <span class="ot">&lt;-</span> oeufs_2022_2021 <span class="sc">|&gt;</span>   </span>
+<span id="cb122-55"><a href="#cb122-55" tabindex="-1"></a>             <span class="fu">pivot_wider</span>( <span class="at">names_from =</span> <span class="fu">c</span>(Année,mois),</span>
+<span id="cb122-56"><a href="#cb122-56" tabindex="-1"></a>                          <span class="at">names_prefix=</span><span class="st">&quot;an_&quot;</span>,</span>
+<span id="cb122-57"><a href="#cb122-57" tabindex="-1"></a>                          <span class="at">values_from =</span> <span class="fu">c</span>(Exportation_Nombre,Importation_Nombre,solde))</span>
+<span id="cb122-58"><a href="#cb122-58" tabindex="-1"></a></span>
+<span id="cb122-59"><a href="#cb122-59" tabindex="-1"></a>eff_volailles_evol_part <span class="ot">&lt;-</span> eff_volailles_evol <span class="sc">|&gt;</span> </span>
+<span id="cb122-60"><a href="#cb122-60" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(evo_percent,region,an_2020)) <span class="sc">|&gt;</span> </span>
+<span id="cb122-61"><a href="#cb122-61" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span>reg,</span>
+<span id="cb122-62"><a href="#cb122-62" tabindex="-1"></a>              <span class="at">names_prefix=</span><span class="st">&#39;&#39;</span>,</span>
+<span id="cb122-63"><a href="#cb122-63" tabindex="-1"></a>              <span class="at">names_sep =</span> <span class="st">&quot;_&quot;</span>,</span>
+<span id="cb122-64"><a href="#cb122-64" tabindex="-1"></a>              <span class="at">values_from=</span> <span class="fu">c</span>(an_2021,evol_2021_2020) ) <span class="sc">|&gt;</span> </span>
+<span id="cb122-65"><a href="#cb122-65" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">part_pdl_france_2021=</span><span class="fu">paste0</span>(<span class="fu">round_half_up</span>(an_2021_pdl<span class="sc">/</span>an_2021_fm<span class="sc">*</span><span class="dv">100</span>,<span class="dv">0</span>),<span class="st">&quot; %&quot;</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb122-66"><a href="#cb122-66" tabindex="-1"></a>  <span class="fu">relocate</span>(an_2021_pdl,evol_2021_2020_pdl,an_2021_fm,evol_2021_2020_fm,</span>
+<span id="cb122-67"><a href="#cb122-67" tabindex="-1"></a>           part_pdl_france_2021, <span class="at">.after =</span> espece )</span>
+<span id="cb122-68"><a href="#cb122-68" tabindex="-1"></a></span>
+<span id="cb122-69"><a href="#cb122-69" tabindex="-1"></a>laits_mensuel_chevre_livr_coll_large <span class="ot">&lt;-</span> laits_mensuel_chevre_livr_coll <span class="sc">|&gt;</span> </span>
+<span id="cb122-70"><a href="#cb122-70" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> annee,</span>
+<span id="cb122-71"><a href="#cb122-71" tabindex="-1"></a>              <span class="at">names_sep =</span> <span class="st">&quot;_&quot;</span>,</span>
+<span id="cb122-72"><a href="#cb122-72" tabindex="-1"></a>              <span class="at">values_from =</span> <span class="fu">c</span>(livraison,collecte)) <span class="sc">|&gt;</span> </span>
+<span id="cb122-73"><a href="#cb122-73" tabindex="-1"></a>  <span class="fu">adorn_totals</span>(<span class="at">where =</span> <span class="st">&quot;row&quot;</span>,</span>
+<span id="cb122-74"><a href="#cb122-74" tabindex="-1"></a>               <span class="at">name =</span> <span class="st">&quot;Total&quot;</span>)</span>
+<span id="cb122-75"><a href="#cb122-75" tabindex="-1"></a></span>
+<span id="cb122-76"><a href="#cb122-76" tabindex="-1"></a><span class="co"># passage au format large pour dep</span></span>
+<span id="cb122-77"><a href="#cb122-77" tabindex="-1"></a>exploit_otex_dep <span class="ot">&lt;-</span> exploit_pdl <span class="sc">|&gt;</span></span>
+<span id="cb122-78"><a href="#cb122-78" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(dep),otex_regroup) <span class="sc">|&gt;</span> </span>
+<span id="cb122-79"><a href="#cb122-79" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">id_cols =</span>otex_regroup,  </span>
+<span id="cb122-80"><a href="#cb122-80" tabindex="-1"></a>              <span class="at">names_from =</span> dep, </span>
+<span id="cb122-81"><a href="#cb122-81" tabindex="-1"></a>              <span class="at">values_from =</span> c03_n_exploit_dep, </span>
+<span id="cb122-82"><a href="#cb122-82" tabindex="-1"></a>              <span class="at">names_prefix =</span> <span class="st">&quot;dep_&quot;</span>)</span>
+<span id="cb122-83"><a href="#cb122-83" tabindex="-1"></a></span>
+<span id="cb122-84"><a href="#cb122-84" tabindex="-1"></a><span class="co"># on transpose cult_pdl_2020 pour avoir une seule ligne par exploitation (nom_dossier)</span></span>
+<span id="cb122-85"><a href="#cb122-85" tabindex="-1"></a>nom_dossier_cult_pdl <span class="ot">&lt;-</span> cult_pdl_2020 <span class="sc">|&gt;</span> </span>
+<span id="cb122-86"><a href="#cb122-86" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">id_cols =</span> nom_dossier,  </span>
+<span id="cb122-87"><a href="#cb122-87" tabindex="-1"></a>              <span class="at">names_from =</span> cult_ra_code, </span>
+<span id="cb122-88"><a href="#cb122-88" tabindex="-1"></a>              <span class="at">values_from =</span> <span class="fu">c</span>(cultsur,irrisur), </span>
+<span id="cb122-89"><a href="#cb122-89" tabindex="-1"></a>              <span class="at">names_prefix =</span> <span class="st">&quot;&quot;</span>)</span>
+<span id="cb122-90"><a href="#cb122-90" tabindex="-1"></a></span>
+<span id="cb122-91"><a href="#cb122-91" tabindex="-1"></a><span class="co"># enchainement de pivots</span></span>
+<span id="cb122-92"><a href="#cb122-92" tabindex="-1"></a><span class="co"># en général pivot_longer avant pivot_wider : cela augmente le nombre de lignes</span></span>
+<span id="cb122-93"><a href="#cb122-93" tabindex="-1"></a><span class="co"># et diminue le nombre de colonnes, ce qui est généralement plus facile à gérer</span></span>
+<span id="cb122-94"><a href="#cb122-94" tabindex="-1"></a><span class="co"># pour ensuite pivoter les données en utilisant pivot_wider.</span></span>
+<span id="cb122-95"><a href="#cb122-95" tabindex="-1"></a><span class="co"># Pivoter de manière à avoir les indicateurs surf_2023 et prod_2023 en lignes,</span></span>
+<span id="cb122-96"><a href="#cb122-96" tabindex="-1"></a><span class="co"># et les valeurs de dep en colonnes </span></span>
+<span id="cb122-97"><a href="#cb122-97" tabindex="-1"></a>surf_fruits_tonnes_large <span class="ot">&lt;-</span> surf_fruits_tonnes <span class="sc">|&gt;</span></span>
+<span id="cb122-98"><a href="#cb122-98" tabindex="-1"></a>  <span class="co"># on va d’abord transformer les colonnes surf_2023 et prod_2023 </span></span>
+<span id="cb122-99"><a href="#cb122-99" tabindex="-1"></a>  <span class="co"># en une colonne indicateur </span></span>
+<span id="cb122-100"><a href="#cb122-100" tabindex="-1"></a>  <span class="co"># avec les valeurs correspondantes dans une colonne valeur.</span></span>
+<span id="cb122-101"><a href="#cb122-101" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(surf_2023, prod_2023), </span>
+<span id="cb122-102"><a href="#cb122-102" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="st">&quot;indicateur&quot;</span>, </span>
+<span id="cb122-103"><a href="#cb122-103" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">&quot;valeur&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb122-104"><a href="#cb122-104" tabindex="-1"></a>  <span class="co"># Ensuite, on va pivoter ces données </span></span>
+<span id="cb122-105"><a href="#cb122-105" tabindex="-1"></a>  <span class="co"># pour que les valeurs de dep deviennent des colonnes</span></span>
+<span id="cb122-106"><a href="#cb122-106" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> dep, <span class="at">values_from =</span> valeur)</span>
+<span id="cb122-107"><a href="#cb122-107" tabindex="-1"></a></span>
+<span id="cb122-108"><a href="#cb122-108" tabindex="-1"></a><span class="co"># autre enchainement de pivots</span></span>
+<span id="cb122-109"><a href="#cb122-109" tabindex="-1"></a>otex_regroupe <span class="ot">&lt;-</span> otex_transp  <span class="sc">|&gt;</span> </span>
+<span id="cb122-110"><a href="#cb122-110" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(<span class="fu">ends_with</span>(<span class="st">&#39;temp&#39;</span>),otex_4813,otex_4840,otex_5100,otex_5374)) <span class="sc">|&gt;</span> </span>
+<span id="cb122-111"><a href="#cb122-111" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="sc">-</span><span class="fu">c</span>(annee), </span>
+<span id="cb122-112"><a href="#cb122-112" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">&quot;otex_code_regr&quot;</span>),</span>
+<span id="cb122-113"><a href="#cb122-113" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">&quot;etp&quot;</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb122-114"><a href="#cb122-114" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span>annee,</span>
+<span id="cb122-115"><a href="#cb122-115" tabindex="-1"></a>              <span class="at">values_from=</span> <span class="fu">c</span>(etp))</span>
+<span id="cb122-116"><a href="#cb122-116" tabindex="-1"></a></span>
+<span id="cb122-117"><a href="#cb122-117" tabindex="-1"></a><span class="co"># enchainement de pivots</span></span>
+<span id="cb122-118"><a href="#cb122-118" tabindex="-1"></a><span class="co"># ici pivot_wider avant pivot_longer </span></span>
+<span id="cb122-119"><a href="#cb122-119" tabindex="-1"></a><span class="co"># on remet temporairement import export en colonne pour calculer le solde</span></span>
+<span id="cb122-120"><a href="#cb122-120" tabindex="-1"></a><span class="co"># Étape 1 : Pivoter pour avoir Export et Import en colonnes</span></span>
+<span id="cb122-121"><a href="#cb122-121" tabindex="-1"></a><span class="co"># on transforme les colonnes flux (qui contiennent Export et Import) en colonnes distinctes, </span></span>
+<span id="cb122-122"><a href="#cb122-122" tabindex="-1"></a><span class="co"># avec les valeurs correspondantes dans montant.</span></span>
+<span id="cb122-123"><a href="#cb122-123" tabindex="-1"></a>produits_large <span class="ot">&lt;-</span> produits_long_AZ_C1 <span class="sc">|&gt;</span> </span>
+<span id="cb122-124"><a href="#cb122-124" tabindex="-1"></a>   <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> flux, </span>
+<span id="cb122-125"><a href="#cb122-125" tabindex="-1"></a>               <span class="at">values_from =</span> montant) <span class="sc">|&gt;</span> </span>
+<span id="cb122-126"><a href="#cb122-126" tabindex="-1"></a>   <span class="fu">mutate</span>(<span class="at">solde =</span> Export <span class="sc">-</span> Import)  <span class="co"># Étape 2 : Calculer le solde</span></span>
+<span id="cb122-127"><a href="#cb122-127" tabindex="-1"></a></span>
+<span id="cb122-128"><a href="#cb122-128" tabindex="-1"></a><span class="co"># Étape 3 : Revenir au format long</span></span>
+<span id="cb122-129"><a href="#cb122-129" tabindex="-1"></a><span class="co"># on reconvertit les colonnes Export, Import et solde en une colonne flux </span></span>
+<span id="cb122-130"><a href="#cb122-130" tabindex="-1"></a><span class="co"># avec les valeurs correspondantes dans montant.</span></span>
+<span id="cb122-131"><a href="#cb122-131" tabindex="-1"></a>produits_long_AZ_C1 <span class="ot">&lt;-</span> produits_large <span class="sc">|&gt;</span>   </span>
+<span id="cb122-132"><a href="#cb122-132" tabindex="-1"></a>   <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(<span class="st">&#39;Export&#39;</span>, <span class="st">&#39;Import&#39;</span>, <span class="st">&#39;solde&#39;</span>), </span>
+<span id="cb122-133"><a href="#cb122-133" tabindex="-1"></a>                <span class="at">names_to =</span> <span class="st">&#39;flux&#39;</span>, </span>
+<span id="cb122-134"><a href="#cb122-134" tabindex="-1"></a>                <span class="at">values_to =</span> <span class="st">&quot;montant&quot;</span>)</span></code></pre></div>
 </div>
 </div>
 <div id="jointure-de-tableaux" class="section level1" number="7">
@@ -5679,64 +5720,66 @@ une fonction dite “pipe-operator-friendly”, par exemple <code>stri_sub_repla
 <span id="cb185-7"><a href="#cb185-7" tabindex="-1"></a></span>
 <span id="cb185-8"><a href="#cb185-8" tabindex="-1"></a><span class="fu">calcul_IMC</span> (<span class="at">poids =</span> <span class="dv">80</span>, <span class="at">taille =</span> <span class="fl">1.89</span>)</span>
 <span id="cb185-9"><a href="#cb185-9" tabindex="-1"></a><span class="fu">calcul_IMC</span> (<span class="at">poids =</span> <span class="dv">60</span>, <span class="at">taille =</span> <span class="fl">1.55</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb186"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb186-1"><a href="#cb186-1" tabindex="-1"></a><span class="fu">library</span>(janitor) <span class="co"># pour round_half_up</span></span>
-<span id="cb186-2"><a href="#cb186-2" tabindex="-1"></a></span>
-<span id="cb186-3"><a href="#cb186-3" tabindex="-1"></a><span class="co"># fonction secteurs</span></span>
-<span id="cb186-4"><a href="#cb186-4" tabindex="-1"></a>secteur_1 <span class="ot">&lt;-</span> <span class="cf">function</span>(df) {</span>
-<span id="cb186-5"><a href="#cb186-5" tabindex="-1"></a>  df <span class="sc">|&gt;</span> </span>
-<span id="cb186-6"><a href="#cb186-6" tabindex="-1"></a>    <span class="fu">select</span>(region,<span class="st">&#39;2019&#39;</span>,<span class="st">&#39;2020&#39;</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb186-7"><a href="#cb186-7" tabindex="-1"></a>    <span class="fu">filter</span>(region <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;France métropolitaine&quot;</span>,<span class="st">&quot;Pays de la Loire&quot;</span>)) </span>
-<span id="cb186-8"><a href="#cb186-8" tabindex="-1"></a>}</span>
-<span id="cb186-9"><a href="#cb186-9" tabindex="-1"></a></span>
-<span id="cb186-10"><a href="#cb186-10" tabindex="-1"></a><span class="co"># nouvelle variable emploi_salarie en mettant la liste des especes par transposition</span></span>
-<span id="cb186-11"><a href="#cb186-11" tabindex="-1"></a>secteur_2 <span class="ot">&lt;-</span> <span class="cf">function</span>(df) {</span>
-<span id="cb186-12"><a href="#cb186-12" tabindex="-1"></a>  df <span class="sc">|&gt;</span>   </span>
-<span id="cb186-13"><a href="#cb186-13" tabindex="-1"></a>    <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(<span class="st">&#39;2019&#39;</span>,<span class="st">&#39;2020&#39;</span>), </span>
-<span id="cb186-14"><a href="#cb186-14" tabindex="-1"></a>                 <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">&quot;annee&quot;</span>),</span>
-<span id="cb186-15"><a href="#cb186-15" tabindex="-1"></a>                 <span class="at">values_to =</span> <span class="st">&quot;nb_emploi_salarie&quot;</span>)</span>
-<span id="cb186-16"><a href="#cb186-16" tabindex="-1"></a>}</span>
-<span id="cb186-17"><a href="#cb186-17" tabindex="-1"></a></span>
-<span id="cb186-18"><a href="#cb186-18" tabindex="-1"></a><span class="co"># utilisation fonction secteur</span></span>
-<span id="cb186-19"><a href="#cb186-19" tabindex="-1"></a>b_iaa <span class="ot">&lt;-</span> <span class="fu">secteur_1</span>(b_iaa)</span>
-<span id="cb186-20"><a href="#cb186-20" tabindex="-1"></a><span class="co"># ajout colonne secteur</span></span>
-<span id="cb186-21"><a href="#cb186-21" tabindex="-1"></a>b_iaa_long <span class="ot">&lt;-</span> <span class="fu">secteur_2</span>(b_iaa) <span class="sc">|&gt;</span> </span>
-<span id="cb186-22"><a href="#cb186-22" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">secteur =</span> <span class="st">&quot;b2_iaa&quot;</span>)</span>
-<span id="cb186-23"><a href="#cb186-23" tabindex="-1"></a></span>
-<span id="cb186-24"><a href="#cb186-24" tabindex="-1"></a><span class="co"># fonction pour an_semestre en colonne</span></span>
-<span id="cb186-25"><a href="#cb186-25" tabindex="-1"></a>an_sem_col <span class="ot">&lt;-</span> <span class="cf">function</span>(df) {</span>
-<span id="cb186-26"><a href="#cb186-26" tabindex="-1"></a>  df <span class="sc">|&gt;</span> </span>
-<span id="cb186-27"><a href="#cb186-27" tabindex="-1"></a>    <span class="fu">pivot_wider</span>( <span class="at">names_from =</span> <span class="fu">c</span>(annee,semestre), <span class="at">names_prefix=</span><span class="st">&quot;an_&quot;</span>,</span>
-<span id="cb186-28"><a href="#cb186-28" tabindex="-1"></a>                 <span class="at">values_from =</span> montant)</span>
-<span id="cb186-29"><a href="#cb186-29" tabindex="-1"></a>}</span>
-<span id="cb186-30"><a href="#cb186-30" tabindex="-1"></a></span>
-<span id="cb186-31"><a href="#cb186-31" tabindex="-1"></a><span class="co"># utilisation fonction pour an_semestre en colonne   </span></span>
-<span id="cb186-32"><a href="#cb186-32" tabindex="-1"></a>produits_AZ_C1_reg <span class="ot">&lt;-</span> <span class="fu">an_sem_col</span>(produits_long_AZ_C1_reg)</span>
-<span id="cb186-33"><a href="#cb186-33" tabindex="-1"></a></span>
-<span id="cb186-34"><a href="#cb186-34" tabindex="-1"></a><span class="co"># fonction pour calcul évolutions et / semestre précédent</span></span>
-<span id="cb186-35"><a href="#cb186-35" tabindex="-1"></a>calcul_evol <span class="ot">&lt;-</span> <span class="cf">function</span>(df) {</span>
-<span id="cb186-36"><a href="#cb186-36" tabindex="-1"></a>   df <span class="sc">|&gt;</span> </span>
-<span id="cb186-37"><a href="#cb186-37" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">diff2022_sem1_evol =</span> an_2022_sem1 <span class="sc">-</span> an_2021_sem1,</span>
-<span id="cb186-38"><a href="#cb186-38" tabindex="-1"></a>             <span class="at">diff2022_sem1_evol_perc =</span> (an_2022_sem1<span class="sc">/</span>an_2021_sem1<span class="dv">-1</span>)<span class="sc">*</span><span class="dv">100</span>,</span>
-<span id="cb186-39"><a href="#cb186-39" tabindex="-1"></a>             <span class="at">diff2021_sem2_evol_prec =</span> an_2021_sem2<span class="sc">-</span>an_2021_sem1,</span>
-<span id="cb186-40"><a href="#cb186-40" tabindex="-1"></a>             <span class="at">diff2021_sem2_evol_prec_perc =</span> ( an_2021_sem2<span class="sc">/</span>an_2021_sem1 <span class="sc">-</span><span class="dv">1</span>)<span class="sc">*</span><span class="dv">100</span>,</span>
-<span id="cb186-41"><a href="#cb186-41" tabindex="-1"></a>             <span class="at">diff2022_sem1_evol_prec =</span> an_2022_sem1<span class="sc">-</span>an_2021_sem2,</span>
-<span id="cb186-42"><a href="#cb186-42" tabindex="-1"></a>             <span class="at">diff2022_sem1_evol_prec_perc =</span> ( an_2022_sem1<span class="sc">/</span>an_2021_sem2 <span class="sc">-</span><span class="dv">1</span>)<span class="sc">*</span><span class="dv">100</span> </span>
-<span id="cb186-43"><a href="#cb186-43" tabindex="-1"></a>             )</span>
-<span id="cb186-44"><a href="#cb186-44" tabindex="-1"></a>}</span>
-<span id="cb186-45"><a href="#cb186-45" tabindex="-1"></a></span>
-<span id="cb186-46"><a href="#cb186-46" tabindex="-1"></a><span class="co"># utilisation fonction calcul évolutions</span></span>
-<span id="cb186-47"><a href="#cb186-47" tabindex="-1"></a>produits_AZ_C1_reg <span class="ot">&lt;-</span> <span class="fu">calcul_evol</span>(produits_AZ_C1_reg) </span>
-<span id="cb186-48"><a href="#cb186-48" tabindex="-1"></a></span>
-<span id="cb186-49"><a href="#cb186-49" tabindex="-1"></a><span class="co"># fonction pour arrondi évolutions </span></span>
-<span id="cb186-50"><a href="#cb186-50" tabindex="-1"></a>arrondi_evol <span class="ot">&lt;-</span> <span class="cf">function</span>(df) {</span>
-<span id="cb186-51"><a href="#cb186-51" tabindex="-1"></a>  df <span class="sc">|&gt;</span> </span>
-<span id="cb186-52"><a href="#cb186-52" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">diff2022_sem1_evol_perc=</span><span class="fu">round_half_up</span>(diff2022_sem1_evol_perc, <span class="at">digits=</span><span class="dv">2</span>),</span>
-<span id="cb186-53"><a href="#cb186-53" tabindex="-1"></a>  <span class="at">diff2021_sem2_evol_prec_perc=</span><span class="fu">round_half_up</span>(diff2021_sem2_evol_prec_perc, <span class="at">digits=</span><span class="dv">2</span>),</span>
-<span id="cb186-54"><a href="#cb186-54" tabindex="-1"></a>  <span class="at">diff2022_sem1_evol_prec_perc=</span><span class="fu">round_half_up</span>(diff2022_sem1_evol_prec_perc, <span class="at">digits=</span><span class="dv">2</span>) )</span>
-<span id="cb186-55"><a href="#cb186-55" tabindex="-1"></a>}</span>
-<span id="cb186-56"><a href="#cb186-56" tabindex="-1"></a></span>
-<span id="cb186-57"><a href="#cb186-57" tabindex="-1"></a><span class="co"># utilisation fonction arrondi évolutions </span></span>
-<span id="cb186-58"><a href="#cb186-58" tabindex="-1"></a>produits_AZ_C1_reg <span class="ot">&lt;-</span> <span class="fu">arrondi_evol</span>(produits_AZ_C1_reg) </span></code></pre></div>
+<div class="sourceCode" id="cb186"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb186-1"><a href="#cb186-1" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb186-2"><a href="#cb186-2" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb186-3"><a href="#cb186-3" tabindex="-1"></a><span class="fu">library</span>(janitor) <span class="co"># pour round_half_up</span></span>
+<span id="cb186-4"><a href="#cb186-4" tabindex="-1"></a></span>
+<span id="cb186-5"><a href="#cb186-5" tabindex="-1"></a><span class="co"># fonction secteurs</span></span>
+<span id="cb186-6"><a href="#cb186-6" tabindex="-1"></a>secteur_1 <span class="ot">&lt;-</span> <span class="cf">function</span>(df) {</span>
+<span id="cb186-7"><a href="#cb186-7" tabindex="-1"></a>  df <span class="sc">|&gt;</span> </span>
+<span id="cb186-8"><a href="#cb186-8" tabindex="-1"></a>    <span class="fu">select</span>(region,<span class="st">&#39;2019&#39;</span>,<span class="st">&#39;2020&#39;</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb186-9"><a href="#cb186-9" tabindex="-1"></a>    <span class="fu">filter</span>(region <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;France métropolitaine&quot;</span>,<span class="st">&quot;Pays de la Loire&quot;</span>)) </span>
+<span id="cb186-10"><a href="#cb186-10" tabindex="-1"></a>}</span>
+<span id="cb186-11"><a href="#cb186-11" tabindex="-1"></a></span>
+<span id="cb186-12"><a href="#cb186-12" tabindex="-1"></a><span class="co"># nouvelle variable emploi_salarie en mettant la liste des especes par transposition</span></span>
+<span id="cb186-13"><a href="#cb186-13" tabindex="-1"></a>secteur_2 <span class="ot">&lt;-</span> <span class="cf">function</span>(df) {</span>
+<span id="cb186-14"><a href="#cb186-14" tabindex="-1"></a>  df <span class="sc">|&gt;</span>   </span>
+<span id="cb186-15"><a href="#cb186-15" tabindex="-1"></a>    <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(<span class="st">&#39;2019&#39;</span>,<span class="st">&#39;2020&#39;</span>), </span>
+<span id="cb186-16"><a href="#cb186-16" tabindex="-1"></a>                 <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">&quot;annee&quot;</span>),</span>
+<span id="cb186-17"><a href="#cb186-17" tabindex="-1"></a>                 <span class="at">values_to =</span> <span class="st">&quot;nb_emploi_salarie&quot;</span>)</span>
+<span id="cb186-18"><a href="#cb186-18" tabindex="-1"></a>}</span>
+<span id="cb186-19"><a href="#cb186-19" tabindex="-1"></a></span>
+<span id="cb186-20"><a href="#cb186-20" tabindex="-1"></a><span class="co"># utilisation fonction secteur</span></span>
+<span id="cb186-21"><a href="#cb186-21" tabindex="-1"></a>b_iaa <span class="ot">&lt;-</span> <span class="fu">secteur_1</span>(b_iaa)</span>
+<span id="cb186-22"><a href="#cb186-22" tabindex="-1"></a><span class="co"># ajout colonne secteur</span></span>
+<span id="cb186-23"><a href="#cb186-23" tabindex="-1"></a>b_iaa_long <span class="ot">&lt;-</span> <span class="fu">secteur_2</span>(b_iaa) <span class="sc">|&gt;</span> </span>
+<span id="cb186-24"><a href="#cb186-24" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">secteur =</span> <span class="st">&quot;b2_iaa&quot;</span>)</span>
+<span id="cb186-25"><a href="#cb186-25" tabindex="-1"></a></span>
+<span id="cb186-26"><a href="#cb186-26" tabindex="-1"></a><span class="co"># fonction pour an_semestre en colonne</span></span>
+<span id="cb186-27"><a href="#cb186-27" tabindex="-1"></a>an_sem_col <span class="ot">&lt;-</span> <span class="cf">function</span>(df) {</span>
+<span id="cb186-28"><a href="#cb186-28" tabindex="-1"></a>  df <span class="sc">|&gt;</span> </span>
+<span id="cb186-29"><a href="#cb186-29" tabindex="-1"></a>    <span class="fu">pivot_wider</span>( <span class="at">names_from =</span> <span class="fu">c</span>(annee,semestre), <span class="at">names_prefix=</span><span class="st">&quot;an_&quot;</span>,</span>
+<span id="cb186-30"><a href="#cb186-30" tabindex="-1"></a>                 <span class="at">values_from =</span> montant)</span>
+<span id="cb186-31"><a href="#cb186-31" tabindex="-1"></a>}</span>
+<span id="cb186-32"><a href="#cb186-32" tabindex="-1"></a></span>
+<span id="cb186-33"><a href="#cb186-33" tabindex="-1"></a><span class="co"># utilisation fonction pour an_semestre en colonne   </span></span>
+<span id="cb186-34"><a href="#cb186-34" tabindex="-1"></a>produits_AZ_C1_reg <span class="ot">&lt;-</span> <span class="fu">an_sem_col</span>(produits_long_AZ_C1_reg)</span>
+<span id="cb186-35"><a href="#cb186-35" tabindex="-1"></a></span>
+<span id="cb186-36"><a href="#cb186-36" tabindex="-1"></a><span class="co"># fonction pour calcul évolutions et / semestre précédent</span></span>
+<span id="cb186-37"><a href="#cb186-37" tabindex="-1"></a>calcul_evol <span class="ot">&lt;-</span> <span class="cf">function</span>(df) {</span>
+<span id="cb186-38"><a href="#cb186-38" tabindex="-1"></a>   df <span class="sc">|&gt;</span> </span>
+<span id="cb186-39"><a href="#cb186-39" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">diff2022_sem1_evol =</span> an_2022_sem1 <span class="sc">-</span> an_2021_sem1,</span>
+<span id="cb186-40"><a href="#cb186-40" tabindex="-1"></a>             <span class="at">diff2022_sem1_evol_perc =</span> (an_2022_sem1<span class="sc">/</span>an_2021_sem1<span class="dv">-1</span>)<span class="sc">*</span><span class="dv">100</span>,</span>
+<span id="cb186-41"><a href="#cb186-41" tabindex="-1"></a>             <span class="at">diff2021_sem2_evol_prec =</span> an_2021_sem2<span class="sc">-</span>an_2021_sem1,</span>
+<span id="cb186-42"><a href="#cb186-42" tabindex="-1"></a>             <span class="at">diff2021_sem2_evol_prec_perc =</span> ( an_2021_sem2<span class="sc">/</span>an_2021_sem1 <span class="sc">-</span><span class="dv">1</span>)<span class="sc">*</span><span class="dv">100</span>,</span>
+<span id="cb186-43"><a href="#cb186-43" tabindex="-1"></a>             <span class="at">diff2022_sem1_evol_prec =</span> an_2022_sem1<span class="sc">-</span>an_2021_sem2,</span>
+<span id="cb186-44"><a href="#cb186-44" tabindex="-1"></a>             <span class="at">diff2022_sem1_evol_prec_perc =</span> ( an_2022_sem1<span class="sc">/</span>an_2021_sem2 <span class="sc">-</span><span class="dv">1</span>)<span class="sc">*</span><span class="dv">100</span> </span>
+<span id="cb186-45"><a href="#cb186-45" tabindex="-1"></a>             )</span>
+<span id="cb186-46"><a href="#cb186-46" tabindex="-1"></a>}</span>
+<span id="cb186-47"><a href="#cb186-47" tabindex="-1"></a></span>
+<span id="cb186-48"><a href="#cb186-48" tabindex="-1"></a><span class="co"># utilisation fonction calcul évolutions</span></span>
+<span id="cb186-49"><a href="#cb186-49" tabindex="-1"></a>produits_AZ_C1_reg <span class="ot">&lt;-</span> <span class="fu">calcul_evol</span>(produits_AZ_C1_reg) </span>
+<span id="cb186-50"><a href="#cb186-50" tabindex="-1"></a></span>
+<span id="cb186-51"><a href="#cb186-51" tabindex="-1"></a><span class="co"># fonction pour arrondi évolutions </span></span>
+<span id="cb186-52"><a href="#cb186-52" tabindex="-1"></a>arrondi_evol <span class="ot">&lt;-</span> <span class="cf">function</span>(df) {</span>
+<span id="cb186-53"><a href="#cb186-53" tabindex="-1"></a>  df <span class="sc">|&gt;</span> </span>
+<span id="cb186-54"><a href="#cb186-54" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">diff2022_sem1_evol_perc=</span><span class="fu">round_half_up</span>(diff2022_sem1_evol_perc, <span class="at">digits=</span><span class="dv">2</span>),</span>
+<span id="cb186-55"><a href="#cb186-55" tabindex="-1"></a>  <span class="at">diff2021_sem2_evol_prec_perc=</span><span class="fu">round_half_up</span>(diff2021_sem2_evol_prec_perc, <span class="at">digits=</span><span class="dv">2</span>),</span>
+<span id="cb186-56"><a href="#cb186-56" tabindex="-1"></a>  <span class="at">diff2022_sem1_evol_prec_perc=</span><span class="fu">round_half_up</span>(diff2022_sem1_evol_prec_perc, <span class="at">digits=</span><span class="dv">2</span>) )</span>
+<span id="cb186-57"><a href="#cb186-57" tabindex="-1"></a>}</span>
+<span id="cb186-58"><a href="#cb186-58" tabindex="-1"></a></span>
+<span id="cb186-59"><a href="#cb186-59" tabindex="-1"></a><span class="co"># utilisation fonction arrondi évolutions </span></span>
+<span id="cb186-60"><a href="#cb186-60" tabindex="-1"></a>produits_AZ_C1_reg <span class="ot">&lt;-</span> <span class="fu">arrondi_evol</span>(produits_AZ_C1_reg) </span></code></pre></div>
 <div class="sourceCode" id="cb187"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb187-1"><a href="#cb187-1" tabindex="-1"></a><span class="co"># cas de plusieurs modalités par variable</span></span>
 <span id="cb187-2"><a href="#cb187-2" tabindex="-1"></a><span class="co"># traitement récurrent</span></span>
 <span id="cb187-3"><a href="#cb187-3" tabindex="-1"></a><span class="co"># fonction pour effectuer la transformation des données dep + reg</span></span>

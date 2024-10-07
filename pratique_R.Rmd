@@ -1454,6 +1454,9 @@ cog_com_2019_tbl
 Voici comment on peut utiliser `separate` pour scinder `com` en deux nouvelles colonnes `code_dep` et `code_com`. La colonne `com` disparait, car par défaut `separate` supprime la colonne scindée. Si on souhaite la conserver, il faut ajouter l'option `remove = FALSE`.
 
 ```{r, eval=FALSE}
+library(dplyr)
+library(tidyr)
+
 cog_com_2019_tbl |> 
   separate(com, c("code_dep", "code_com"), sep = 2)
 
@@ -2510,6 +2513,9 @@ agri_bio_vegetal_fr_tab2 <- agri_bio_vegetal_fr_cultures |>
 
 Spécificité pour les vecteurs 'factor', le tri se réalise avec l'instruction levels
 ```{r , eval = FALSE}
+library(dplyr)
+library(tidyr)
+
 # regroupements et pivot_wider
 volailles_sum <- rbind(volailles_dep_sum,volailles_pdl_sum) |> 
   pivot_wider(names_from=dep,
@@ -2525,6 +2531,8 @@ volailles_sum <- rbind(volailles_dep_sum,volailles_pdl_sum) |>
 
 relocate
 ```{r , eval = FALSE}
+library(dplyr)
+library(tidyr)
 library(janitor) # pour round_half_up
 
 # la fonction relocate() pour réorganiser les colonnes.
@@ -2765,6 +2773,8 @@ La fonction `bind_cols()` permet de juxtaposer des tables (qui doivent avoir le 
 
 adorn_totals
 ```{r , eval = FALSE}
+library(dplyr)
+library(tidyr)
 library(janitor) # pour round_half_up
 
 # nb exploitations par département et pour la région
@@ -3051,6 +3061,7 @@ La fonction `pivot_longer` permet de restructurer des données en transformant d
 
 
 ```{r , eval = FALSE}
+library(dplyr)
 library(tidyr) # pour pivot
 
 # pivot_longer
@@ -3120,6 +3131,9 @@ Nous souhaitons obtenir une nouvelle table, avec une observation par EPCI et par
 
 
 ```{r , eval = FALSE}
+library(dplyr)
+library(tidyr)
+
 donnees_pauvrete_long <- filosofi_epci_2016_tbl |> 
   pivot_longer(cols = starts_with("TP"), 
                names_to = "tranche_age", 
@@ -3141,6 +3155,7 @@ La fonction `pivot_wider` permet de restructurer des données en transformant de
 Par ailleurs, l'option `names_prefix` permet de définir le préfixe du nom des nouvelles colonnes, ce qui est utile pour avoir des noms explicites.
 
 ```{r , eval = FALSE}
+library(dplyr)
 library(tidyr) # pour pivot
 library(janitor) # pour round_half_up
 
@@ -3231,24 +3246,49 @@ nom_dossier_cult_pdl <- cult_pdl_2020 |>
               names_prefix = "")
 
 # enchainement de pivots
+# en général pivot_longer avant pivot_wider : cela augmente le nombre de lignes
+# et diminue le nombre de colonnes, ce qui est généralement plus facile à gérer
+# pour ensuite pivoter les données en utilisant pivot_wider.
+# Pivoter de manière à avoir les indicateurs surf_2023 et prod_2023 en lignes,
+# et les valeurs de dep en colonnes 
+surf_fruits_tonnes_large <- surf_fruits_tonnes |>
+  # on va d’abord transformer les colonnes surf_2023 et prod_2023 
+  # en une colonne indicateur 
+  # avec les valeurs correspondantes dans une colonne valeur.
+  pivot_longer(cols = c(surf_2023, prod_2023), 
+               names_to = "indicateur", 
+               values_to = "valeur") |>
+  # Ensuite, on va pivoter ces données 
+  # pour que les valeurs de dep deviennent des colonnes
+  pivot_wider(names_from = dep, values_from = valeur)
+
+# autre enchainement de pivots
 otex_regroupe <- otex_transp  |> 
   select(-c(ends_with('temp'),otex_4813,otex_4840,otex_5100,otex_5374)) |> 
   pivot_longer(cols = -c(annee), 
                names_to = c("otex_code_regr"),
                values_to = "etp") |> 
   pivot_wider(names_from =annee,
-              values_from= c(etp) )
+              values_from= c(etp))
 
+# enchainement de pivots
+# ici pivot_wider avant pivot_longer 
 # on remet temporairement import export en colonne pour calculer le solde
-produits_large <- produits_long_AZ_C1 |>   
-   pivot_wider( names_from = flux, 
-                values_from = montant) |> 
-   mutate(solde = Export - Import)
-produits_long_AZ_C1 <- produits_large |>   
-             pivot_longer(cols = c('Export','Import','solde'), 
-                          names_to = 'flux',
-                          values_to = "montant")
+# Étape 1 : Pivoter pour avoir Export et Import en colonnes
+# on transforme les colonnes flux (qui contiennent Export et Import) en colonnes distinctes, 
+# avec les valeurs correspondantes dans montant.
+produits_large <- produits_long_AZ_C1 |> 
+   pivot_wider(names_from = flux, 
+               values_from = montant) |> 
+   mutate(solde = Export - Import)  # Étape 2 : Calculer le solde
 
+# Étape 3 : Revenir au format long
+# on reconvertit les colonnes Export, Import et solde en une colonne flux 
+# avec les valeurs correspondantes dans montant.
+produits_long_AZ_C1 <- produits_large |>   
+   pivot_longer(cols = c('Export', 'Import', 'solde'), 
+                names_to = 'flux', 
+                values_to = "montant")
 ```
 # Jointure de tableaux
 
@@ -4664,6 +4704,8 @@ calcul_IMC (poids = 60, taille = 1.55)
 ```
 
 ```{r, eval = FALSE}
+library(dplyr)
+library(tidyr)
 library(janitor) # pour round_half_up
 
 # fonction secteurs
