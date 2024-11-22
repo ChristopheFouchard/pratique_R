@@ -4107,8 +4107,6 @@ Le graphique ci-dessous illustre les différentes méthodes de jointure :
 
 **Seules les lignes aux identifiants communs abondent la fusion.** Dans le cas de `inner_join(x, y)`, seules les lignes présentes à la fois dans `x` et `y` sont conservées (et si nécessaire dupliquées) dans la table résultat.
 
-```{r, echo=TRUE, eval=FALSE}
-
 ![*Comportement d'un inner_join*](images/apercu_inner_join.png){fig-align="center"}
 
 ***
@@ -4357,7 +4355,13 @@ https://mtes-mct.github.io/parcours-r/
 
 Site [Introduction à R et au tidyverse](https://juba.github.io/tidyverse) 
 
-Ces 3 sites servent de source pour alimenter le présent document.
+Ces 3 sites servent de source pour alimenter le présent document : 
+https://christophefouchard.github.io/pratique_R/pratique_R.html
+
+Il est également disponible sur Cerise    
+- se rendre dans  
+~/CERISE/01-Espace-de-Partage/SRISE/Pays-De-La-Loire/Partage_R  
+- faire un clic gauche sur "pratique_R.html" et choisir "Voir dans le navigateur Web"  
 
 Les lettres du groupe des utilisateurs de R (GUR) sont aussi très utiles :
 
