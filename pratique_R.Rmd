@@ -1285,6 +1285,98 @@ list_eff_annees <- map(annees, function(annee) {
 })
 # Combine tous les dataframes en un seul
 eff_volailles_2000_2010 <- bind_rows(list_eff_annees)
+
+# fichiers agrégés ----
+chemin_entree_agreg <- "S:/Fichiers source/Agence_BIO/2023/"
+
+# Affectation des fichiers d'entrée en fonction des codes de région
+fichier_entree_11 <- "Export Productions Bio - Région - Île-de-France.xlsx"
+fichier_entree_24 <- "Export Productions Bio - Région - Centre-Val de Loire.xlsx"
+fichier_entree_27 <- "Export Productions Bio - Région - Bourgogne-Franche-Comté.xlsx"
+fichier_entree_28 <- "Export Productions Bio - Région - Normandie.xlsx"
+fichier_entree_32 <- "Export Productions Bio - Région - Hauts-de-France.xlsx"
+fichier_entree_44 <- "Export Productions Bio - Région - Grand Est.xlsx"
+fichier_entree_52 <- "Export Productions Bio - Région - Pays de la Loire.xlsx"
+fichier_entree_53 <- "Export Productions Bio - Région - Bretagne.xlsx"
+fichier_entree_75 <- "Export Productions Bio - Région - Nouvelle-Aquitaine.xlsx"
+fichier_entree_76 <- "Export Productions Bio - Région - Occitanie.xlsx"
+fichier_entree_84 <- "Export Productions Bio - Région - Auvergne-Rhône-Alpes.xlsx"
+fichier_entree_93 <- "Export Productions Bio - Région - Provence-Alpes-Côte d'Azur.xlsx"
+fichier_entree_94 <- "Export Productions Bio - Région - Corse.xlsx"
+
+# fonction pour l'ensemble des fichiers régionaux
+# Créer une liste des fichiers d'entrée
+fichiers_entree <- list(
+  fichier_entree_11, fichier_entree_24, fichier_entree_27,
+  fichier_entree_28, fichier_entree_32, fichier_entree_44,
+  fichier_entree_52, fichier_entree_53, fichier_entree_75,
+  fichier_entree_76, fichier_entree_84, fichier_entree_93,
+  fichier_entree_94
+)
+
+# Créer une liste des codes région
+codes_region <- c(11, 24, 27, 28, 32, 44, 52, 53, 75, 76, 84, 93, 94)
+
+# Créer une fonction pour lire et transformer les données
+# Ajouter la colonne 'reg' avec la valeur de 'territoire' pour les lignes où 'echelle_geographique' vaut "Régional"
+# Remplir les valeurs manquantes de 'reg' avec la dernière valeur non manquante
+# Supprimer les lignes où 'echelle_geographique' vaut "Régional"
+# Renommer la colonne 'territoire' en 'dep'
+# Supprimer la colonne 'echelle_geographique'
+lire_et_transformer <- function(fichier, feuille) {
+  read.xlsx(
+    xlsxFile = paste0(chemin_entree_agreg, fichier),
+    sheet = feuille,
+    colNames = TRUE, startRow = 1
+  ) |>
+    as_tibble(.name_repair = make_clean_names) |>
+    mutate(
+      reg = ifelse(echelle_geographique == "Régional", territoire, NA),
+      .after = echelle_geographique
+    ) |>
+    fill(reg) |>
+    filter(echelle_geographique != "Régional") |>
+    rename(dep = territoire) |>
+    select(-echelle_geographique)
+}
+
+# Lire et transformer les fichiers avec la fonction map de purrr
+bio_anim_list <- map(
+  fichiers_entree,
+  ~ lire_et_transformer(.x, feuille = "Productions animales")
+)
+
+# Nommer les éléments de la liste avec les codes région
+names(bio_anim_list) <- paste0("bio_anim_", codes_region)
+
+# Afficher les premières lignes pour vérifier
+map(bio_anim_list, head)
+
+# On peut accéder aux données d'une région spécifique en utilisant son code,
+# par exemple : bio_anim_list$bio_anim_11 pour l'Île-de-France.
+
+# Regrouper l'ensemble des lignes dans un seul dataframe
+bio_anim_fm <- bind_rows(bio_anim_list) |>
+  # ajout colonne numéro de ligne
+  # creation d'une variable identifiant reprenant le numéro de ligne
+  mutate(ident_anim1 = row_number(), .before = 1)
+
+# Traitement de tous les fichiers en une seule étape
+# map_dfr() est une fonction qui mappe une fonction sur une liste
+# et combine les résultats en un dataframe
+# Le suffixe dfr signifie "data frame row".
+# Cela signifie que les résultats sont assemblés en lignes, utile avec des ensembles de données qui ont les mêmes colonnes.
+# map_dfr() est une combinaison de map() et bind_rows().
+# On souhaite combiner les résultats verticalement, en empilant les lignes de chaque tableau de données.
+bio_anim_fm2 <- map_dfr(
+  fichiers_entree,
+  ~ lire_et_transformer(.x, feuille = "Productions animales")
+) |>
+  mutate(ident_anim1 = row_number(), .before = 1)
+
+# comparaison des deux méthodes
+identical(bio_anim_fm, bio_anim_fm2)
+
 ```
 
 ## Exporter
@@ -4333,6 +4425,11 @@ b
 
 filter(b, tr_au_debut)
 filter(a, str_detect(string = txt, pattern = "n$"))
+
+
+# \\d+ est une expression régulière qui correspond à une séquence de un ou plusieurs chiffres consécutifs
+# \\d : Correspond à un chiffre (0-9). Le double antislash (\\) est utilisé pour échapper le caractère \ dans les chaînes de caractères en R.
+# + : Indique que l'élément précédent (dans ce cas, \\d) doit apparaître une ou plusieurs fois.
 ```
 
 Les fonctions de `stringr` étant prévues pour fonctionner avec des expressions régulières, certains caractères n'auront pas le sens habituel dans la chaîne indiquant le motif à rechercher. Par exemple, le `.` ne sera pas un point mais le symbole représentant "n'importe quel caractère".
@@ -4355,8 +4452,7 @@ https://mtes-mct.github.io/parcours-r/
 
 Site [Introduction à R et au tidyverse](https://juba.github.io/tidyverse) 
 
-Ces 3 sites servent de source pour alimenter le présent document : 
-https://christophefouchard.github.io/pratique_R/pratique_R.html
+Ces 3 sites servent de source pour alimenter le présent [document](https://christophefouchard.github.io/pratique_R/pratique_R.html).
 
 Il est également disponible sur Cerise    
 - se rendre dans  

@@ -7,6 +7,7 @@
 
         <meta name="author" content="Christophe Fouchard" />
     
+        <meta name="date" content="2024-05-12" />
     
     <title>Guide pratique R</title>
 
@@ -1455,7 +1456,7 @@ margin-left: 0 !important;
     </div>
     <div id="postamble" data-toggle="wy-nav-shift" class="status">
                   <p class="author"><span class="glyphicon glyphicon-user"></span> Christophe Fouchard</p>
-                        <p class="date"><span class="glyphicon glyphicon-calendar"></span> 22/11/2024</p>
+                        <p class="date"><span class="glyphicon glyphicon-calendar"></span> 05/12/2024</p>
           </div>
    </div>
      
@@ -2606,7 +2607,98 @@ janitor::make_clean_names permet notamment d’obtenir des noms de variables pro
 <span id="cb42-21"><a href="#cb42-21" tabindex="-1"></a>    <span class="fu">as_tibble</span>(<span class="at">.name_repair =</span> make_clean_names)</span>
 <span id="cb42-22"><a href="#cb42-22" tabindex="-1"></a>})</span>
 <span id="cb42-23"><a href="#cb42-23" tabindex="-1"></a><span class="co"># Combine tous les dataframes en un seul</span></span>
-<span id="cb42-24"><a href="#cb42-24" tabindex="-1"></a>eff_volailles_2000_2010 <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(list_eff_annees)</span></code></pre></div>
+<span id="cb42-24"><a href="#cb42-24" tabindex="-1"></a>eff_volailles_2000_2010 <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(list_eff_annees)</span>
+<span id="cb42-25"><a href="#cb42-25" tabindex="-1"></a></span>
+<span id="cb42-26"><a href="#cb42-26" tabindex="-1"></a><span class="co"># fichiers agrégés ----</span></span>
+<span id="cb42-27"><a href="#cb42-27" tabindex="-1"></a>chemin_entree_agreg <span class="ot">&lt;-</span> <span class="st">&quot;S:/Fichiers source/Agence_BIO/2023/&quot;</span></span>
+<span id="cb42-28"><a href="#cb42-28" tabindex="-1"></a></span>
+<span id="cb42-29"><a href="#cb42-29" tabindex="-1"></a><span class="co"># Affectation des fichiers d&#39;entrée en fonction des codes de région</span></span>
+<span id="cb42-30"><a href="#cb42-30" tabindex="-1"></a>fichier_entree_11 <span class="ot">&lt;-</span> <span class="st">&quot;Export Productions Bio - Région - Île-de-France.xlsx&quot;</span></span>
+<span id="cb42-31"><a href="#cb42-31" tabindex="-1"></a>fichier_entree_24 <span class="ot">&lt;-</span> <span class="st">&quot;Export Productions Bio - Région - Centre-Val de Loire.xlsx&quot;</span></span>
+<span id="cb42-32"><a href="#cb42-32" tabindex="-1"></a>fichier_entree_27 <span class="ot">&lt;-</span> <span class="st">&quot;Export Productions Bio - Région - Bourgogne-Franche-Comté.xlsx&quot;</span></span>
+<span id="cb42-33"><a href="#cb42-33" tabindex="-1"></a>fichier_entree_28 <span class="ot">&lt;-</span> <span class="st">&quot;Export Productions Bio - Région - Normandie.xlsx&quot;</span></span>
+<span id="cb42-34"><a href="#cb42-34" tabindex="-1"></a>fichier_entree_32 <span class="ot">&lt;-</span> <span class="st">&quot;Export Productions Bio - Région - Hauts-de-France.xlsx&quot;</span></span>
+<span id="cb42-35"><a href="#cb42-35" tabindex="-1"></a>fichier_entree_44 <span class="ot">&lt;-</span> <span class="st">&quot;Export Productions Bio - Région - Grand Est.xlsx&quot;</span></span>
+<span id="cb42-36"><a href="#cb42-36" tabindex="-1"></a>fichier_entree_52 <span class="ot">&lt;-</span> <span class="st">&quot;Export Productions Bio - Région - Pays de la Loire.xlsx&quot;</span></span>
+<span id="cb42-37"><a href="#cb42-37" tabindex="-1"></a>fichier_entree_53 <span class="ot">&lt;-</span> <span class="st">&quot;Export Productions Bio - Région - Bretagne.xlsx&quot;</span></span>
+<span id="cb42-38"><a href="#cb42-38" tabindex="-1"></a>fichier_entree_75 <span class="ot">&lt;-</span> <span class="st">&quot;Export Productions Bio - Région - Nouvelle-Aquitaine.xlsx&quot;</span></span>
+<span id="cb42-39"><a href="#cb42-39" tabindex="-1"></a>fichier_entree_76 <span class="ot">&lt;-</span> <span class="st">&quot;Export Productions Bio - Région - Occitanie.xlsx&quot;</span></span>
+<span id="cb42-40"><a href="#cb42-40" tabindex="-1"></a>fichier_entree_84 <span class="ot">&lt;-</span> <span class="st">&quot;Export Productions Bio - Région - Auvergne-Rhône-Alpes.xlsx&quot;</span></span>
+<span id="cb42-41"><a href="#cb42-41" tabindex="-1"></a>fichier_entree_93 <span class="ot">&lt;-</span> <span class="st">&quot;Export Productions Bio - Région - Provence-Alpes-Côte d&#39;Azur.xlsx&quot;</span></span>
+<span id="cb42-42"><a href="#cb42-42" tabindex="-1"></a>fichier_entree_94 <span class="ot">&lt;-</span> <span class="st">&quot;Export Productions Bio - Région - Corse.xlsx&quot;</span></span>
+<span id="cb42-43"><a href="#cb42-43" tabindex="-1"></a></span>
+<span id="cb42-44"><a href="#cb42-44" tabindex="-1"></a><span class="co"># fonction pour l&#39;ensemble des fichiers régionaux</span></span>
+<span id="cb42-45"><a href="#cb42-45" tabindex="-1"></a><span class="co"># Créer une liste des fichiers d&#39;entrée</span></span>
+<span id="cb42-46"><a href="#cb42-46" tabindex="-1"></a>fichiers_entree <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb42-47"><a href="#cb42-47" tabindex="-1"></a>  fichier_entree_11, fichier_entree_24, fichier_entree_27,</span>
+<span id="cb42-48"><a href="#cb42-48" tabindex="-1"></a>  fichier_entree_28, fichier_entree_32, fichier_entree_44,</span>
+<span id="cb42-49"><a href="#cb42-49" tabindex="-1"></a>  fichier_entree_52, fichier_entree_53, fichier_entree_75,</span>
+<span id="cb42-50"><a href="#cb42-50" tabindex="-1"></a>  fichier_entree_76, fichier_entree_84, fichier_entree_93,</span>
+<span id="cb42-51"><a href="#cb42-51" tabindex="-1"></a>  fichier_entree_94</span>
+<span id="cb42-52"><a href="#cb42-52" tabindex="-1"></a>)</span>
+<span id="cb42-53"><a href="#cb42-53" tabindex="-1"></a></span>
+<span id="cb42-54"><a href="#cb42-54" tabindex="-1"></a><span class="co"># Créer une liste des codes région</span></span>
+<span id="cb42-55"><a href="#cb42-55" tabindex="-1"></a>codes_region <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">11</span>, <span class="dv">24</span>, <span class="dv">27</span>, <span class="dv">28</span>, <span class="dv">32</span>, <span class="dv">44</span>, <span class="dv">52</span>, <span class="dv">53</span>, <span class="dv">75</span>, <span class="dv">76</span>, <span class="dv">84</span>, <span class="dv">93</span>, <span class="dv">94</span>)</span>
+<span id="cb42-56"><a href="#cb42-56" tabindex="-1"></a></span>
+<span id="cb42-57"><a href="#cb42-57" tabindex="-1"></a><span class="co"># Créer une fonction pour lire et transformer les données</span></span>
+<span id="cb42-58"><a href="#cb42-58" tabindex="-1"></a><span class="co"># Ajouter la colonne &#39;reg&#39; avec la valeur de &#39;territoire&#39; pour les lignes où &#39;echelle_geographique&#39; vaut &quot;Régional&quot;</span></span>
+<span id="cb42-59"><a href="#cb42-59" tabindex="-1"></a><span class="co"># Remplir les valeurs manquantes de &#39;reg&#39; avec la dernière valeur non manquante</span></span>
+<span id="cb42-60"><a href="#cb42-60" tabindex="-1"></a><span class="co"># Supprimer les lignes où &#39;echelle_geographique&#39; vaut &quot;Régional&quot;</span></span>
+<span id="cb42-61"><a href="#cb42-61" tabindex="-1"></a><span class="co"># Renommer la colonne &#39;territoire&#39; en &#39;dep&#39;</span></span>
+<span id="cb42-62"><a href="#cb42-62" tabindex="-1"></a><span class="co"># Supprimer la colonne &#39;echelle_geographique&#39;</span></span>
+<span id="cb42-63"><a href="#cb42-63" tabindex="-1"></a>lire_et_transformer <span class="ot">&lt;-</span> <span class="cf">function</span>(fichier, feuille) {</span>
+<span id="cb42-64"><a href="#cb42-64" tabindex="-1"></a>  <span class="fu">read.xlsx</span>(</span>
+<span id="cb42-65"><a href="#cb42-65" tabindex="-1"></a>    <span class="at">xlsxFile =</span> <span class="fu">paste0</span>(chemin_entree_agreg, fichier),</span>
+<span id="cb42-66"><a href="#cb42-66" tabindex="-1"></a>    <span class="at">sheet =</span> feuille,</span>
+<span id="cb42-67"><a href="#cb42-67" tabindex="-1"></a>    <span class="at">colNames =</span> <span class="cn">TRUE</span>, <span class="at">startRow =</span> <span class="dv">1</span></span>
+<span id="cb42-68"><a href="#cb42-68" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb42-69"><a href="#cb42-69" tabindex="-1"></a>    <span class="fu">as_tibble</span>(<span class="at">.name_repair =</span> make_clean_names) <span class="sc">|&gt;</span></span>
+<span id="cb42-70"><a href="#cb42-70" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
+<span id="cb42-71"><a href="#cb42-71" tabindex="-1"></a>      <span class="at">reg =</span> <span class="fu">ifelse</span>(echelle_geographique <span class="sc">==</span> <span class="st">&quot;Régional&quot;</span>, territoire, <span class="cn">NA</span>),</span>
+<span id="cb42-72"><a href="#cb42-72" tabindex="-1"></a>      <span class="at">.after =</span> echelle_geographique</span>
+<span id="cb42-73"><a href="#cb42-73" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
+<span id="cb42-74"><a href="#cb42-74" tabindex="-1"></a>    <span class="fu">fill</span>(reg) <span class="sc">|&gt;</span></span>
+<span id="cb42-75"><a href="#cb42-75" tabindex="-1"></a>    <span class="fu">filter</span>(echelle_geographique <span class="sc">!=</span> <span class="st">&quot;Régional&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb42-76"><a href="#cb42-76" tabindex="-1"></a>    <span class="fu">rename</span>(<span class="at">dep =</span> territoire) <span class="sc">|&gt;</span></span>
+<span id="cb42-77"><a href="#cb42-77" tabindex="-1"></a>    <span class="fu">select</span>(<span class="sc">-</span>echelle_geographique)</span>
+<span id="cb42-78"><a href="#cb42-78" tabindex="-1"></a>}</span>
+<span id="cb42-79"><a href="#cb42-79" tabindex="-1"></a></span>
+<span id="cb42-80"><a href="#cb42-80" tabindex="-1"></a><span class="co"># Lire et transformer les fichiers avec la fonction map de purrr</span></span>
+<span id="cb42-81"><a href="#cb42-81" tabindex="-1"></a>bio_anim_list <span class="ot">&lt;-</span> <span class="fu">map</span>(</span>
+<span id="cb42-82"><a href="#cb42-82" tabindex="-1"></a>  fichiers_entree,</span>
+<span id="cb42-83"><a href="#cb42-83" tabindex="-1"></a>  <span class="sc">~</span> <span class="fu">lire_et_transformer</span>(.x, <span class="at">feuille =</span> <span class="st">&quot;Productions animales&quot;</span>)</span>
+<span id="cb42-84"><a href="#cb42-84" tabindex="-1"></a>)</span>
+<span id="cb42-85"><a href="#cb42-85" tabindex="-1"></a></span>
+<span id="cb42-86"><a href="#cb42-86" tabindex="-1"></a><span class="co"># Nommer les éléments de la liste avec les codes région</span></span>
+<span id="cb42-87"><a href="#cb42-87" tabindex="-1"></a><span class="fu">names</span>(bio_anim_list) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">&quot;bio_anim_&quot;</span>, codes_region)</span>
+<span id="cb42-88"><a href="#cb42-88" tabindex="-1"></a></span>
+<span id="cb42-89"><a href="#cb42-89" tabindex="-1"></a><span class="co"># Afficher les premières lignes pour vérifier</span></span>
+<span id="cb42-90"><a href="#cb42-90" tabindex="-1"></a><span class="fu">map</span>(bio_anim_list, head)</span>
+<span id="cb42-91"><a href="#cb42-91" tabindex="-1"></a></span>
+<span id="cb42-92"><a href="#cb42-92" tabindex="-1"></a><span class="co"># On peut accéder aux données d&#39;une région spécifique en utilisant son code,</span></span>
+<span id="cb42-93"><a href="#cb42-93" tabindex="-1"></a><span class="co"># par exemple : bio_anim_list$bio_anim_11 pour l&#39;Île-de-France.</span></span>
+<span id="cb42-94"><a href="#cb42-94" tabindex="-1"></a></span>
+<span id="cb42-95"><a href="#cb42-95" tabindex="-1"></a><span class="co"># Regrouper l&#39;ensemble des lignes dans un seul dataframe</span></span>
+<span id="cb42-96"><a href="#cb42-96" tabindex="-1"></a>bio_anim_fm <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(bio_anim_list) <span class="sc">|&gt;</span></span>
+<span id="cb42-97"><a href="#cb42-97" tabindex="-1"></a>  <span class="co"># ajout colonne numéro de ligne</span></span>
+<span id="cb42-98"><a href="#cb42-98" tabindex="-1"></a>  <span class="co"># creation d&#39;une variable identifiant reprenant le numéro de ligne</span></span>
+<span id="cb42-99"><a href="#cb42-99" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ident_anim1 =</span> <span class="fu">row_number</span>(), <span class="at">.before =</span> <span class="dv">1</span>)</span>
+<span id="cb42-100"><a href="#cb42-100" tabindex="-1"></a></span>
+<span id="cb42-101"><a href="#cb42-101" tabindex="-1"></a><span class="co"># Traitement de tous les fichiers en une seule étape</span></span>
+<span id="cb42-102"><a href="#cb42-102" tabindex="-1"></a><span class="co"># map_dfr() est une fonction qui mappe une fonction sur une liste</span></span>
+<span id="cb42-103"><a href="#cb42-103" tabindex="-1"></a><span class="co"># et combine les résultats en un dataframe</span></span>
+<span id="cb42-104"><a href="#cb42-104" tabindex="-1"></a><span class="co"># Le suffixe dfr signifie &quot;data frame row&quot;.</span></span>
+<span id="cb42-105"><a href="#cb42-105" tabindex="-1"></a><span class="co"># Cela signifie que les résultats sont assemblés en lignes, utile avec des ensembles de données qui ont les mêmes colonnes.</span></span>
+<span id="cb42-106"><a href="#cb42-106" tabindex="-1"></a><span class="co"># map_dfr() est une combinaison de map() et bind_rows().</span></span>
+<span id="cb42-107"><a href="#cb42-107" tabindex="-1"></a><span class="co"># On souhaite combiner les résultats verticalement, en empilant les lignes de chaque tableau de données.</span></span>
+<span id="cb42-108"><a href="#cb42-108" tabindex="-1"></a>bio_anim_fm2 <span class="ot">&lt;-</span> <span class="fu">map_dfr</span>(</span>
+<span id="cb42-109"><a href="#cb42-109" tabindex="-1"></a>  fichiers_entree,</span>
+<span id="cb42-110"><a href="#cb42-110" tabindex="-1"></a>  <span class="sc">~</span> <span class="fu">lire_et_transformer</span>(.x, <span class="at">feuille =</span> <span class="st">&quot;Productions animales&quot;</span>)</span>
+<span id="cb42-111"><a href="#cb42-111" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb42-112"><a href="#cb42-112" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ident_anim1 =</span> <span class="fu">row_number</span>(), <span class="at">.before =</span> <span class="dv">1</span>)</span>
+<span id="cb42-113"><a href="#cb42-113" tabindex="-1"></a></span>
+<span id="cb42-114"><a href="#cb42-114" tabindex="-1"></a><span class="co"># comparaison des deux méthodes</span></span>
+<span id="cb42-115"><a href="#cb42-115" tabindex="-1"></a><span class="fu">identical</span>(bio_anim_fm, bio_anim_fm2)</span></code></pre></div>
 </div>
 </div>
 <div id="exporter" class="section level2" number="3.2">
@@ -5248,7 +5340,12 @@ une fonction dite “pipe-operator-friendly”, par exemple <code>stri_sub_repla
 <span id="cb188-5"><a href="#cb188-5" tabindex="-1"></a>b</span>
 <span id="cb188-6"><a href="#cb188-6" tabindex="-1"></a></span>
 <span id="cb188-7"><a href="#cb188-7" tabindex="-1"></a><span class="fu">filter</span>(b, tr_au_debut)</span>
-<span id="cb188-8"><a href="#cb188-8" tabindex="-1"></a><span class="fu">filter</span>(a, <span class="fu">str_detect</span>(<span class="at">string =</span> txt, <span class="at">pattern =</span> <span class="st">&quot;n$&quot;</span>))</span></code></pre></div>
+<span id="cb188-8"><a href="#cb188-8" tabindex="-1"></a><span class="fu">filter</span>(a, <span class="fu">str_detect</span>(<span class="at">string =</span> txt, <span class="at">pattern =</span> <span class="st">&quot;n$&quot;</span>))</span>
+<span id="cb188-9"><a href="#cb188-9" tabindex="-1"></a></span>
+<span id="cb188-10"><a href="#cb188-10" tabindex="-1"></a></span>
+<span id="cb188-11"><a href="#cb188-11" tabindex="-1"></a><span class="co"># \\d+ est une expression régulière qui correspond à une séquence de un ou plusieurs chiffres consécutifs</span></span>
+<span id="cb188-12"><a href="#cb188-12" tabindex="-1"></a><span class="co"># \\d : Correspond à un chiffre (0-9). Le double antislash (\\) est utilisé pour échapper le caractère \ dans les chaînes de caractères en R.</span></span>
+<span id="cb188-13"><a href="#cb188-13" tabindex="-1"></a><span class="co"># + : Indique que l&#39;élément précédent (dans ce cas, \\d) doit apparaître une ou plusieurs fois.</span></span></code></pre></div>
 <p>Les fonctions de <code>stringr</code> étant prévues pour fonctionner avec des expressions régulières, certains caractères n’auront pas le sens habituel dans la chaîne indiquant le motif à rechercher. Par exemple, le <code>.</code> ne sera pas un point mais le symbole représentant “n’importe quel caractère”.</p>
 <p><a href="https://stringr.tidyverse.org/articles/regular-expressions.html" class="uri">https://stringr.tidyverse.org/articles/regular-expressions.html</a></p>
 <hr />
@@ -5264,8 +5361,7 @@ une fonction dite “pipe-operator-friendly”, par exemple <code>stri_sub_repla
 <p>Ministère de la Transition écologique et de la Cohésion des territoires
 <a href="https://mtes-mct.github.io/parcours-r/" class="uri">https://mtes-mct.github.io/parcours-r/</a></p>
 <p>Site <a href="https://juba.github.io/tidyverse">Introduction à R et au tidyverse</a></p>
-<p>Ces 3 sites servent de source pour alimenter le présent document :
-<a href="https://christophefouchard.github.io/pratique_R/pratique_R.html" class="uri">https://christophefouchard.github.io/pratique_R/pratique_R.html</a></p>
+<p>Ces 3 sites servent de source pour alimenter le présent <a href="https://christophefouchard.github.io/pratique_R/pratique_R.html">document</a>.</p>
 <p>Il est également disponible sur Cerise<br />
 - se rendre dans<br />
 ~/CERISE/01-Espace-de-Partage/SRISE/Pays-De-La-Loire/Partage_R<br />
