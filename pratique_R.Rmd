@@ -236,7 +236,11 @@ https://orion.agriculture/confluence/display/CER/4+-+FAQ
 
 RStudio est un *environnement de développement intégré* (EDI), qui propose des outils facilitant l'écriture de scripts et l'usage de R au quotidien. Un autre EDI apprécié est Visual Studio Code, qui peut être utilisé en local sur son poste de travail.
 
-L’interface RStudio est composée de différents panneaux, incluant une console, un navigateur de fichiers et graphiques, l’espace de travail et l’historique des commandes.
+L’interface RStudio est composée de différents panneaux, incluant :  
+- une vue des scripts et des données (en haut à gauche),  
+- une console (en bas à gauche),  
+- l’espace de travail et l’historique des commandes (en haut à droite),  
+- un navigateur offrant une vue des répertoires et fichiers, des graphiques, des packages et de l'aide (en bas à droite).
 
 <center>![](images/interface_Rstudio.png)</center>
 
@@ -417,7 +421,7 @@ Pour effacer le contenu de la console : cliquer sur l'icone "balai" à droite, 
 
 L'espace de travail (ou 'workspace') est l’environnement de la session R. Il comprend tous les objets créés durant une session de travail sous R. Par exemple, lorsqu'on importe des données, elles deviennent un objet de type data.frame et sont intégrées à l’environnement global. De même lorsqu'on crée un objet, il vient s’inclure dans l'environnement.
 
-Ces différents objets sont alors visibles dans l’onglet 'Environnement' de la fenêtre en haut à droite.
+Ces différents objets (éléments en mémoire) sont alors visibles dans l’onglet 'Environnement' de la fenêtre en haut à droite. 
 
 Pour conserver le résultat d'une opération, on peut le stocker dans un *objet* à l'aide de l'opérateur d'assignation `<-`. Cette "flèche" stocke ce qu'il y a à sa droite dans un objet dont le nom est indiqué à sa gauche.
 
@@ -466,6 +470,8 @@ rm(list=ls())
 gc()
 
 ```
+
+La console permet aussi d'acccéder à l'historique des commandes (Menu History).
 
 ### Ne pas sauvegarder le fichier ".RData" - Désactiver la sauvegarde de l'espace de travail
 
@@ -894,7 +900,9 @@ C'est une opération qu'il faut réaliser _à chaque fois_ que l'on ouvre une se
 
 Ainsi, on regroupe en général en début de script toute une série d'appels à `library` qui permettent de charger tous les packages utilisés dans le script.
 
-Toutefois, si on utilise la fonction du package sous la forme nom_du_package::nom_fonction, cela n'est pas nécessaire. L'utilisation de l'opérateur :: évite ainsi de charger un package peu utilisé.
+On peut utiliser nom_package::nom_fonction pour préciser explicitement de quel package on utilise la fonction nom_fonction.  
+L'utilisation de l'opérateur `::` permet de ne pas charger le package en mémoire, ce qui peut être utile si on utilise une seule fonction d'un package.  
+Cela permet aussi d'éviter les conflits de noms de fonctions entre les packages.
 
 ```{r, eval = FALSE}
 # Charger les bibliotheques necessaires
@@ -1039,6 +1047,8 @@ laits_reg_dep_2021 <- read.xlsx(xlsxFile=paste0(chemin_entree_2021,fichier_entre
   mutate(reg_dep_prod=paste0(regnprod,sep = "_",depprod),
          dep_prod=substr(depprod,2,3))  
 ```
+
+Pour récupérer le nom des différents onglets, on peut utiliser la fonction openxlsx::getSheetNames.
 
 https://book.utilitr.org/03_Fiches_thematiques/Fiche_import_tableurs.html#importer-un-fichier-xlsx-avec-le-package-openxlsx
 
@@ -1428,21 +1438,28 @@ saveRDS(object = oeufs_cot_det_2022_2021_an_mois, file = paste0(chemin_sortie,fi
 ### Exporter dans des fichiers xlsx
 
 Pour exporter un tableau de données dans R vers un fichier au format xlsx, on peut utiliser `write.xlsx` du package `openxlsx`.
-Les arguments principaux de `write.xlsx` sont :
-data : le tableau de données à exporter
-file : le chemin et le nom du fichier de sortie, y compris l'extension .xlsx.
-sheetName (facultatif) :le nom de la feuille Excel dans laquelle écrire les données. Par défaut, "Sheet1".
-overwrite (facultatif) : indique s'il faut écraser un fichier existant. Par défaut, FALSE.
-col.names (facultatif) : si TRUE, les noms de colonnes sont exportés. Par défaut, TRUE.
+Les arguments principaux de `write.xlsx` sont :  
+data : le tableau de données à exporter  
+file : le chemin et le nom du fichier de sortie, y compris l'extension .xlsx.  
+sheetName (facultatif) :le nom de la feuille Excel dans laquelle écrire les données. Par défaut, "Sheet1".  
+overwrite (facultatif) : indique s'il faut écraser un fichier existant. Par défaut, FALSE.  
+col.names (facultatif) : si TRUE, les noms de colonnes sont exportés. Par défaut, TRUE.  
 
 On peut exporter plusieurs tableaux de données dans un même fichier Excel en utilisant `write.xlsx` avec une liste de tableaux de données.
-Écrire une liste de data.frames dans un fichier xlsx dans des feuilles individuelles en utilisant les noms de la liste comme noms de feuilles. 
+Écrire une liste de data frames dans un fichier xlsx dans des feuilles individuelles en utilisant les noms de la liste comme noms de feuilles. 
 ```{r , eval = FALSE}
+# Export simple
+write.xlsx(donnees, "export/fichier.xlsx")
+
+# Export multi-feuilles
 # Liste de tableaux de données
-liste_tableaux <- list("IRIS" = iris, "MTCARS" = mtcars)
+liste_tableaux <- list(
+  'table1' = df1,
+  'table2' = df2
+)
 
 # Exporter la liste de tableaux de données dans un fichier Excel avec plusieurs feuilles
-write.xlsx(liste_tableaux, file = "fichier.xlsx")
+write.xlsx(liste_tableaux, file = "fichier_multi_feuilles.xlsx")
 ```
 
 ```{r , eval = FALSE}
@@ -1464,12 +1481,12 @@ chemin_sortie <- "S:/ETUDES/En cours/memento_Christophe/sortie/"
 fichier_sortie <- "agri_bio_2021.xlsx"
 
 # définir les noms de feuilles pour chaque tableau (data frame)
-dataset_names <- list('tab1' = agri_bio_vegetal_tab1_final, 
+liste_tableaux <- list('tab1' = agri_bio_vegetal_tab1_final, 
                       'tab2' = agri_bio_vegetal_tab2_final,
                       'tab3' = agri_bio_animal_tab3_final)
 
 # exporter chaque tableau vers des feuilles séparées dans le même fichier Excel
-write.xlsx(dataset_names, file= paste0(chemin_sortie,fichier_sortie))
+write.xlsx(liste_tableaux, file= paste0(chemin_sortie,fichier_sortie))
 
 ```
 https://www.statology.org/r-export-to-excel-multiple-sheets/
@@ -1478,9 +1495,11 @@ https://www.statology.org/r-export-to-excel-multiple-sheets/
 
 Le package `readOD`S permet d'exporter une data.frame dans un fichier au format ods :
 ```{r , eval = FALSE}
-write_ods(ma_table, path = "chemin/fichier.ods",
-                    sheet = "nom_onglet",
-                    append = TRUE)
+library(readODS)
+write_ods(donnees, 
+          path = "chemin/fichier.ods",
+          sheet = "nom_onglet",
+          append = TRUE)
 ```
 
 
@@ -1491,10 +1510,16 @@ Pour exporter un tableau de données dans R vers un fichier au format texte dél
 Il est possible d'exporter les données dans les formats de données « plats » grâce à la fonction `write_delim` du package `readr`. Une syntaxe standard est la suivante :
 
 ```{r , eval = FALSE}
-write_delim(x = maDataFrame,                 # La table de donnée à exporter 
-            path = "mon_fichier_export.csv", # Le chemin et le nom du fichier à exporter
+# Avec point-virgule comme séparateur de champ
+write_csv2(donnees, "export/donnees.csv")
+
+# Configuration avancée
+write_delim(donnees,                         # La table de donnée à exporter 
+            path = "fichier_export.csv",     # Le chemin et le nom du fichier à exporter
             delim = ";",                     # Le séparateur de champ (le point-virgule ici)
-            na = "") # Les valeurs manquantes notées NA dans R seront replacées par un vide dans l'export
+            fileEncoding = "UTF-8",          # L'encodage du fichier
+            row.names = FALSE,               # Indique que les numéros de ligne ne seront pas exportés
+            na = "") # Les valeurs manquantes notées NA dans R seront remplacées par un champ vide
 ```
 
 
@@ -1514,6 +1539,9 @@ La fonction `str` renvoie un descriptif détaillé de la structure du tableau. E
 À noter que sous RStudio, on peut afficher à tout moment la structure d'un objet en cliquant sur l'icône de triangle sur fond bleu à gauche du nom de l'objet dans l'onglet *Environment*.
 
 <center>![Structure d'un objet](images/rstudio_environment_str.png)</center>
+
+La librairie `dplyr` propose une fonction `glimpse` qui permet de visualiser rapidement et de manière condensée le contenu d’un tableau de données.  
+Cette fonction permet de connaître le nombre de lignes et colonnes, le type données dans les colonnes, ainsi que les premières observations.
 
 La fonction `unique` supprime toutes les valeurs en double dans un vecteur, qu'il s'agisse de nombres ou de chaînes de caractères.
 
@@ -1771,7 +1799,8 @@ Voici quelques utilisations fréquentes de `mutate()` :
 
 ### `separate` : scinder une colonne en plusieurs
 
-Il arrive que plusieurs informations réunies en une seule colonne et qu'on souhaite les séparer. La fonction `separate` permet d'effectuer cette opération. Elle prend trois arguments principaux :
+La fonction `separate` est utile lorsque nous avons une seule colonne contenant des valeurs composées que nous souhaitons diviser en plusieurs colonnes distinctes.
+Elle prend trois arguments principaux :
 
 - le nom de la colonne à scinder ;
 - un vecteur indiquant les noms des nouvelles variables à créer ;
@@ -1953,7 +1982,7 @@ bio_pdl_dep_ab <- bio_pdl_dep_large2 |>
   select(dep,c(contains("ab_")))
 
 ```
-    Le tableau suivant donne la liste des conditions utilisables avec `select()` :
+  Le tableau suivant donne la liste des conditions utilisables avec `select()` :
 
 | Fonction                    | Signification |
 |-----------------------------|----------------------------------------------------------------------|
@@ -2025,7 +2054,8 @@ tmp <- rename(
 select(tmp, `retard départ`, `retard arrivée`)
 ```
 
-La fonction `rename_with()` permet de renommer un groupe de colonnes avec une fonction. La syntaxe est la suivante :  `rename_with(data, nom_fonction, selection_colonnes)`. Voici un exemple qui met en minuscules tous les noms de colonnes :
+La fonction `rename_with()` permet de renommer un groupe de colonnes avec une fonction.  
+La syntaxe est la suivante :  `rename_with(data, nom_fonction, selection_colonnes)`. Voici un exemple qui met en minuscules tous les noms de colonnes :
 
 ```{r , eval = FALSE}
 bpe_ens_2018_tbl |> 
@@ -2270,7 +2300,7 @@ bio_pdl_pommes <- bio_pdl |>
 
 `case_when` prend en arguments une série d'instructions sous la forme `condition ~ valeur`. Il les exécute une par une, et dès qu'une `condition` est vraie, il renvoie la `valeur` associée.
 
-La dernière clause `TRUE ~ "Autre"` permet d'assigner une valeur à toutes les lignes pour lesquelles aucune des conditions précédentes n'est vraie.
+La dernière clause `.default = "Autre"` permet d'assigner une valeur à toutes les lignes pour lesquelles aucune des conditions précédentes n'est vraie.
 La condition TRUE indique la valeur par défaut à appliquer si aucune des conditions précédentes n'est vérifiée.
 
 Les conditions mises dans un `case_when()` ne sont pas exclusives. De ce fait, il faut pouvoir déterminer l'ordre d'évaluation des conditions qui y sont posées. Cet ordre s'effectue de bas en haut, c'est à dire que la dernière condition évaluée (celle qui primera sur toutes les autres) sera la première à écrire.
@@ -2298,7 +2328,7 @@ produits_laitiers_3 <- produits_laitiers_2 |>
     code_produit %in% c("144221, 223, 224") ~ "144221_144223_144224",
     code_produit %in% c("188100 et 188220") ~ "188100_188220",
     code_produit %in% c("249319 et 249325") ~ "249319_249325",
-    TRUE ~ code_produit),
+    .default = code_produit),
     territoire = ifelse(ident %in% 2:22,"France",territoire),
     territoire = ifelse(ident %in% 23:45,"Pays de la Loire",territoire))
 
@@ -2317,7 +2347,7 @@ agri_bio_vegetal_fr_cultures <- agri_bio_vegetal_fr |>
                                       "Surfaces toujours en herbe") ~ "6_Fourrage et STH",
     groupe_de_productions %in% c("Autres surfaces") 
                       & sous_groupe_de_productions %in% c("Toutes") ~ "7_Autres",
-    TRUE ~ "autre cas - doublon")
+    .default = "autre cas - doublon")
  )
 
 # nomenclature animaux
@@ -2331,7 +2361,7 @@ agri_bio_animal_fr_animaux <- agri_bio_animal_fr |>
     groupe_de_productions %in% c("Truies") ~ "6_Truies reproductrices",
     groupe_de_productions %in% c("Poulets de chair") ~ "7_Poulets de chair",
     groupe_de_productions %in% c("Poules pondeuses") ~ "8_Poules pondeuses",
-    TRUE ~ "autre cas - doublon")
+    .default = "autre cas - doublon")
  )
   
 # Modification de la nomenclature agrégée libelle_ab_regroupt pour les animaux avec les regroupements :
@@ -2344,7 +2374,7 @@ bio_pdl_nomenclature_animaux <- bio_pdl_nomenclature |>
     libelle_ab_regroupt %in% c("Poulets","Poules pondeuses","Canards",
                             "Pintades","Dindes","Autres volailles") ~ "Volailles",
     libelle_ab_regroupt %in% c("Lapins","Lapines reproductrices") ~ "Lapins",
-    TRUE ~ libelle_ab_regroupt)
+    .default = libelle_ab_regroupt)
  ) 
 
 sort(unique(bio_pdl_nomenclature_animaux$libelle_ab_regroupt))
@@ -2353,7 +2383,7 @@ sort(unique(bio_pdl_nomenclature_animaux$libelle_ab_regroupt))
 stats_chefcoexpl_statutdirig <- mo_2020 |> 
   mutate(statut_dirig=case_when(statutdirig=="1" ~ "Chef d'exploitation",
                                statutdirig=="2" ~ "Coexploitant",
-                               TRUE ~ statutdirig)) |> 
+                               .default = statutdirig)) |> 
   group_by (statut_dirig) |> 
   summarise(nb=n()) |> 
   adorn_totals(where=c("row"))
@@ -2362,7 +2392,7 @@ stats_chefcoexpl_statutdirig <- mo_2020 |>
 # si niveau égal, on indique dipl_max agricole
 mo_2020_diplome_max <-  mo_2020_install2010 |> 
   mutate(filiere_dipl_max = case_when(as.numeric(mofgene) > as.numeric(mofagri) ~ "general",
-                                   TRUE ~ "agricole"),
+                                   .default = "agricole"),
           dipl_max=case_when(filiere_dipl_max=="general" ~ mofgene,
                              filiere_dipl_max=="agricole" ~ mofagri),
          dipl_agri=if_else(mofagri %in% c("23","24","25","26","27","28"),1,0),
@@ -2370,7 +2400,7 @@ mo_2020_diplome_max <-  mo_2020_install2010 |>
                                    dipl_max  %in% c("11","23","24") ~ "b_ niveau brevet CAP BEP",
                                    dipl_max %in% c("25","26") ~ "c_Niveau bac",
                                    dipl_max %in% c("27","28") ~ "d_Niveau études supérieures",
-                                   TRUE ~ dipl_max),
+                                   .default = dipl_max),
          mofgene_car=case_when(mofgene=="00" ~ "Aucune scolarisation",
                               mofgene=="10" ~ "Niveau CEP ou scolarisé(e) jusqu'au primaire",
                               mofgene=="11" ~ "Niveau BEPC, brevet ou scolarisé(e) jusqu'au collège",
@@ -2380,7 +2410,7 @@ mo_2020_diplome_max <-  mo_2020_install2010 |>
                               mofgene=="26" ~ "Niveau baccalauréat pro., brevet pro. de technicien",
                               mofgene=="27" ~ "Niveau diplôme de 1er cycle universitaire, BTS, DUT",
                               mofgene=="28" ~ "Niveau d'études supérieures longues, diplôme d'ingénieur, ...",
-                              TRUE ~ mofgene),
+                              .default = mofgene),
          mofagri_car=case_when(mofagri=="00" ~ "Aucune scolarisation",
                                mofagri=="11" ~ "Niveau BEPC, brevet ou scolarisé(e) jusqu'au collège",
                                mofagri=="23" ~ "Niveau CAP (certificat d'aptitude professionnelle)",
@@ -2389,7 +2419,7 @@ mo_2020_diplome_max <-  mo_2020_install2010 |>
                                mofagri=="26" ~ "Niveau baccalauréat de technicien agricole (BTA), BEA,BPREA",
                                mofagri=="27" ~ "Niveau diplôme de 1er cycle universitaire, BTS, DUT",
                                mofagri=="28" ~ "Niveau d'études supérieures longues, diplôme d'ingénieur, ...",
-                               TRUE ~ mofagri)
+                               .default = mofagri)
  )
 
 ```
@@ -2407,7 +2437,7 @@ exploit_lait2_production <- exploit_lait2_production |>
     type %in% c("VB","VNB") ~ "Vaches",
     type %in% c("CB","CNB") ~ "Chevres",
     type %in% c("BB","BNB") ~ "Brebis",
-    TRUE ~ "autre"))
+    .default = "autre"))
 
 # 2- Créer un type_regroupement_1, avec la méthode 'recode'
 exploit_lait2_production <- exploit_lait2_production |>
@@ -2476,14 +2506,14 @@ hdv2003$qualif_rec <- fct_explicit_na(hdv2003$qualif, na_level = "(Manquant)")
 
 La fonction `cut()` permet de découper une variable quantitative (de type numérique) en un certain nombre de classes (plages de valeurs).
 
-Elle génère un objet de type factor (variable qualitative, variable catégorielle ordonnée). Les facteurs sont un type de variable ne pouvant prendre qu'un nombre défini de modalités nommés *levels*.
+Elle génère un objet de type `factor` (variable qualitative, variable catégorielle ordonnée). Les facteurs sont un type de variable ne pouvant prendre qu'un nombre défini de modalités nommés *levels*.
 
 On précise les intervalles (les amplitudes ou les limites des classes) avec l’argument `breaks` (points de rupture).
 
-Les symboles dans les noms attribués aux classes ont leur importance : 
-( signifie que la frontière de la classe est exclue, 
-tandis que [ signifie qu’elle est incluse.
-Ainsi, (20,40] signifie « strictement supérieur à 20 et inférieur ou égal à 40 ».
+Les symboles dans les noms attribués aux classes ont leur importance :   
+`(` signifie que la frontière de la classe est exclue,  
+tandis que `[` signifie qu’elle est incluse.  
+Ainsi, (20,40] signifie « strictement supérieur à 20 et inférieur ou égal à 40 ».  
          
 `right = FALSE` pour fermé à gauche (c’est-à-dire incluant), ouvert à droite (c’est-à-dire n’incluant pas) [inf,sup)
 
@@ -2526,7 +2556,7 @@ exploitants_2010 <- fam_2010 |>
 # Levels: moins de 40 ans, de 40 à 49 ans, de 50 à 59 ans, 60 ans ou plus
 ```
 
-https://juba.github.io/tidyverse/09-recodages.html#interface-graphique
+https://juba.github.io/tidyverse/09-recodages.html#d%C3%A9couper-une-variable-num%C3%A9rique-en-classes
 
 ## Somme des variables 
 
@@ -2831,6 +2861,16 @@ print(distinct_data)
 
 Cela donne un tableau avec toutes les colonnes conservées, mais seulement les lignes distinctes basées sur la colonne id.
 
+```{r , eval = FALSE}
+# Exemple d'utilisation de distinct() 
+df |> distinct()  # sur toutes les colonnes
+df |> distinct(id, group)  # colonnes spécifiques
+
+# Options utiles de distinct()
+df |> distinct(id, .keep_all = TRUE)  # garde les autres colonnes
+df |> distinct(across(starts_with("group")))  # sélection flexible
+```
+
 ### Somme avec une pondération
 
 ```{r , eval = FALSE}
@@ -2855,10 +2895,10 @@ nb_exploit_2020_mop_non_fam_reg <- exploit_2020 |>
   distinct(nb_exploit,nb_exploit_ech,nb_exploit_mop_non_fam)
 ```
 
-Pour le calcul de statistiques pondérées, on peut charger le package `Hmisc` :
-Tableau de fréquence pondéré : wtd.table(var, weights = var_pond, na.rm = TRUE, type = "table")
-Moyenne pondérée : wtd.mean(var, weights = var_pond, na.rm = TRUE)
-Quantiles pondérés : wtd.quantile(var, weights = var_pond, probs = proba, na.rm = TRUE)
+Pour le calcul de statistiques pondérées, on peut charger le package `Hmisc` :  
+Tableau de fréquence pondéré : wtd.table(var, weights = var_pond, na.rm = TRUE, type = "table")  
+Moyenne pondérée : wtd.mean(var, weights = var_pond, na.rm = TRUE)  
+Quantiles pondérés : wtd.quantile(var, weights = var_pond, probs = proba, na.rm = TRUE)  
 où proba est compris entre 0 et 1 (0,10 pour le D1, 0,25 pour le Q1, 0,5 pour la médiane, 0,75 pour le Q3, 0,9 pour le D9...)
 
 
@@ -2866,7 +2906,7 @@ où proba est compris entre 0 et 1 (0,10 pour le D1, 0,25 pour le Q1, 0,5 pour l
 ## Faire des opérations par groupe : `group_by()`
  
 **La fonction `group_by()` permet de définir des groupes dans la table de données pour faire des opérations par groupe.**
-Elle permet de définir des groupes de lignes à partir des valeurs d’une ou plusieurs colonnes. 
+Elle permet de définir des groupes de lignes (ou groupes de modalités) à partir des valeurs d’une ou plusieurs colonnes. 
 L'utilisation de `group_by()` rend très utiles les opérations avec `summarise()`. Le code suivant groupe les données de la BPE par département `group_by(DEP)` puis calcule le nombre total d'équipements `sum(NB_EQUIP, na.rm = TRUE)` et le nombre total de boulangeries `sum(NB_EQUIP * (TYPEQU == "B203"), na.rm = TRUE)`.
  
 ```{r , eval = FALSE}
@@ -2985,7 +3025,7 @@ library(dplyr)
 library(tidyr)
 
 # regroupements et pivot_wider
-volailles_sum <- rbind(volailles_dep_sum,volailles_pdl_sum) |> 
+volailles_sum <- bind_rows(volailles_dep_sum,volailles_pdl_sum) |> 
   pivot_wider(names_from=dep,
               values_from =tec_regrpt) |> 
   mutate(espece_ordre=factor(espece,levels= c("a10-volailles",
@@ -3133,78 +3173,13 @@ exploit_volailles_regroupt <- exploit_dont_volailles_2020 |>
          
 ```
 
-
-## Ajouter un préfixe à un nom de variable
-
-```{r , eval = FALSE}
-# ajout prefixe annee pour Total
-vol_2022 <- vol_2022 |>
-  rename(total_nombre = paste0("x2022_", total_nombre), 
-         total_poids = paste0("x2022_", total_poids))
-
-# autre méthode
-vol_2022 <- vol_2022 |>
-  rename_with(.cols = c(total_nombre,total_poids), function(x){paste0("x2022_", x)})
-
-# On peut simplifier le code en utilisant une fonction anonyme plus courte avec ~.
-# Le . est une variable qui représente chaque élément des colonnes spécifiées. 
-vol_2022 <- vol_2022 |>
-  rename_with(.cols = c(total_nombre,total_poids), ~ paste0("x2022_", .))
-
-```
-
-## Ajouter un suffixe à un nom de variable
-
-```{r , eval = FALSE}
-# ajout suffixe annee aux variables
-bio_2023 <- read.xlsx(xlsxFile=paste0(chemin,fichier_2023), 
-                      sheet = "Feuil1",
-                      colNames = TRUE,startRow = 1) |> 
-  as_tibble(.name_repair = make_clean_names) |>
-  rename_with(.cols = c(nombre_dassocies_gaec,quantite_declaree), 
-              function(x){paste0(x,"_2023")})
-```
-
-## Supprimer un préfixe à un nom de variable pour l'ensemble des noms de colonnes
-
-La fonction colnames() renvoie la liste des noms de colonnes d'un tableau. 
-
-colnames(df) <- ... : Cette partie de la commande assigne les nouveaux noms de colonnes dans df
-
-La fonction  gsub() remplace toutes les occurrences d'un motif dans une chaîne de caractères. Pour supprimer un préfixe, on peut spécifier le motif du préfixe à supprimer et le remplacer par une chaîne vide. 
-
-```{r , eval = FALSE}
-# enlever le préfixe prod_ de tous les noms de colonnes dans le dataframe viande_volaille_annee_pdl
-colnames(viande_volaille_annee_pdl) <- gsub("prod_","",colnames(viande_volaille_annee_pdl))
-
-# ou bien
-# names(viande_volaille_annee_pdl) <- gsub("prod_","",names(viande_volaille_annee_pdl))
-```
-
-## Supprimer un suffixe à un nom de variable pour l'ensemble des noms de colonnes
-
-La fonction colnames() renvoie la liste des noms de colonnes d'un tableau. 
-
-colnames(df) <- ... : Cette partie de la commande assigne les nouveaux noms de colonnes dans df
-
-La fonction  gsub() remplace toutes les occurrences d'un motif dans une chaîne de caractères. Pour supprimer un suffixe, on peut spécifier le motif du suffixe à supprimer et le remplacer par une chaîne vide. 
-
-```{r , eval = FALSE}
-# enlever le suffixe _valeur_en_k de tous les noms de colonnes dans le dataframe produits
-colnames(produits) <- gsub("_valeur_en_k","",colnames(produits))
-
-# ou bien
-# names(produits) <- gsub("_valeur_en_k","",names(produits))
-
-```
-
 ## Regroupement de colonnes
 
-`cbind` et `bind_cols` permettent de concaténer des colonnes.
+`bind_cols` permet de concaténer des colonnes.
 
 ```{r , eval = FALSE}
 # regroupement PDL + France
-agri_bio_vegetal_tab1_final <- cbind(agri_bio_vegetal_pdl_tab1_final,agri_bio_vegetal_fr_tab1_final) 
+agri_bio_vegetal_tab1_final <- bind_cols(agri_bio_vegetal_pdl_tab1_final,agri_bio_vegetal_fr_tab1_final) 
 str(agri_bio_vegetal_tab1_final)
 
 # exploitants
@@ -3420,7 +3395,8 @@ filter(flights, distance > median(distance))
 
 ##  Sélection de lignes avec `slice`
 
-Le verbe `slice` de `dplyr` sélectionne des lignes du tableau selon leur position. On lui passe un chiffre ou un vecteur de chiffres.
+Le verbe `slice` de `dplyr` sélectionne des lignes du tableau selon leur position. On lui passe un chiffre ou un vecteur de chiffres.  
+Cette fonction permet de sélectionner des observations (et donc d’en supprimer). 
 
 Si on souhaite sélectionner la 345e ligne du tableau `airports` :
 
@@ -3434,7 +3410,7 @@ Si on veut sélectionner les 5 premières lignes :
 slice(airports, 1:5)
 ```
 
-##  Sélection des n premières lignes avec `slice_head`
+###  Sélection des n premières lignes avec `slice_head`
 
 
 `slice` propose plusieurs variantes utiles, dont `slice_head` et `slice_tail`, qui permettent de sélectionner les premières ou les dernières lignes du tableau (on peut spécifier le nombre de lignes souhaitées avec `n`, ou la proportion avec `prop`).
@@ -3472,7 +3448,9 @@ slice_max(airports, alt, n = 5)
 
 ## Regroupement de lignes (par exemple pour concaténer deux tables)
 
-Le package `dplyr` propose la fonction `bind_rows()` pour superposer deux ou plusieurs tables (en empilant des observations). Deux remarques sur l'utilisation de cette fonction :
+Le package `dplyr` propose la fonction `bind_rows()` pour superposer deux ou plusieurs tables (en empilant des observations). Les colonnes ayant le même nom vont s'empiler. Les autres vont se compléter avec des valeurs manquantes.  
+
+Deux remarques sur l'utilisation de cette fonction :
 
 - `bind_rows()` combine les tables en fonction du nom des colonnes, l'ordre des colonnes n'a pas donc d'importance
 - si une colonne est manquante dans une des tables, alors des valeurs manquantes (`NA`) sont automatiquement insérées dans la table de sortie.
@@ -3528,8 +3506,8 @@ emploi_salarie <- bind_rows(a_agri_long, b_iaa_long,cz_ind_tot_long,d_constr_lon
 groupe_produits_laitiers_2021 <- bind_rows(groupe_produits_laitiers_2021_France,
                                            groupe_produits_laitiers_2021_PDL)
 
-# regroupements de lignes possibles aussi avec rbind
-volailles_sum <- rbind(volailles_dep_sum,volailles_pdl_sum)
+# regroupements de lignes possibles aussi avec bind_rows
+volailles_sum <- bind_rows(volailles_dep_sum,volailles_pdl_sum)
 
 ```
 
@@ -3576,16 +3554,18 @@ Les deux principales opérations de restructuration des données peuvent être i
 La fonction `pivot_longer` permet de restructurer des données en transformant des colonnes en lignes. Cette fonction prend quatre arguments principaux :
 
 - le `data.frame` (ou le `tibble`) auquel elle est appliquée ;
-- `cols` : cols = colonnes pivotantes,  
+- `cols` : cols = noms des colonnes à pivoter,  
            un vecteur contenant le nom des colonnes dont les valeurs vont être transposées ;  
 - `names_to` : nom de la première colonne à créer et qui recevra les actuels noms des colonnes pivotantes,  
                le nom de la nouvelle colonne qui va contenir les noms des colonnes transposées ;  
 - `values_to` : nom de la deuxième colonne à créer et qui recevra les valeurs des colonnes pivotantes,    
                 le nom de la nouvelle colonne qui va contenir les valeurs des colonnes transposées.  
 
-La fonction `pivot_longer` prend comme premier argument `cols` contenant la liste des colonnes à rassembler. Il est parfois plus rapide d'indiquer à les colonnes qu'on ne souhaite pas "rassembler" (avec cols = - ).
+La fonction `pivot_longer` prend comme premier argument `cols` contenant la liste des colonnes à rassembler.  
+On peut spécifier les colonnes à exclure en utilisant le signe négatif - suivi des noms des colonnes à exclure (avec cols = - ).
 
-`names_prefix` : préfixe à enlever des noms de colonnes à pivoter
+
+`names_prefix` : préfixe à enlever des noms de colonnes à pivoter, qui seront transformées en modalités.
 
 ```{r , eval = FALSE}
 library(dplyr)
@@ -3685,7 +3665,7 @@ La fonction `pivot_wider` permet de restructurer des données en transformant de
 
 - le `data.frame` (ou le `tibble`) auquel elle est appliquée ;
 - `id_cols` : un vecteur contenant le nom des colonnes qui définissent les observations de la table transposée ;  
-- `names_from` : nom de la variable dont les modalités deviendront les intitulés de colonne,  
+- `names_from` : nom de la variable dont les modalités deviendront les intitulés des futures colonnes,   
                  un vecteur contenant le nom de la (ou des) colonne(s) qui donne(nt) les noms des nouvelles colonnes à créer ;  
 - `values_from` : nom de la variable à utiliser pour remplir les colonnes,    
                   un vecteur contenant le nom de la (ou des) colonne(s) dont les valeurs vont être transposées.  
@@ -3706,7 +3686,7 @@ bpe_ens_2018_tbl |>
 	            names_prefix = "nb_equip_reg")
 
 # pivot_wider
-volailles_sum <- rbind(volailles_dep_sum,volailles_pdl_sum) |> 
+volailles_sum <- bind_rows(volailles_dep_sum,volailles_pdl_sum) |> 
   pivot_wider(names_from=dep,
               values_from =tec_regrpt) 
 
@@ -3858,7 +3838,7 @@ df |>
 
 # Jointure de tableaux
 
-On cherche à associer deux tables en se basant sur les valeurs d'une ou plusieurs colonnes. Ces colonnes sont appelées des *clés* (codes d’identification).
+On cherche à associer deux tables en se basant sur les valeurs d'une ou plusieurs colonnes. Ces colonnes sont appelées des *clés de jointure* (codes d’identification).
 
 Les noms de variables peuvent être cités sans guillemets (sauf dans le cas des jointures).
 -   les fonctions `*_join(a, b, by)` du package `dplyr` permettent de joindre les tables `a` et `b` sur les variables de jointure précisées dans l'argument `by`.
@@ -4044,7 +4024,7 @@ recolte_bois_pdl_indic <- recolte_bois_pdl_indic |>
 recolte_bois_pdl_indic <- recolte_bois_pdl_indic |>
   mutate(identifiant = case_when(
     indicateur == "Récolte de bois" ~ 62,
-    TRUE ~ identifiant), 
+    .default = identifiant), 
     .before=1)
 
 ```
@@ -4091,7 +4071,7 @@ surface_bio_2022_2023 <- surface_bio_2022_2023 |>
            !is.na(quantite_declaree_2023) & !is.na(quantite_declaree_2022) ~ "present_2023_present_2022",
            !is.na(quantite_declaree_2023) & is.na(quantite_declaree_2022) ~ "present_2023_absent_2022",
            is.na(quantite_declaree_2023) & !is.na(quantite_declaree_2022) ~ "absent_2023_present_2022",
-         TRUE ~ "autre"),
+         .default = "autre"),
          surface_supplementaire_2023 = quantite_declaree_2023 - quantite_declaree_2022)
 
 unique(surface_bio_2022_2023$indicateur_presence)
@@ -4197,10 +4177,10 @@ bio_pdl_test_doublons_var_doubl <- bio_pdl |>
   
 ```
 
-Extraire les doublons avec le package janitor
-iris|> get_dupes() : renvoie les doublons de lignes entièrement identiques (les premières occurrences et leurs doublons) et compte les doublons
-iris |> get_dupes(Sepal.Length, Sepal.Width) : renvoie les doublons de lignes partageant les mêmes valeurs sur les variables Sepal.Length et Sepal.Width (les premières occurrences et leurs doublons) et compte les doublons
-iris |> get_dupes(Sepal.Length, Sepal.Width, .keep_all = TRUE) : renvoie les doublons de lignes partageant les mêmes valeurs sur les variables Sepal.Length et Sepal.Width (les premières occurrences et leurs doublons) et conserve toutes les colonnes
+Extraire les doublons avec le package janitor  
+iris|> get_dupes() : renvoie les doublons de lignes entièrement identiques (les premières occurrences et leurs doublons) et compte les doublons  
+iris |> get_dupes(Sepal.Length, Sepal.Width) : renvoie les doublons de lignes partageant les mêmes valeurs sur les variables Sepal.Length et Sepal.Width (les premières occurrences et leurs doublons) et compte les doublons  
+iris |> get_dupes(Sepal.Length, Sepal.Width, .keep_all = TRUE) : renvoie les doublons de lignes partageant les mêmes valeurs sur les variables Sepal.Length et Sepal.Width (les premières occurrences et leurs doublons) et conserve toutes les colonnes  
 
 
 - **Règle n°3 : vérifier la compatibilité des variables de jointure**. 
@@ -4264,6 +4244,16 @@ Après une jointure, il est essentiel de **vérifier que la jointure a bien prod
 
   ```
 
+En effet, il existe plusieurs manières différentes d’associer des données qui déterminent directement la clé à utiliser :
+
+    - 1 to 1 (one to one) : 1 observation côté A correspond à 1 observation côté B. 
+
+    - 1 to m (one to many) : 1 observation côté A correspond à plusieurs observations côté B. Une observation côté A (par exemple d’une unique région) correspond à plusieurs observations côté B (par exemple des différents départements constituant la région). La clé serait alors la région et des lignes de A se retrouveraient alors dupliquées.  
+
+    - m to 1 (many to one) : plusieurs observations côté A correspondent à 1 observation côté B. Plusieurs observations côté A (le nombre d'observations des différents départements d’une unique région) correspondent à une seule observation côté B (les données de la région composée par ces départements). La clé serait alors la région et des lignes de B se retrouveraient alors dupliquées.  
+
+Pour les fonctions de jointure _join, il existe un argument relationship qui permet de vérifier que le nombre de correspondances est bien conforme aux attentes (one-to-one, one-to-many etc.). Si la valeur transmise à l’argument relationship est différente du réel lien entre les deux clés des bases de données, alors une erreur surviendra. 
+
 - **Règle n°5 : vérifier la présence éventuelle de valeurs manquantes (`NA`) dans les variables d'intérêt.** 
 
   On peut par exemple utiliser la fonction `is.na()` qui permet de repérer les observations manquantes dans les variables provenant de la table de droite. S'il y a des valeurs manquantes, cela peut indiquer que cette variable contient des valeurs manquantes dans la table de droite, ou que certaines observations de la table de gauche n'ont pas de correspondances dans la table de droite.
@@ -4272,6 +4262,114 @@ Après une jointure, il est essentiel de **vérifier que la jointure a bien prod
   table_jointe_tbl |> filter(is.na(dep))
   ```
   
+### Tester sa jointure sur un full join
+
+Une bonne pratique est de tester sa jointure une première fois dans un full join. On peut distinguer dans un full join trois types d’observations :
+    - Observations présentes côté A seulement (type 1)  
+    - Observations présentes côté A et B (type 2)  
+    - Observations présentes côté B seulement (type 3)  
+
+Réaliser dans un premier temps un full join permet ainsi de voir à quel point le taux de correspondance entre les deux dataframes est bon.  
+Il peut être intéressant de creuser en étudiant plus précisément les données sans correspondance côté dataframe A (type 1) ou B (type 3). 
+
+```{r , eval = FALSE}
+# Comparer deux tableaux de données tab1 et tab2 et analyser leur correspondance
+# On crée deux nouvelles colonnes in_tab1 et in_tab2. 
+# Ces colonnes contiendront des TRUE si l’observation provient de la table en question.
+# On réalise une jointure complète entre les deux tableaux, avec les indicateurs de présence.
+tab1_tab2 <- tab1 |>
+  mutate(in_tab1 = TRUE) |>
+  full_join(tab2 |> 
+                mutate(in_tab2 = TRUE), 
+            join_by(identifiant)) |> 
+  mutate(across(contains("in"), ~ replace_na(., FALSE)) |> # Remplacer les NA par FALSE
+  mutate(
+      indicateur_correspondance = case_when(
+        in_tab1 & in_tab2 ~ "Présent dans les deux tables",
+        in_tab1 ~ "Uniquement dans table 1",
+        in_tab2 ~ "Uniquement dans table 2",
+        .default = "Absent des deux tables"
+      ))
+
+tab1_tab2
+
+# Sans le remplcement des NA par FALSE
+# Résultat: NA crée des groupes supplémentaires non désirés
+#   in_tab1 in_tab2     n
+#   <lgl>   <lgl>   <int>
+# 1 FALSE   FALSE       1
+# 2 TRUE    TRUE        1
+# 3 TRUE    NA          1
+# 4 NA      TRUE        1
+
+# Analyse des correspondances entre les deux tableaux
+# Compter les occurrences des valeurs des colonnes in_tab1 et in_tab2 dans le tableau joint
+# On groupe les données avec les indicateurs de présence et on somme leurs occurrences grâce à la commande group_by
+test_tab1_tab2 <- tab1_tab2 |>
+  group_by(indicateur_correspondance) |>
+  summarise(
+      nombre = n(),
+      pourcentage = round_half_up(n() / nrow(tab1_tab2) * 100, 1),
+      .groups = "drop"
+    ) 
+    
+test_tab1_tab2
+```
+
+```{r , eval = FALSE}
+# Comparer deux tableaux de données tab1 et tab2 et analyser leur correspondance
+# On crée deux nouvelles colonnes in_tab1 et in_tab2.
+# Ces colonnes contiendront des TRUE si l’observation provient de la table en question.
+# On réalise une jointure complète entre les deux tableaux, avec les indicateurs de présence.
+# On remplace les NA par FALSE pour éviter la création de groupes supplémentaires non désirés.
+# On crée un indicateur de correspondance pour chaque observation.
+# On analyse les correspondances entre les deux tableaux.
+# On compte les occurrences des valeurs des colonnes in_tab1 et in_tab2 dans le tableau joint.
+# On groupe les données avec les indicateurs de présence et on somme leurs occurrences grâce à la commande group_by.
+# On affiche le nombre d'observations et le pourcentage d'observations pour chaque type de correspondance.
+# On affiche le tableau récapitulatif des correspondances entre les deux tableaux.
+# On crée une fonction pour réaliser cela.
+comparer_tables <- function(tab1, tab2, identifiant) {
+  # Jointure et indicateurs
+  comparaison <- tab1 |>
+    mutate(in_tab1 = TRUE) |>
+    full_join(
+      tab2 |> mutate(in_tab2 = TRUE),
+      join_by(identifiant)
+    ) |>
+    mutate(
+      # Remplacer NA par FALSE
+      across(starts_with("in_"), ~replace_na(., FALSE)),
+      
+      # Créer indicateur
+      indicateur_correspondance = case_when(
+        in_tab1 & in_tab2 ~ "Présent dans les deux tables",
+        in_tab1 ~ "Uniquement dans table 1",
+        in_tab2 ~ "Uniquement dans table 2",
+        .default = "Absent des deux tables"
+      )
+    )
+    
+  # Résumé statistique
+  resume <- comparaison |>
+    group_by(indicateur_correspondance) |>
+    summarise(
+      nombre = n(),
+      pourcentage = round_half_up(n() / nrow(comparaison) * 100, 1),
+      .groups = "drop"
+    )
+    
+  return(list(
+    details = comparaison,
+    resume = resume
+  ))
+}
+
+# Utilisation
+resultats <- comparer_tables(tab1, tab2, identifiant)
+print(resultats$resume)
+```
+
 ## Compléments sur les différentes jointures
 
 Le graphique ci-dessous illustre les différentes méthodes de jointure :
@@ -4334,7 +4432,8 @@ On peut utiliser l'argument `suffix` de `..._join`, pour indiquer les suffixes �
 
 Différencier les variables partageant le même nom dans les deux tables
 
-Lorsque des variables ont le même nom dans deux tables différentes mais ne sont pas des variables de jointure, on peut choisir le suffixe à leur donner dans la table résultat avec l'argument suffix. Il s'écrit sous la forme :
+Lorsque des variables ont le même nom dans deux tables différentes mais ne sont pas des variables de jointure, on peut choisir le suffixe à leur donner dans la table résultat avec l'argument suffix.  
+Il s'écrit sous la forme :  
 suffix = c("_tab1", "_tab2")
 
 ```{r, eval = FALSE}
@@ -4354,11 +4453,9 @@ Remarque : toutes les variables ne seront pas suffixées selon leur table d'ori
 
 # Manipuler du texte
 
-Mettre x en majuscules : `toupper(x)` ou `str_to_upper(x)` du package `stringr`.
-Mettre x en minuscules : `tolower(x)` ou `str_to_lower(x)` du package `stringr`.
-Rajouter des caractères en début ou en fin de chaîne pour respecter un format (utile code dep) :   
-str_pad(x, width = longueur_format, side = ''left'', pad = caractère_a_ajouter) du package `stringr`.  
-exemple pour siren `str_pad(x, width = 5, side = "left", pad = "0")`.
+Mettre x en majuscules : `toupper(x)` ou `str_to_upper(x)` du package `stringr`.  
+Mettre x en minuscules : `tolower(x)` ou `str_to_lower(x)` du package `stringr`.  
+Rajouter des caractères en début ou en fin de chaîne pour respecter un format :   
 
 ## Concaténer des chaînes de caractères
 
@@ -4435,6 +4532,9 @@ str_sub(a$x, start = 6, end = 9) <-"rer"
 a$x
 ```
 
+Il est possible de rajouter le suffixe `_all` à la fonctions `str_sub`. Le “_all” permet de l’appliquer à toutes les occurrences et pas seulement à la première.  
+
+
 Si on souhaite réaliser ce genre d'opération dans le cadre d'un `mutate`, il faut utiliser 
 une fonction dite "pipe-operator-friendly", par exemple `stri_sub_replace()` du package `stringi`
 
@@ -4463,7 +4563,7 @@ str_detect(df$adresse, "Libération")
 
 ## Remplacer des motifs
 
-Pour remplacer un motif dans une chaîne de caractères, on peut utiliserc `str_replace` du package `stringr`. 
+Pour remplacer un motif dans une chaîne de caractères, on peut utiliserc `str_replace` du package `stringr`.   
 str_replace(x, motif, remplacement) remplace la première occurrence uniquement.
 
 Pour remplacer toutes les occurrences d'un motif par un autre, il convient d'utiliser la fonction `str_replace_all` du package `stringr`.
@@ -4482,6 +4582,82 @@ str_replace_all(
     c("avenue" = "Avenue", "ave" = "Avenue", "rue" = "Rue")
 )
 ```
+
+
+## Ajouter un préfixe à un nom de variable
+
+```{r , eval = FALSE}
+# ajout prefixe annee pour Total
+vol_2022 <- vol_2022 |>
+  rename(total_nombre = paste0("x2022_", total_nombre), 
+         total_poids = paste0("x2022_", total_poids))
+
+# autre méthode
+vol_2022 <- vol_2022 |>
+  rename_with(.cols = c(total_nombre,total_poids), function(x){paste0("x2022_", x)})
+
+# On peut simplifier le code en utilisant une fonction anonyme plus courte avec ~.
+# Le . est une variable qui représente chaque élément des colonnes spécifiées. 
+vol_2022 <- vol_2022 |>
+  rename_with(.cols = c(total_nombre,total_poids), ~ paste0("x2022_", .))
+
+```
+
+## Ajouter un suffixe à un nom de variable
+
+```{r , eval = FALSE}
+# ajout suffixe annee aux variables
+bio_2023 <- read.xlsx(xlsxFile=paste0(chemin,fichier_2023), 
+                      sheet = "Feuil1",
+                      colNames = TRUE,startRow = 1) |> 
+  as_tibble(.name_repair = make_clean_names) |>
+  rename_with(.cols = c(nombre_dassocies_gaec,quantite_declaree), 
+              function(x){paste0(x,"_2023")})
+```
+
+## Supprimer un préfixe à un nom de variable pour l'ensemble des noms de colonnes
+
+La fonction colnames() renvoie la liste des noms de colonnes d'un tableau. 
+
+colnames(df) <- ... : Cette partie de la commande assigne les nouveaux noms de colonnes dans df
+
+La fonction  gsub() remplace toutes les occurrences d'un motif dans une chaîne de caractères. Pour supprimer un préfixe, on peut spécifier le motif du préfixe à supprimer et le remplacer par une chaîne vide. 
+
+```{r , eval = FALSE}
+# enlever le préfixe prod_ de tous les noms de colonnes dans le dataframe viande_volaille_annee_pdl
+colnames(viande_volaille_annee_pdl) <- gsub("prod_","",colnames(viande_volaille_annee_pdl))
+
+# ou bien
+# names(viande_volaille_annee_pdl) <- gsub("prod_","",names(viande_volaille_annee_pdl))
+```
+
+```{r , eval = FALSE}
+# Pour enlever le préfixe « surf_ ».
+# On modifie le libellé espece avec la fonction gsub ou avec la fonction remove (c'est équivalent)
+balsa_dep <- balsa_dep |> 
+  mutate(espece = gsub("surf_", "", espece))
+balsa_reg <- balsa_reg |> 
+  mutate(espece = str_remove(espece, "surf_"))
+```
+
+
+## Supprimer un suffixe à un nom de variable pour l'ensemble des noms de colonnes
+
+La fonction colnames() renvoie la liste des noms de colonnes d'un tableau. 
+
+colnames(df) <- ... : Cette partie de la commande assigne les nouveaux noms de colonnes dans df
+
+La fonction  gsub() remplace toutes les occurrences d'un motif dans une chaîne de caractères. Pour supprimer un suffixe, on peut spécifier le motif du suffixe à supprimer et le remplacer par une chaîne vide. 
+
+```{r , eval = FALSE}
+# enlever le suffixe _valeur_en_k de tous les noms de colonnes dans le dataframe produits
+colnames(produits) <- gsub("_valeur_en_k","",colnames(produits))
+
+# ou bien
+# names(produits) <- gsub("_valeur_en_k","",names(produits))
+
+```
+
 
 ## Remplacer partout les points par des virgules, en vue d'un export vers excel
 
@@ -4513,6 +4689,19 @@ On peut aussi modifier le comportement des expressions régulières à l'aide de
 ```{r , eval = FALSE}
 str_detect(df$nom, regex("mme", ignore_case = TRUE))
 ```
+## `str_pad` pour ajouter des caractères en début ou en fin de chaîne
+
+La fonction `str_pad` remplit une chaîne de caractères avec des espaces (par défaut) ou une valeur choisie (argument pad) à une largeur fixe, de sorte que str_length(str_pad(x, n)) soit toujours supérieur ou égal à n.  
+Il est possible de remplir avant et / ou après la chaîne de caractères existant (argument side).
+
+str_pad(x, width = longueur_format, side = ''left'', pad = caractère_a_ajouter).  
+
+```{r , eval = FALSE}
+# exemple pour siren 
+str_pad(x, width = 5, side = "left", pad = "0")
+```
+
+
 
 ## Obtenir la longueur d'une chaîne de caractères avec `str_length()` :
 
@@ -4526,7 +4715,39 @@ str_length("abc")
 
 ## Utiliser les expressions régulières
 
-Les **expressions régulières** permettent la détection de motifs (patterns) sur des chaînes de caractères. Par exemple "^" sert à indiquer que la chaîne de caractère recherchée doit se trouver au début de la chaîne examinée. Au contraire, "$" sert à indiquer que la chaîne de caractère recherchée doit se trouver à la fin.
+Les **expressions régulières** permettent la détection de motifs (patterns) sur des chaînes de caractères. 
+Cette recherche textuelle sur motif (‘pattern’) consiste à décrire ce qu'on cherche plutôt que comment chercher.
+
+Exemple : Un nombre suivi d’une virgule se dit “\\d+,”
+
+    - la séquence ‘\\d’ représente un chiffre quelconque
+    - le ‘+’ signifie que ce qui précède (un chiffre) peut être répété
+    - le ‘,’ signifie bien qu’on cherche à trouver une virgule.
+
+Note : il convient de redoubler les \ car ils sont interprétés à la lecture de la chaîne (comme pour les chemins windows).
+
+- Restreindre par une condition sur la position dans la chaîne :
+  - en début : le métacaractère `^` sert à indiquer que la chaîne de caractère recherchée doit se trouver au début de la chaîne examinée.  
+str_replace_all("anormale", "^a", "")  # un 'a' mais seulement en DEBUT DE CHAINE  
+## [1] "normale"  
+
+  - en fin : le métacaractère `$` sert à indiquer que la chaîne de caractère recherchée doit se trouver à la fin.
+
+- Rechercher des caractères appartenant à des groupes particuliers
+  - n’importe quel caractère : le métacaractère `.`
+  - un chiffre : la séquence `\d` (équivalent à `[0-9]`) et son contraire `\D` (tout sauf un chiffre décimal)
+  - un caractère alphanumérique (lettre ou chiffre) : la séquence `\w` et son contraire `\W` (tout sauf un caractère alphanumérique)  
+     `\w` correspond à [A-Za-z0-9_]  
+  - `[a-zA-Z]` : correspond à une lettre majuscule ou minuscule.
+  - une liste de caractères : la séquence `[…]` et son contraire `[^...]`
+    str_replace_all("Concrètement", "[oe]", "")  # un 'o' ou un 'e'
+    ## [1] "Cncrènt"
+
+- Rechercher des répétitions
+  - un caractère répété 0 ou 1 fois : le métacaractère `?`
+  - un caractère répété 0 ou plusieurs fois : le métacaractère `*`
+  - un caractère répété 1 ou plusieurs fois : le métacaractère `+`
+
 
 ```{r}
 a <- data.frame(txt = c("vélo", "train", "voilier", "bus", "avion", "tram", "trottinette"))
@@ -4549,11 +4770,14 @@ Les fonctions de `stringr` étant prévues pour fonctionner avec des expressions
 
 https://stringr.tidyverse.org/articles/regular-expressions.html
 
+
 ***
 
 <br>
 
 # Utilisation des fonctions 
+
+Une `fonction` est une portion de code qui est exécutée quand elle est appelée. Elle peut prendre en entrée des arguments (ou aucun) pour les insérer dans le code à exécuter. Elle peut renvoyer une valeur à l’issue de l’exécution.  
 
 On affecte le résultat d’une fonction à un objet pour avoir le résultat dans l’environnement global et pouvoir le manipuler.
 
@@ -4945,7 +5169,7 @@ function() {
 }
 ```
 
-### Paramètres (ou arguments) d'une' fonction
+### Paramètres (ou arguments) d'une fonction
 
 Les **parenthèses** servent à indiquer les *paramètres* (ou *arguments*) de la fonction, ceux qui devront lui être passés lors de l’appel de la fonction.  
 
@@ -4993,7 +5217,7 @@ Lorsque R rencontre une instruction `return()` dans une fonction, il interrompt 
 
 #### Résultat sous forme d'une liste
 
-On ne peut pas utiliser plusieurs `return()` pour renvoyer plusieurs résultats depuis une seule fonction. L’exécution s’arrête au premier return rencontré.  
+On ne peut pas utiliser plusieurs `return()` pour renvoyer plusieurs résultats depuis une seule fonction. L’exécution d’une fonction s’arrête au premier return rencontré.    
 
 Est-ce à dire qu'une fonction R ne pourrait renvoyer qu'une seule valeur ? Non, car si elle ne peut retourner qu'un seul objet, celui-ci peut être complexe et comporter plusieurs valeurs.  
 
@@ -5505,7 +5729,8 @@ Les boucles permettent de répéter du code plusieurs fois, soit en fonction d'u
 
 ### `for`
 
-Le premier type de boucle est défini par l'instruction `for`. Sa structure est la suivante :
+La boucle définie par l'instruction `for` permet de répéter une opération sur un ensemble de valeurs d'une séquence.  
+Sa structure est la suivante :
 
 ![](images/structure_for.svg){width=90%}
 
@@ -5539,6 +5764,7 @@ for (pp in seq(from = 50, to = 100, by = 5)) {
 
 ### `while`
 
+La boucle `while` permet de répéter une opération tant qu’une condition est vérifiée.
 `while` prend en argument une condition et est suivi d'un bloc de code entre accolades. Elle exécute le bloc tant que la condition est vraie :
 
 ![](images/structure_while.svg){width=90%}
@@ -6088,24 +6314,60 @@ Le schéma suivant récapitule les points précédents :
 
 https://juba.github.io/tidyverse/19-programmer-tidyverse.html
 
+## Paramétrer une chaîne de caractères avec le package `glue`
+
+Construire une chaîne de caractères agrégeant des parties fixes et des parties variables peut devenir fastidieux avec la fonction `paste0 `(beaucoup de quotes et de virgules).  
+Le package `glue` peut être intéressant : on met entre accolades `{}` les parties de la chaîne de caractères qui doivent être évaluées lors de la construction de la chaîne finale.
+
+```{r}
+library(glue)
+
+# Exemple simple
+name <- "Alice"
+age <- 30
+
+# Avec glue
+glue("Je m'appelle {name} et j'ai {age} ans")
+
+# Equivalent avec paste0
+paste0("Je m'appelle ", name, " et j'ai ", age, " ans")
+
+# Exemple plus complexe
+data <- data.frame(
+  prenom = c("Alice", "Bob"),
+  age = c(30, 25),
+  ville = c("Paris", "Lyon")
+)
+
+# Avec glue
+glue_data(data, 
+  "{prenom} a {age} ans et habite à {ville}")
+
+# Multiples lignes
+glue("
+  Nom: {name}
+  Age: {age}
+  Ville: {data$ville[1]}
+")
+```
+
+
 ## Style de codage
 
-Suivre le style de code du tidyverse (https://style.tidyverse.org/). 
+Suivre le [style de code du tidyverse](https://style.tidyverse.org/). 
 
 Quelques principes à retenir :
 
-- éviter le mélange de majuscules et minuscules dans les noms des objets et donc utiliser la snake case (minuscules et underscores) pour les noms de variables et de fonctions (ma_variable, ouvrir_ra()) ;
+- éviter le mélange de majuscules et minuscules dans les noms des objets et donc utiliser la [snake case](https://fr.wikipedia.org/wiki/Snake_case) (minuscules et underscores) pour les noms de variables et de fonctions (ma_variable, ouvrir_ra()) ; 
 - nommer clairement ses variables et fonctions (pas de a <- "84" mais insee_reg <- "84") ;
 - retourner à la ligne après le pipe |> (privilégier le pipe natif) ;
 - conserver des lignes pas trop longues (80 caractères si possible, pas plus de 100) ;
 - aérer le code (espace après les , avant et après les opérateurs =, ==, <-, etc.) ;
-- utiliser TRUEet FALSE plutôt que T et F ;
+- utiliser TRUE et FALSE plutôt que T et F ;
 - utiliser, comme délimiteurs de chaînes, les guillemets anglais " plutôt que les apostrophes ' ;
 - indiquer les noms des arguments dans les fonctions utilisées, au moins pour les arguments secondaires : read_delim("fic.txt", delim = ";", dec = ",", skip = 2) plutôt que read_delim("fic.txt", ";", ",", 2).
 
 Le nommage des objets : variables, constantes, fonctions doit être explicite. Une fonction est par exemple nommée à partir d’un verbe d’action à l’infinitif : ouvrir_fichier_enquete()
-
-
 
 ***
 
@@ -6118,7 +6380,7 @@ Le nommage des objets : variables, constantes, fonctions doit être explicite. U
 utilitR 
 https://book.utilitr.org/
 
-Ministère de la Transition écologique et de la Cohésion des territoires
+Ministère de la Transition écologique et de la Cohésion des territoires 
 https://mtes-mct.github.io/parcours-r/
 
 Site [Introduction à R et au tidyverse](https://juba.github.io/tidyverse) 
@@ -6222,8 +6484,6 @@ et des vecteurs de type `logical`, qui ne peuvent contenir que les valeurs vraie
 
 Chaque variable est du type de son contenu (numeric, character, logical).
 
-Si les valeurs prises par la variables correspondent à un nombre fini de modalités, **la variable peut être du type "factor"**. 
-Ses composantes sont toujours d'un des 3 types décrits ci-dessus mais il est possible d'employer des fonctions spécifiques au traitement de modalités.
 À chaque type de variable correspond une utilisation. 
 Lors de l’import des données, un type est affecté automatiquement par R.
 Mais le type peut être erroné. 
@@ -6233,7 +6493,9 @@ Il suffit alors de les convertir :
 base <- mutate(base0, LIBGEO = as.character(LIBGEO))
 ```
 
-ou `as.factor()`, `as.numeric()`, etc... On peut convertir un vecteur d'un type à un autre avec les fonctions `as.character()`, `as.numeric()` et `as.logical()`. Si une valeur ne peut pas être convertie, elle est remplacée par un `NA`, et R affiche un avertissement.
+On peut convertir un vecteur d'un type à un autre avec les fonctions de forme as.XXX (`as.character()`, `as.numeric()`, `as.factor()` et `as.logical()`).  
+
+Si une valeur ne peut pas être convertie, elle est remplacée par un `NA`, et R affiche un avertissement.
 
 ```{r warning=TRUE}
 as.character(1:3)
@@ -6241,6 +6503,21 @@ as.logical(c(0, 2, 4))
 as.numeric(c("foo", "23"))
 ```
 On peut aussi gérer les types au moment de l'importation (par exemple avec le paramètre `colClasses`).
+
+### `Factor` pour une variable catégorielle
+
+Si les valeurs prises par la variables correspondent à un nombre fini de modalités, **la variable peut être du type "factor"**. 
+Ses composantes sont toujours d'un des 3 types décrits ci-dessus mais il est possible d'employer des fonctions spécifiques au traitement de modalités.
+
+Un `factor` est une manière de représenter une variable catégorielle, généralement utilisée lorsqu’il y a un nombre restreint de catégories (par exemple les tranches d’âges).  
+
+Les différentes modalités autorisées de la variable, appelées `levels`, sont associées chacune à un entier. Le `factor` stocke alors les valeurs des entiers à la place des modalités complètes. Cela permet :
+
+    - Un stockage efficace en évitant de stocker de multiples fois de longs labels.  
+    - De formaliser le caractère catégoriel de la variable en limitant les valeurs acceptées.  
+    - De faciliter certaines analyses en identifiant ces variables comme catégorielles et non autre chose (texte, numérique etc.).
+
+Les `factors` peuvent être délicats à manipuler et sont souvent source d’erreur car les valeurs intrinsèques de l’objet sont les entiers codant les `levels`.  
 
 ### Travail sur les dates
 
@@ -6265,10 +6542,8 @@ itavi <- itavi |>
 
 ## Les vecteurs
 
-Les valeurs peuvent être structurées au sein de vecteurs. 
+Un *vecteur* est un ensemble de 1 ou plusieurs éléments du même type.
 Ces vecteurs peuvent être vus comme des colonnes de valeurs toutes du même type (numérique, chaîne de caractères, booléen, catégorie).
-
-Un *vecteur* est un objet qui peut contenir plusieurs informations du même type.
 
 **Vecteurs** : suite unidimensionnelle de **valeurs** ayant le même type.
 
@@ -6309,6 +6584,10 @@ Si on affiche dans la console un vecteur avec beaucoup d'éléments, ceux-ci ser
     [40] 914 694 126 969 744 927 337 439 226 704 635
 
 On remarque que R ajoute systématiquement un nombre entre crochets au début de chaque ligne : il s'agit en fait de la position du premier élément de la ligne dans le vecteur. Ainsi, le 848 de la deuxième ligne est le 14e élément du vecteur.
+
+Pour connaitre le type d'un vecteur, on peut utiliser la fonction `class()`.  
+On peut aussi faire un test logique avec is.numeric(x) ou is.character(x) par exemple.  
+
 
 **Facteurs** : vecteur qui prend un nombre limité de modalités (exemple : sexe). Il est défini par les niveaux (`levels`) et les libellés associés (`labels`).  On parle aussi de variables qualitatives ou catégorielles (de type catégoriel).
 
@@ -6401,6 +6680,10 @@ Dans les deux cas le tableau devrait s'afficher dans RStudio avec une interface 
 
 On peut lister et modifier les noms des colonnes d'un tableau avec les fonctions `names()` ou `colnames()` (qui sont équivalentes).
 
+Pour obtenir le nombre de lignes et de colonnes dans *data frame* on utilise les fonctions `nrow()` et `ncol()`.  
+La fonction `dim(x)` renvoie le vecteur c(nrow(x),ncol(x)).
+
+
 ## Le `tibble` : un `data.frame` amélioré
 
 **Le `tibble` est une version améliorée du `data.frame` de base.**  Il s'agit d'un `data.frame` standard, avec quelques propriétés supplémentaires qui rendent son utilisation plus facile. 
@@ -6414,6 +6697,8 @@ bpe_ens_2018 <- doremifasolData::bpe_ens_2018
 bpe_ens_2018_tbl <- as_tibble(bpe_ens_2018)
 ```
 * **L'affichage des `tibbles` est meilleur que celui des `data.frames`.** Même sans la fonction `head()`, l'affichage d'un `tibble` affiche les dimensions de celui-ci (nombres de lignes et de colonnes), ainsi que le type des variables (en-dessous des noms des colonnes).
+
+L’affichage print dans la console est amélioré ; il affiche notamment les types des colonnes et limite le nombre de lignes.  
 
 Les tableaux de données au format *tibble* autorisent des noms de colonnes invalides pour les *data frames* (espaces, caractères spéciaux, nombres...). Quand on veut utiliser des noms de ce type, on doit les entourer avec des *backticks* (`) ("apostrophes inverses").
 
@@ -6488,14 +6773,23 @@ df
 
 L'utilisation des opérateurs `[[]]` et `[,]` sur un tableau de données peut sembler redondante et moins pratique que l'utilisation des verbes de `dplyr` comme `select()` ou `filter()`. Ils peuvent cependant être utiles lorsqu'on souhaite éviter les complications liées à l'utilisation du *tidyverse* à l'intérieur de fonctions. 
 
-## Les fonctions et les valeurs particulières (NA,NaN,Inf)
-- NA : valeur manquante (*Not Available*, non disponible) dans une dataframe ou en résultat d'une fonction. Cette valeur particulière est utilisée pour indiquer une valeur manquante, qu'il s'agisse d'un nombre, d'une chaîne de caractères, etc.
+## Les fonctions et les valeurs particulières (NA, NaN, Inf)
+- `NA` : valeur manquante (*Not Available*, non disponible) dans un dataframe ou en résultat d'une fonction. Cette valeur particulière est utilisée pour indiquer une valeur manquante, qu'il s'agisse d'un nombre, d'une chaîne de caractères, etc.
 
-Si la valeur `NA` permet d'indiquer une valeur manquante, il existe en réalité plusieurs types de `NA`. On a ainsi notamment des valeurs `NA_integer_`, `NA_character_`, `NA_real_`.
+`NA` est de type logical ; il existe des variantes pour les autres types : `NA_integer_`, `NA_real_`, `NA_character_`.  
 
-- NaN : pas un nombre (*Not a Number*) lorsqu'une fonction tente de diviser par 0
+Il faut utiliser `is.na` pour vérifier si une valeur vaut `NA` :
+```{r, eval = FALSE}
+is.na(NA)
+[1] TRUE
+```
 
-- -Inf, Inf : inﬁni positif ou négatif lorsque une fonction diverge
+- `NaN` : pas un nombre (*Not a Number*) lorsqu'une fonction tente de diviser par 0  
+  
+- `NULL` désigne l’absence de valeur. À la différence de NA qui désigne une valeur inconnue / manquante, NULL indique qu’il n’y a pas de valeur.  
+NULL peut être utilisé pour assigner des valeurs par défaut à des arguments d’une fonction ou pour supprimer des éléments.
+
+- `-Inf`, `Inf` : inﬁni positif ou négatif lorsque une fonction diverge
 
 Une valeur manquante peut perturber l’exécution d'une fonction :
 ```{r, eval = FALSE}
@@ -6520,128 +6814,20 @@ Si on ne dit rien à la fonction `mean`, cet argument a une valeur par défaut, 
 La fonction `coalesce(x, y)` permet de remplacer les valeurs manquantes de x par la valeur de y.
 
 
-## Les listes
-
-Les listes regroupent plusieurs éléments ensemble. Une liste peut donc contenir des vecteurs, des listes, des tableaux de données.
-Une liste dans R est une structure de données qui peut contenir des éléments de types différents (contrairement aux vecteurs qui doivent être homogènes).
-Contrairement à un vecteur, qui doit contenir des éléments du même type (par exemple, tous numériques ou tous caractères), une liste peut mélanger différents types.
-
-### Création
-
-On construit une liste avec la fonction `list`.
-
-On peut nommer les éléments à la création de la liste.
-
-```{r, eval = FALSE}
-liste <- list(nombre = 1, char = "foo", vecteur = c("Pomme", "Citron"))
-liste
-```
-On peut utiliser `names()` pour afficher ou modifier les noms des éléments.
-
-```{r, eval = FALSE}
-names(liste)
-```
-
-Quand la liste est plus complexe, la fonction `str` peut être utile pour afficher de manière plus compacte la structure de la liste. 
-```{r, eval = FALSE}
-str(liste)
-```
-
-### Sélection d'éléments
-
-Il y a deux opérateurs différents qui permettent de sélectionner les éléments d'une liste : les crochets simples `[]` et les crochets doubles `[[]]`. La différence entre ces deux opérateurs est souvent source de confusion.
-
-Partons de la liste suivante :
-
-```{r, eval = FALSE}
-liste <- list(1:5, "foo", c("Pomme", "Citron"))
-liste
-```
-
-Si on utilise les crochets simples pour sélectionner le premier élément de cette liste, on obtient le résultat suivant :
-
-```{r, eval = FALSE}
-liste[1]
-```
-
-On notera que le résultat est une liste à un seul élément.
-
-Si on utilise les crochets doubles :
-
-```{r, eval = FALSE}
-liste[[1]]
-```
-
-On obtient cette fois-ci non pas une liste composée du premier élément, mais le contenu de ce premier élément.
-
-La différence est importante, mais pas toujours facile à retenir. On peut utiliser deux petites astuces mnémotechniques :
-
-- si une liste est un train composé de plusieurs wagons, `[1]` retourne le premier wagon du train, tandis que `[[1]]` renvoie le contenu du premier wagon.
-- une alternative est de considérer que `[[]]` va chercher "plus profondément" que `[]`.
-
-Un autre point important est que si on passe plusieurs éléments à `[[]]`, la sélection se fait d'une manière récursive peu intuitive et source d'erreurs. Il est donc conseillé de **toujours utiliser** `[[]]` **avec un seul argument**, et d'utiliser `[]` si on souhaite sélectionner plusieurs éléments d'une liste.
-
-```{r, eval = FALSE}
-liste[c(1, 2)]
-```
-
-En résumé :
-
-- si on souhaite récupérer uniquement le contenu d'un élément d'une liste, on utilise `[[]]` avec un seul argument.
-- si on souhaite récupérer une nouvelle liste en sélectionnant des éléments de laliste actuelle, on utilise `[]` avec un ou plusieurs arguments.
-
-
-Comme pour les vecteurs, on peut utiliser des nombres négatifs avec `[]` pour exclure des éléments plutôt que les sélectionner, et on peut également utiliser les fonctions `head()` et `tail()`.
-
-Si la liste est nommée, on peut sélectionner des éléments par noms avec les deux opérateurs.
-
-```{r, eval = FALSE}
-liste <- list(nombre = 1, char = "foo", vecteur = c("Pomme", "Citron"))
-liste[c("nombre", "char")]
-liste[["vecteur"]]
-```
-
-On peut aussi utiliser l'opérateur `$`, qui équivaut à `[[]]` :
-
-```{r, eval = FALSE}
-liste$vecteur
-```
-
-### Utilisation
-
-En tant que généralisation des vecteurs atomiques, les listes sont utiles dès qu'on souhaite regrouper des éléments complexes ou hétérogènes.
-
-On les utilisera par exemple pour retourner plusieurs résultats depuis une fonction.
-
-```{r , eval = FALSE}
-indicateurs <- function(x) {
-    list(
-        moyenne = mean(x),
-        variance = var(x)
-    )
-}
-
-x <- 1:10
-res <- indicateurs(x)
-res$moyenne
-res$variance
-```
-
-On utilise également les listes pour stocker des objets complexes (par exemple des tableaux ) et leur appliquer des fonctions. 
-
-On pourra ensuite utiliser cette liste de tableaux pour leur appliquer des transformations ou les fusionner.
-
-Piège courant à éviter : la confusion entre `[ ]` et `[[ ]]`.
-```{r , eval = FALSE}
-# Piège : Confusion entre [] et [[]]
-ma_liste[1]      # renvoie une liste
-ma_liste[[1]]    # renvoie l'élément
-```
-
-## Travailler avec les valeurs manquantes
+## Travailler avec les valeurs manquantes `NA`
 
 ```{r , eval = FALSE}
 library(janitor) # pour round_half_up
+
+# Calculer le nombre de valeurs manquantes dans chaque ligne
+# Calculer proportion de NA par ligne / ncol (nombre de colonnes)
+lignes_avec_na <- df |>
+  mutate(
+    nb_na = rowSums(is.na(.)),
+    pct_na = (nb_na / ncol(.)) * 100
+  ) 
+
+lignes_avec_bcp_na <- (nombre_na / ncol(df)) >= 50/100
 
 # mettre NA pour variable d'évolution avec regroupement
 otex_regroupe <- otex_regroupe |> 
@@ -6678,7 +6864,7 @@ vab_agri_2020_3 <- vab_agri_2020_2 |>
   filter(libreg != "France métropolitaine hors Ile-de-France") |> 
   mutate(reg = case_when(
       is.na(reg) ~ "FM",
-    TRUE ~ reg))
+    .default = reg))
 
 # transformation des valeurs numériques manquantes par des zéros 
 exploit_prod_anim_pdl <- exploit_prod_anim_pdl |> 
@@ -6747,10 +6933,125 @@ unique(bio_pdl_nomenclature$libelle_ab_regroupt)
 
 ```
 
+## Les listes
+
+Les listes regroupent plusieurs éléments ensemble. Une liste peut donc contenir des vecteurs, des listes, des tableaux de données.
+Une liste dans R est une structure de données qui peut contenir des éléments de types différents (contrairement aux vecteurs qui doivent être homogènes).
+Contrairement à un vecteur, qui doit contenir des éléments du même type (par exemple, tous numériques ou tous caractères), une liste peut mélanger différents types.
+
+### Création
+
+On construit une liste avec la fonction `list`.
+
+On peut nommer les éléments à la création de la liste.
+
+```{r, eval = FALSE}
+liste <- list(nombre = 1, char = "foo", vecteur = c("Pomme", "Citron"))
+liste
+```
+On peut utiliser `names()` pour afficher ou modifier les noms des éléments.
+
+```{r, eval = FALSE}
+names(liste)
+```
+
+Quand la liste est plus complexe, la fonction `str` peut être utile pour afficher de manière plus compacte la structure de la liste. 
+```{r, eval = FALSE}
+str(liste)
+```
+
+### Sélection d'éléments
+
+Il y a deux opérateurs différents qui permettent de sélectionner les éléments d'une liste : les crochets simples `[]` et les crochets doubles `[[]]`. La différence entre ces deux opérateurs est souvent source de confusion.
+
+Partons de la liste suivante :
+
+```{r, eval = FALSE}
+liste <- list(1:5, "foo", c("Pomme", "Citron"))
+liste
+```
+
+Si on utilise les crochets simples pour sélectionner le premier élément de cette liste, on notera que le résultat est une liste à un seul élément.
+
+```{r, eval = FALSE}
+liste[1]
+```
+
+Si on utilise les crochets doubles, pn obtient cette fois-ci non pas une liste composée du premier élément, mais le contenu de ce premier élément.
+
+```{r, eval = FALSE}
+liste[[1]]
+```
+
+La différence est importante, mais pas toujours facile à retenir. On peut utiliser deux petites astuces mnémotechniques :
+
+- si une liste est un train composé de plusieurs wagons, `[1]` retourne le premier wagon du train, tandis que `[[1]]` renvoie le contenu du premier wagon.
+- une alternative est de considérer que `[[]]` va chercher "plus profondément" que `[]`.
+
+Un autre point important est que si on passe plusieurs éléments à `[[]]`, la sélection se fait d'une manière récursive peu intuitive et source d'erreurs. Il est donc conseillé de **toujours utiliser** `[[]]` **avec un seul argument**, et d'utiliser `[]` si on souhaite sélectionner plusieurs éléments d'une liste.
+
+```{r, eval = FALSE}
+liste[c(1, 2)]
+```
+
+En résumé :
+
+- si on souhaite récupérer uniquement le contenu d'un élément d'une liste, on utilise `[[]]` avec un seul argument.
+- si on souhaite récupérer une nouvelle liste en sélectionnant des éléments de laliste actuelle, on utilise `[]` avec un ou plusieurs arguments.
+
+
+Comme pour les vecteurs, on peut utiliser des nombres négatifs avec `[]` pour exclure des éléments plutôt que les sélectionner, et on peut également utiliser les fonctions `head()` et `tail()`.
+
+Si la liste est nommée, on peut sélectionner des éléments par noms avec les deux opérateurs.
+
+```{r, eval = FALSE}
+liste <- list(nombre = 1, char = "foo", vecteur = c("Pomme", "Citron"))
+liste[c("nombre", "char")]
+liste[["vecteur"]]
+```
+
+On peut aussi utiliser l'opérateur `$`, qui équivaut à `[[]]` :
+
+```{r, eval = FALSE}
+liste$vecteur
+```
+
+### Utilisation
+
+En tant que généralisation des vecteurs atomiques, les listes sont utiles dès qu'on souhaite regrouper des éléments complexes ou hétérogènes.
+
+On les utilisera par exemple pour retourner plusieurs résultats depuis une fonction.
+
+```{r , eval = FALSE}
+indicateurs <- function(x) {
+    list(
+        moyenne = mean(x),
+        variance = var(x)
+    )
+}
+
+x <- 1:10
+res <- indicateurs(x)
+res$moyenne
+res$variance
+```
+
+On utilise également les listes pour stocker des objets complexes (par exemple des tableaux ) et leur appliquer des fonctions. 
+
+On pourra ensuite utiliser cette liste de tableaux pour leur appliquer des transformations ou les fusionner.
+
+Piège courant à éviter : la confusion entre `[ ]` et `[[ ]]`.
+```{r , eval = FALSE}
+# Piège : Confusion entre [] et [[]]
+ma_liste[1]      # renvoie une liste
+ma_liste[[1]]    # renvoie l'élément
+```
+
 
 ## Qu'est-ce que l'opérateur `pipe` ?
 
-Lorsqu'on enchaîne les manipulations sur une table de données, un problème est que le code devient peu lisible car il y a beaucoup d'opérations imbriquées les unes dans les autres, avec un grand nombre de parenthèses ou de crochets. **L'opérateur `pipe` (noté `|>`) permet de résoudre ce problème en réécrivant les opérations de façon plus lisible.** Le principe de l'opérateur `pipe` est très simple :
+Lorsqu'on enchaîne les manipulations sur une table de données, un problème est que le code devient peu lisible car il y a beaucoup d'opérations imbriquées les unes dans les autres, avec un grand nombre de parenthèses ou de crochets.  
+**L'opérateur `pipe` (noté `|>`) permet de résoudre ce problème en réécrivant les opérations de façon plus lisible.** Tout ce qui suit le pipe est appliqué à tout ce qui le précède. Le principe de l'opérateur `pipe` est simple :
 
 * le terme qui précède l'opérateur est utilisé comme **premier** argument de la fonction qui suit l'opérateur ;
 * les opérations peuvent être enchaînées en enchaînant les opérateurs `pipe` ;
@@ -6903,8 +7204,9 @@ Ceci fournit un raccourci très pratique. Par exemple, pour compter le nombre de
 # Création d'un opérateur personnalisé `%not_in%`
 `%not_in%` <- purrr::negate(`%in%`)
 ```
-à placer en début de programme
+à placer en début de programme  
 
+Comme le nom de fonction %in% ne contient pas que des lettres, on utilise les “backticks” ` (AltGr+7) qui servent à définir des noms de symbole contenant des caractères spéciaux.
 
 ## La question des arrondis
 
@@ -7089,15 +7391,15 @@ Une manière de mesurer la dispersion est de calculer les quartiles :
 
 ```{r,  eval = FALSE}
 ## Premier quartile
-quantile(df$age, prob = 0.25)
+quantile(df$age, probs = 0.25)
 ```
 
 ```{r,  eval = FALSE}
 ## Troisième quartile
-quantile(df$age, prob = 0.75)
+quantile(df$age, probs = 0.75)
 ```
 
-`quantile` prend deux arguments principaux : le vecteur dont on veut calculer le quantile, et un argument `prob` qui indique quel quantile on souhaite obtenir. `prob` prend une valeur entre 0 et 1 : 0.5 est la médiane, 0.25 le premier quartile, 0.1 le premier décile.
+`quantile` prend deux arguments principaux : le vecteur dont on veut calculer le quantile, et un argument `probs` qui indique quel quantile on souhaite obtenir. `probs` prend une valeur entre 0 et 1 : 0.5 est la médiane, 0.25 le premier quartile, 0.1 le premier décile.
 
 ```{r,  eval = FALSE}
 sum(pull(base_extrait, P14_POP), na.rm = TRUE)
@@ -7292,27 +7594,27 @@ install.packages("nom_package")
 ```{r, eval=FALSE}
 rp_individu_pdl_age_actif <-  rp_individu_pdl_var |> 
  mutate(age=case_when(agerevq %in% c("20","25","30","35","40","45","50","55","60") ~ "a_20_64_ans",
-                        TRUE ~ agerevq),
+                        .default = agerevq),
         actif=case_when(tact %in% c(11,12) ~ "actifs",
-                        TRUE ~ tact))
+                        .default = tact))
 ```
 ```{r, eval=FALSE}
 Error in `mutate()`:
-! Problem while computing `actif = case_when(tact %in% c(11, 12) ~ "actifs", TRUE ~ tact)`.
+! Problem while computing `actif = case_when(tact %in% c(11, 12) ~ "actifs", .default = tact)`.
 Caused by error in `` names(message) <- `*vtmp*` ``:
 ! attribut 'names' [1] doit être de même longueur que le vecteur [0]
 Run `rlang::last_error()` to see where the error occurred.
 ```
-En effet, la valeur associée à TRUE ~ doit être de même type que la variable créée (ici actif), soit de type caractère.
-En associant, TRUE ~ à un élément de type "caractère", cela a résolu le problème.
+En effet, la valeur associée à .default = doit être de même type que la variable créée (ici actif), soit de type caractère.
+En associant, .default = à un élément de type "caractère", cela a résolu le problème.
 
 ```{r, eval=FALSE}
 rp_individu_pdl_age_actif <-  rp_individu_pdl_var |> 
  mutate(age=case_when(agerevq %in%
                          c("020","025","030","035","040","045","050","055","060") ~ "a_20_64_ans",
-                    TRUE ~ agerevq),
+                    .default = agerevq),
         activite=case_when(tact %in% c(11,12) ~ "actifs",
-                    TRUE ~ "inactifs"))
+                    .default = "inactifs"))
 ```
 
 ***
