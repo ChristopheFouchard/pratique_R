@@ -145,7 +145,7 @@ Cerise permet l'accès aux ressources déposées sur le serveur, la sauvegarde, 
 
 ### Version de R
 
-La version de R par défaut est la 4.2.3. La version précédente (4.0.2) est toujours disponible.
+La version de R par défaut est la 4.4.1. La version précédente (4.2.3) est toujours disponible.
 Il est recommandé d'utiliser la nouvelle version de R.
 
 Pour changer de version, aller en haut à droite et cocher la version souhaitée.
@@ -153,9 +153,11 @@ Pour changer de version, aller en haut à droite et cocher la version souhaitée
 <!-- 
 Pour centrer une image avec contrôle de largeur
 ![*Légende optionnelle*](chemin/vers/image.extension){fig-align="center" width="XX%"}
+L'attribut fig-align ne doit pas avoir d'espaces autour du signe égal 
+et doit être entre accolades après le chemin de l'image
 -->
 
-![](images/Cerise_version_R.png){fig-align="center" width="50%" }
+![](images/Cerise_version_R.png){fig-align="center" width="50%"}
 
 
 ### Sessions R
@@ -165,21 +167,21 @@ On peut choisir la version de R utilisée au lancement de la session, en allant 
 
 On peut aussi créer une nouvelle session, en cliquant sur le '+'  en haut à droite, via :
 
-![](images/Cerise_ouvrir_nouvelle_session_R.png){fig-align="center" width="50%" }
+![](images/Cerise_ouvrir_nouvelle_session_R.png){fig-align="center" width="50%"}
 
 puis choisir de l'associer à un projet ou à un dossier :
 
-![](images/Cerise_nouvelle_session_R_directory.png){fig-align="center" width="50%" }
+![](images/Cerise_nouvelle_session_R_directory.png){fig-align="center" width="50%"}
 
 '~' (obtenu par AltGr+2 puis espace) permet d’indiquer le répertoire racine dans Cerise, relatif au répertoire personnel de l'utilisateur (correspond à ~/CERISE/00-Espace-Personnel/prenom.nom/).
 
 On peut préciser le chemin du dossier en cliquant sur 'Parcourir', puis cliquer sur 'Choisissez'
 
-![](images/Cerise_nouvelle_session_R_directory_pdl.png){fig-align="center" width="50%" }
+![](images/Cerise_nouvelle_session_R_directory_pdl.png){fig-align="center" width="50%"}
 
 Puis choisir la version de R à travers la fenêtre :
 
-![](images/Cerise_nouvelle_session_version_R.png){fig-align="center" width="50%" }
+![](images/Cerise_nouvelle_session_version_R.png){fig-align="center" width="50%"}
 
 et enfin cliquer sur 'Start'.
 
@@ -5119,28 +5121,28 @@ Mise en italique des termes avec _italique_ ou *italique*.
 
 **Les lignes de chacune des tables abondent la fusion.**
 
-![*Comportement d'un full_join*](images/apercu_full_join.png){fig-align = "center"}
+![*Comportement d'un full_join*](images/apercu_full_join.png){fig-align="center"}
 
 ***
 `inner_join`
 
 **Seules les lignes aux identifiants communs abondent la fusion.** Dans le cas de `inner_join(x, y)`, seules les lignes présentes à la fois dans `x` et `y` sont conservées (et si nécessaire dupliquées) dans la table résultat.
 
-![*Comportement d'un inner_join*](images/apercu_inner_join.png){fig-align = "center"}
+![*Comportement d'un inner_join*](images/apercu_inner_join.png){fig-align="center"}
 
 ***
 `left_join`
 
 **Les lignes de la première table sont conservées et sont abondées par les lignes de la deuxième table qui partagent les mêmes identifiants.**
 
-![*Comportement d'un left_join*](images/apercu_left_join.png){fig-align = "center"}
+![*Comportement d'un left_join*](images/apercu_left_join.png){fig-align="center"}
 
 ***
 `right_join`
 
 **Les lignes de la seconde table sont conservées et sont abondées par les lignes de la première table qui partagent les mêmes identifiants.**
 
-![*Comportement d'un right_join*](images/apercu_right_join.png){fig-align = "center"}
+![*Comportement d'un right_join*](images/apercu_right_join.png){fig-align="center"}
 
 ***
 `anti_join`
@@ -5148,7 +5150,7 @@ Mise en italique des termes avec _italique_ ou *italique*.
 **Seules les lignes de la première table dont les variables identifiantes n'apparaissent pas dans la seconde table sont conservées.** `anti_join` est une jointure *filtrante*, c'est-à-dire qu'elle sélectionne certaines lignes de `a` sans ajouter les colonnes de `b`. 
 Un `anti_join` ne conserve que les lignes de `a` absentes de `b`.
 
-![*Comportement d'un anti_join*](images/apercu_anti_join.png){fig-align = "center"}
+![*Comportement d'un anti_join*](images/apercu_anti_join.png){fig-align="center"}
 
 ```{r , eval = FALSE}
 # Trouver les siret qui ont disparu
@@ -5175,7 +5177,7 @@ siret_disparus_2024 <- anti_join(abatga_siret_2023, abatga_siret_2024,
 
 Ainsi, `semi_join` ne conservera que les lignes de `a` pour lesquelles une ligne de `b` existe également, et supprimera les autres.
 
-![*Comportement d'un semi_join*](images/apercu_semi_join.png){fig-align = "center"}
+![*Comportement d'un semi_join*](images/apercu_semi_join.png){fig-align="center"}
 
 On peut utiliser l'argument `suffix` de `..._join`, pour indiquer les suffixes à ajouter aux colonnes communes.
 
@@ -8309,7 +8311,8 @@ https://book.utilitr.org/
 Ministère de la transition écologique
 https://mtes-mct.github.io/parcours-r/
 
-Site de formation R du Ministère de l'agriculture et de la souveraineté alimentaire https://ssm-agriculture.github.io/site-formations-R/
+Site de formation R du Ministère de l'agriculture et de la souveraineté alimentaire  
+https://ssm-agriculture.github.io/site-formations-R/
 
 Site [Introduction à R et au tidyverse](https://juba.github.io/tidyverse) 
 
@@ -8344,7 +8347,7 @@ Les lettres du groupe des utilisateurs de R (GUR) sont aussi très utiles :
 
 `Comment fai’R : R et tableurs`
 
-`Comment fai’R : un diagrammes des principales étapes d’un programme`
+`Comment fai’R : un diagramme des principales étapes d’un programme`
 
 Elles sont disponibles sur : *~/CERISE/01-Espace-de-Partage/SSP/BMIS/comment_fair*.
 
