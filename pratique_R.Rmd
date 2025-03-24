@@ -216,7 +216,7 @@ Sous RStudio, le répertoire de travail est également affiché dans le quadrant
 ```{r, eval = FALSE} 
 > setwd("~/CERISE")
 > getwd()
-# donne [1] "/var/data/gluster/volume0/CERISE"
+# donne [1] "/var/data/nfs/CERISE"
 
 ```
 
@@ -791,16 +791,16 @@ avant on avait par exemple "C:\\R\\rtools40\\usr\\bin\\make.exe"
 ```{r, eval = FALSE}
 # pour connaitre les chemins vers lesquels pointe R pour chercher des packages installés
 .libPaths()
-# "/var/data/nfs/CERISE/00-Espace-Personnel/prenom.nom/R/x86_64-pc-linux-gnu-library/4.2"
+# "/var/data/nfs/CERISE/00-Espace-Personnel/prenom.nom/R/x86_64-pc-linux-gnu-library/4.4"
 
 # éléments du répertoire :
-list.files("~/CERISE/00-Espace-Personnel/prenom.nom/R/x86_64-pc-linux-gnu-library/4.2")
+list.files("~/CERISE/00-Espace-Personnel/prenom.nom/R/x86_64-pc-linux-gnu-library/4.4")
 
 View(installed.packages()) # affiche tous les packages installés 
 
 row.names(x = installed.packages(priority = c("base","recommended")))
 row.names(x = installed.packages(
-                        lib.loc = c("~/CERISE/00-Espace-Personnel/prenom.nom/R/x86_64-pc-linux-gnu-library/4.2")))
+                        lib.loc = c("~/CERISE/00-Espace-Personnel/prenom.nom/R/x86_64-pc-linux-gnu-library/4.4")))
 ```
 
 
@@ -863,20 +863,20 @@ Exemple d'installation d'une ancienne version de package en plusieurs étapes
 ```{r, eval = FALSE}
 # suppression d'un package
 remove.packages(pkgs = "cli", 
-                lib = c("~/CERISE/00-Espace-Personnel/prenom.nom/R/x86_64-pc-linux-gnu-library/4.2"))
+                lib = c("~/CERISE/00-Espace-Personnel/prenom.nom/R/x86_64-pc-linux-gnu-library/4.4"))
 
 # suppression de l'ensemble des packages pour repartir de zéro
 remove.packages(pkgs = row.names(
-  x = installed.packages(lib.loc = c("~/CERISE/00-Espace-Personnel/prenom.nom/R/x86_64-pc-linux-gnu-library/4.2"))),
-                lib = c("~/CERISE/00-Espace-Personnel/prenom.nom/R/x86_64-pc-linux-gnu-library/4.2"))
+  x = installed.packages(lib.loc = c("~/CERISE/00-Espace-Personnel/prenom.nom/R/x86_64-pc-linux-gnu-library/4.4"))),
+                lib = c("~/CERISE/00-Espace-Personnel/prenom.nom/R/x86_64-pc-linux-gnu-library/4.4"))
 
 row.names(x = installed.packages(
-  lib.loc = c("~/CERISE/00-Espace-Personnel/prenom.nom/R/x86_64-pc-linux-gnu-library/4.2")))
+  lib.loc = c("~/CERISE/00-Espace-Personnel/prenom.nom/R/x86_64-pc-linux-gnu-library/4.4")))
 # NULL
   
 # install.packages("tidyverse") 
 # ERROR: dependency ‘ragg’ is not available for package ‘tidyverse’
-# * removing ‘/var/data/nfs/CERISE/00-Espace-Personnel/prenom.nom/R/x86_64-pc-linux-gnu-library/4.2/tidyverse’
+# * removing ‘/var/data/nfs/CERISE/00-Espace-Personnel/prenom.nom/R/x86_64-pc-linux-gnu-library/4.4/tidyverse’
 # Warning in install.packages :
 #   installation of package ‘tidyverse’ had non-zero exit status
 
@@ -2533,10 +2533,10 @@ Exemple : création d'une variable résultat pour savoir si les résultats de no
 
 ```{r , eval = FALSE}
 analyseb <- mutate(analyse, resultat_ok = if_else(code_remarque %in% c(1, 2, 7, 10),
-                                                 yes = TRUE, no = FALSE))
+                                                 true = TRUE, false = FALSE))
 ```
 
-qui peut se résumer, lorsque `yes = TRUE` et `no = FALSE`, à :
+qui peut se résumer, lorsque `true = TRUE` et `false = FALSE`, à :
 ```{r , eval = FALSE}
 analyseb <- mutate(analyse, resultat_ok = code_remarque %in% c(1, 2, 7, 10))
 ```
@@ -2545,9 +2545,9 @@ analyseb <- mutate(analyse, resultat_ok = code_remarque %in% c(1, 2, 7, 10))
 laits_mensuel_chevre_cerise <- laits_mensuel_2 |>
   filter(type %in% c("CNB","CB")) |> 
   mutate(reg_etab = if_else(dep_etab %in% c("44","49","53","72","85"),
-                           yes = "PDL", no = "hors PDL"),
+                           true = "PDL", false = "hors PDL"),
          reg_prod = if_else(dep_prod %in% c("44","49","53","72","85"),
-                           yes = "PDL", no = "hors PDL"))
+                           true = "PDL", false = "hors PDL"))
 ```
 
 
@@ -2785,9 +2785,9 @@ exploit_lait2_production <- exploit_lait2_production |>
 
 # 3- Créer un type_regroupement_2, avec la méthode 'if_else'
 exploit_lait2_production <- exploit_lait2_production |>
-  mutate(type_regroupement_2 = if_else(type %in% c("VB","VNB"), yes = "Vaches", no = type),
-         type_regroupement_2 = if_else(type %in% c("CB","CNB"), yes = "Chevres", no = type_regroupement_2),
-         type_regroupement_2 = if_else(type %in% c("BB","BNB"), yes = "Brebis", no = type_regroupement_2))
+  mutate(type_regroupement_2 = if_else(type %in% c("VB","VNB"), true = "Vaches", false = type),
+         type_regroupement_2 = if_else(type %in% c("CB","CNB"), true = "Chevres", false = type_regroupement_2),
+         type_regroupement_2 = if_else(type %in% c("BB","BNB"), true = "Brebis", false = type_regroupement_2))
          
 ```
 
@@ -4673,11 +4673,11 @@ surface_bio_2022_2023 <- bio_2023 |>
 # creation variable surface supplémentaire en 2023
 surface_bio_2022_2023 <- surface_bio_2022_2023 |> 
   mutate(present_2023_present_2022 = if_else(!is.na(quantite_declaree_2023) & !is.na(quantite_declaree_2022),
-                                            yes = 1, no = 0),
+                                            true = 1, false = 0),
          present_2023_absent_2022 = if_else(!is.na(quantite_declaree_2023) & is.na(quantite_declaree_2022),
-                                            yes = 1, no = 0),
+                                            true = 1, false = 0),
          absent_2023_present_2022 = if_else(is.na(quantite_declaree_2023) & !is.na(quantite_declaree_2022),
-                                            yes = 1, no = 0),
+                                            true = 1, false = 0),
          indicateur_presence = case_when(
            !is.na(quantite_declaree_2023) & !is.na(quantite_declaree_2022) ~ "present_2023_present_2022",
            !is.na(quantite_declaree_2023) & is.na(quantite_declaree_2022) ~ "present_2023_absent_2022",
@@ -8855,15 +8855,15 @@ replace_na()
 
 # pb avec == si présence de valeurs manquantes
 bio_pdl_nomenclature_pb_na <- bio_pdl_nomenclature |> 
-  mutate(libelle_ab_regroupt = if_else(libelle_ab_2 == "Pommes", yes = libelle_ab_2, no = libelleonab))
+  mutate(libelle_ab_regroupt = if_else(libelle_ab_2 == "Pommes", true = libelle_ab_2, false = libelleonab))
 
 unique(bio_pdl_nomenclature_pb_na$libelle_ab_regroupt)
 
 # %in% permet de gérer la présence de valeurs manquantes
 bio_pdl_nomenclature <- bio_pdl_nomenclature |> 
   mutate(libelle_ab_regroupt = if_else(libelle_ab_2 %in% c("Pommes"), 
-                                      yes = libelle_ab_2, 
-                                      no = libelleonab))
+                                      true = libelle_ab_2, 
+                                      false = libelleonab))
 
 unique(bio_pdl_nomenclature$libelle_ab_regroupt)
 
@@ -8876,8 +8876,8 @@ bio_pdl_nomenclature_renommage_na <- bio_pdl_nomenclature |>
 # si libelle_ab_2 == "Pommes" et sur libelleonab sinon
 bio_pdl_nomenclature_gestion_na <- bio_pdl_nomenclature_renommage_na |> 
   mutate(libelle_ab_regroupt = if_else(libelle_ab_2 == "Pommes", 
-                                      yes = libelle_ab_2, 
-                                      no = libelleonab))
+                                      true = libelle_ab_2, 
+                                      false = libelleonab))
 
 unique(bio_pdl_nomenclature$libelle_ab_regroupt)
 
@@ -9590,16 +9590,12 @@ bio_anim2_dep_pdl_an <- bio_anim2_dep_pdl_an |>
 # créer les variables valeur_dep_rang à partir de valeur_dep
 # et valeur_dep_rang1_a correspondant à libdep
 # pour valeur_dep_rang correspondant au 1er rang
-# arrondi à l'entier le plus petit avec floor 
-# floor Retourne la valeur du plus grand entier inférieur ou égal au nombre spécifié.
-# partie entière : nombre entier immédiatement inférieur ou égal au nombre spécifié. 
 recolte_bois_dep_reg <- recolte_bois_dep_reg |>
   group_by(categorie) |>
-  mutate(valeur_dep_rang = rank(-valeur_dep),
+  mutate(valeur_dep_rang = rank(-valeur_dep, ties.method = "min"),
          .before = 1) |>
-  mutate(valeur_dep_rang1_a = if_else(valeur_dep_rang == 1, yes = libdep, no = ""),
+  mutate(valeur_dep_rang1_a = if_else(valeur_dep_rang == 1, true = libdep, false = ""),
          .after = valeur_dep_rang) |> 
-  mutate(across(ends_with("rang"),floor)) |> 
   ungroup()
 
 # Calcul de rangs 2 ----  
