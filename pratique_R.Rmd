@@ -2527,7 +2527,9 @@ Parfois, on veut créer une nouvelle variable en partant des valeurs d’une ou 
 
 ### avec `case_match()`
 
-La fonction `case_match()` permet de recoder les valeurs d’une variable en fonction de correspondances exactes ou de conditions.
+La fonction `case_match()` permet de recoder les valeurs d’une variable en fonction de correspondances exactes ou de conditions.  
+Il faut utiliser `~` (AltGr + 2) pour associer les valeurs de correspondance avec leurs résultats.  
+Pour mettre une valeur par défaut, on utilise l'argument de la fonction `.default =`. Le .default est un paramètre nommé de la fonction. Comme pour tout argument, on l’assigne avec = (par exemple, .default = "Autre").  
 
 ```{r , eval = FALSE}
 library(dplyr)
@@ -2603,7 +2605,7 @@ exploit_vaches_statut <- exploit_bovins_c |>
                             "01" ~ "1 - Exploitant individuel",
                             "02" ~ "2 - GAEC",
                             "03" ~ "3 - EARL",
-                            .default ~ "4 - Autres statuts"))
+                            .default = "4 - Autres statuts"))
 
 nb_exploit_vaches_statut <- exploit_vaches_statut |> 
   group_by(siege_dep, statut_libelle) |> 
@@ -2631,8 +2633,8 @@ ages <- c(10, 20, 30, 40, 50, 60)
 
 age_groupes <- case_match(
   ages,
-  1:19 ~ "Enfant/Adolescent",
-  20:39 ~ "Jeune adulte",
+  1:17 ~ "Enfant/Adolescent",
+  18:39 ~ "Jeune adulte",
   40:59 ~ "Adulte",
   .default = "Senior")
 
