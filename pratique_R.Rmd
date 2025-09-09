@@ -233,6 +233,9 @@ Il faut naviguer dans les dossiers jusqu'au fichier et ensuite sélectionner cel
 
 #### Comment téléverser un fichier vers Cerise
 
+Sur votre PC en local, faire un zip qui contient les fichiers à uploader (même si le fichier est unique). Cela permet d’affecter
+les “bons droits” sur ces fichiers (notamment qu’ils soient modifiables par d’autres agents). Son contenu sera ensuite automatiquement dézippé sous Cerise.    
+
 Dans le cas d'un fichier ayant vocation à  être déposé sur Cerise, il faut utiliser le navigateur de fichier de RStudio, dans la partie bas droite de l'écran.
 
 Une fois placé dans le dossier de dépôt du fichier, choisir Upload.
@@ -303,7 +306,7 @@ Pour gagner du temps, il est important d'utiliser les raccourcis pour les comman
     Ctrl + Shift + C : bascule en commentaire le code sélectionné 
     (ou la ligne où se trouve le curseur si rien n'a été sélectionné)
     `Ctrl` + `S` : enregistre le fichier courant (équivalent de la disquette)
-    `Tab` ou Ctrl + Espace : ouvre les propositions d'autocomplétion   
+    `Tab` (touche de tabulation) ou Ctrl + Espace : ouvre les propositions d'autocomplétion   
     (pour les noms de fonctions ou d'objets, et pour les chemins à l'intérieur de guillemets)
 
     F1 : sur une fonction R, affiche l'aide de la fonction 
@@ -736,7 +739,7 @@ install.packages("chemin/en/local/package1_x.y.z.zip", repos = NULL)
 
 Si le fichier est de type "source" (extension .tar.gz), Rtools peut s'avérer nécessaire.
 
-### Modifier les options en cas de difficulté d'installation de packages sur son poste de travail
+### Modifier la configuration pour pouvoir installer les packages sur son poste de travail via internet
 
 `R sur son poste local`
 
@@ -748,21 +751,40 @@ Warning in install.packages :
   impossible d'ouvrir l'URL 'https://cran.rstudio.com/src/contrib/PACKAGES'
 ```
 
-Modifier les options de téléchargement, en indiquant dans la console
+Préciser l'adresse du `proxy` permettant l'accès à internet, pour télécharger les packages. 
+
+Lancer dans la console RStudio
 ```{r, eval = FALSE}
-# méthode utilisée pour télécharger des fichiers à partir d’Internet
-options(download.file.method = "wininet")
-
-# L'option download.file.method contrôle la méthode de téléchargement 
-# pour toutes les opérations de téléchargement de fichiers dans R, y compris install.packages()
-
+# Comment connaître l’adresse du proxy ?
+Sys.getenv("http_proxy")  # Pour le proxy HTTP
+Sys.getenv("https_proxy") # Pour le proxy HTTPS
 ```
 
-On obtient alors
+Puis mettre cette adresse ("...proxy...:8080") dans les variables d'environnement `http_proxy` et `https_proxy`.
+
+Ouvrir le fichier `~/.Renviron` avec la commande suivante :
+
+```{r, eval = FALSE}
+file.edit("~/.Renviron")
+```
+
+Indiquer les lignes suivantes dans le fichier `~/.Renviron` (en remplaçant "...proxy...:8080" par l'adresse du proxy) :
+```{r, eval = FALSE}
+http_proxy="...proxy...:8080"
+https_proxy="...proxy...:8080"
+```
+
+Redémarrer RStudio après avoir modifié le fichier .Renviron pour que les changements prennent effet.
+
+Tester la connexion à un site internet en mettant dans la console RStudio :
+```{r, eval = FALSE}
+url <- "https://cran.r-project.org"
+readLines(url, n = 10)
+```
+
+Pour l'installation des packages, on obtient alors
 ```{r, eval = FALSE}
 > install.packages("haven")
-Warning in install.packages :
-  the 'wininet' method is deprecated for http:// and https:// URLs
 essai de l'URL 'https://cran.rstudio.com/bin/windows/contrib/4.3/haven_2.5.4.zip'
 Content type 'application/zip' length 765340 bytes (747 KB)
 downloaded 747 KB
@@ -774,11 +796,46 @@ Les packages binaires téléchargés sont dans
 
 ```
 
-Pour savoir quelle méthode est actuellement utilisée pour l'option download.file.method dans R
+Pour connaitre l'emplacement du fichier .Renviron, lancer dans la console RStudio
+
 ```{r, eval = FALSE}
-current_method <- getOption("download.file.method")
-print(current_method)
+# Pour obtenir le chemin du répertoire personnel
+Sys.getenv("HOME")
+
+# [1] "C:/Users/prenom.nom/Documents"
 ```
+
+Le fichier avec un point `.Renviron` sert pour la personnalisation utilisateur des variables d’environnement.  
+
+Il est aussi possible de modifier le fichier Renviron.site pour l'ensemble des utilisateurs du PC (par exemple en salle de formation).
+
+Ouvrir le fichier `R_HOME/etc/Renviron.site` avec la commande suivante :
+
+```{r, eval = FALSE}
+# ouvrir le fichier Renviron.site situé dans le dossier R_HOME/etc/ 
+# où R_HOME est le dossier d'installation de R
+file.edit(file.path(R.home(), "etc", "Renviron.site"))
+```
+
+Indiquer les lignes suivantes dans le fichier Renviron.site (en remplaçant "...proxy...:8080" par l'adresse du proxy) :
+```{r, eval = FALSE}
+http_proxy="...proxy...:8080"
+https_proxy="...proxy...:8080"
+```
+
+Redémarrer RStudio après avoir modifié le fichier Renviron.site pour que les changements prennent effet.
+
+Le fichier Renviron.site est un fichier de configuration système qui permet de définir des variables d'environnement communes pour tous les utilisateurs de R du PC.
+
+Pour connaitre l'emplacement du fichier Renviron.site, lancer dans la console RStudio
+```{r, eval = FALSE}
+# Pour obtenir le répertoire d'installation de R (R_HOME)
+R.home()
+# [1] "C:/Program Files/R/R-x.y.z"
+```
+Le fichier de configuration d'environnement global Renviron.site se trouve généralement dans le dossier etc/ de l'installation R.
+
+Le fichier .Renviron de l'utilisateur courant surcharge le fichier Renviron.site, qui est lu en premier lors du démarrage de R.
 
 ### Installation de Rtools en cas de difficulté sur son poste de travail
 
@@ -2537,7 +2594,7 @@ library(dplyr)
 # valeur_originale ~ nouvelle_valeur signifie : 
 # Si la valeur est valeur_originale, la remplacer par nouvelle_valeur.
 
-data <- data %>%
+data <- data |>
   mutate(nouvelle_variable = case_match(
     ancienne_variable,
     valeur1 ~ nouvelle_valeur1,
