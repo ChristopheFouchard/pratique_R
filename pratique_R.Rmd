@@ -739,7 +739,7 @@ install.packages("chemin/en/local/package1_x.y.z.zip", repos = NULL)
 
 Si le fichier est de type "source" (extension .tar.gz), Rtools peut s'avérer nécessaire.
 
-### Modifier la configuration pour pouvoir installer les packages sur son poste de travail via internet
+### Modifier la configuration pour pouvoir installer les packages via internet  
 
 `R sur son poste local`
 
@@ -753,16 +753,9 @@ Warning in install.packages :
 
 Préciser l'adresse du `proxy` permettant l'accès à internet, pour télécharger les packages. 
 
-Lancer dans la console RStudio
-```{r, eval = FALSE}
-# Comment connaître l’adresse du proxy ?
-Sys.getenv("http_proxy")  # Pour le proxy HTTP
-Sys.getenv("https_proxy") # Pour le proxy HTTPS
-```
+Mettre cette adresse ("...proxy...:8080") dans les variables d'environnement `http_proxy` et `https_proxy`.
 
-Puis mettre cette adresse ("...proxy...:8080") dans les variables d'environnement `http_proxy` et `https_proxy`.
-
-Ouvrir le fichier `~/.Renviron` avec la commande suivante :
+Ouvrir le fichier `~/.Renviron` avec la commande :
 
 ```{r, eval = FALSE}
 file.edit("~/.Renviron")
@@ -1919,7 +1912,7 @@ ma_variable <- c("Toulouse", "Nantes", "Strasbourg")
 ma_variable <- 1:10
 ```
 `paste0()` pour concaténer des variables
-'separate()' pour séparer des variables
+`separate()` pour séparer des variables
 
 On souhaite créer de nouvelles variables
 
@@ -5895,9 +5888,8 @@ filter(a, str_detect(string = txt, pattern = "n$"))
 
 
 # \\d+ est une expression régulière qui correspond à une séquence de un ou plusieurs chiffres consécutifs
-# \\d : Correspond à un chiffre (0-9). Le double antislash (\\) est utilisé 
-# pour échapper le caractère \ dans les chaînes de caractères en R.
-# + : Indique que l'élément précédent (dans ce cas, \\d) doit apparaître une ou plusieurs fois.
+# \\d : Correspond à un chiffre (0-9). 
+# + : Indique que l'élément précédent doit apparaître une ou plusieurs fois.
 ```
 
 ```{r , eval = FALSE}
@@ -5907,7 +5899,7 @@ filter(a, str_detect(string = txt, pattern = "n$"))
 # \\d{2} : recherche deux chiffres consécutifs.
 # \\d : Il s'agit d'un caractère spécial qui représente un chiffre (decimal) dans les expressions régulières. 
 # La double barre oblique (\\) est nécessaire pour échapper le caractère spécial 
-#et l'interpréter comme un seul caractère correspondant à un chiffre.
+# et l'interpréter comme un seul caractère correspondant à un chiffre.
 # \\ est utilisé comme caractère d'échappement pour s'assurer que le caractère qui suit (d dans ce cas) 
 # est interprété comme un motif spécial de regex plutôt que comme un caractère littéral.
 # \\d : C’est un métacaractère qui correspond à n’importe quel chiffre, équivalent à [0-9].
@@ -9464,7 +9456,6 @@ La conversion automatique d'un type `logique` (FALSE,TRUE) en un type `entier` (
 On peut donc appliquer `sum()` à un test, et on obtiendra le nombre de valeurs pour lesquelles le test est vrai.
 
 Ceci fournit un raccourci très pratique. Par exemple, pour compter le nombre de valeurs manquantes dans un vecteur, on peut faire `sum(is.na(vecteur))`.
-```
 
 
 ## Ajout d'un opérateur `%not_in%`
