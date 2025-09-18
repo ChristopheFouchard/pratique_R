@@ -509,12 +509,14 @@ Il est également *recommandé* de désactiver la restauration automatique de ce
 
 Dans RStudio, les caractères marchant par paires (parenthèses, guillemets, accolades, crochets) sont automatisés. En sélectionnant du code et en appuyant sur le caractère ouvrant correspondant, RStudio place automatiquement les caractères au début et à la fin du code sélectionné. En plaçant le curseur après un caractère de ce type (par exemple une parenthèse fermante), RStudio va surligner l'autre caractère correspondant (par exemple la parenthèse ouvrante correspondante), permettant de visualiser les paires.
 
-Mdifier la couleur des parenthèses pour faciliter la lecture du code. 
+Modifier la couleur des parenthèses pour faciliter la lecture du code. 
 
-Aller dans le même menu "Tools" (Outils) > "Global Options" (Options globales).
-Sélectionner Code -> Afficher.
-Activer l’option Parenthèses arc-en-ciel en bas.
-Cela changera la couleur des parenthèses, des accolades et des crochets pour qu’ils correspondent entre eux. 
+Aller dans le même menu "Tools" (Outils) > "Global Options" (Options globales).  
+Sélectionner "Code" dans la barre latérale de gauche, puis choisir l'onglet "Display" (Afficher).  
+Cocher l’option "Use rainbow parentheses" (Parenthèses arc-en-ciel) en bas pour colorer les parenthèses en fonction de leur niveau d'imbrication.    
+Cela changera la couleur des parenthèses, des accolades et des crochets pour qu’ils correspondent entre eux.   
+
+Cocher "Highlight R function calls" (Mettre en évidence les appels de fonction R) pour colorer les noms de fonction.
 
 ### Encodage
 
@@ -2025,7 +2027,7 @@ repart_diplome_max_groupe1 <-  mo_2020_diplome_max |>
   group_by(dipl_max_groupe1) |> 
   summarise(nb = n(), percent = n() / n_tot * 100) |> 
   distinct() |> 
-  adorn_totals(where = c("row"), name = "Ensemble")
+  adorn_totals("row", name = "Ensemble")
 
 # utilisation de la fonction last, qui permet de récupérer la valeur de la dernière ligne
 # à manier avec précaution (ne pas modifier l'ordre au préalable par exemple)
@@ -2853,7 +2855,7 @@ stats_chefcoexpl_statutdirig <- mo_2020 |>
                                .default = statutdirig)) |> 
   group_by (statut_dirig) |> 
   summarise(nb = n()) |> 
-  adorn_totals(where = c("row"))
+  adorn_totals("row")
 ```
 
 ```{r , eval = FALSE}
@@ -3202,14 +3204,31 @@ Le verbe `count()` permet de compter les individus par modalité d’une colonne
 
 Il existe quelques paramètres qui peuvent s’avérer utiles :  
 
-    `name =` : permet de nommer la colonne des effectifs obtenus (“effectifs”, par exemple). Par défaut, R la nomme `n`.  
+    `name =` : permet de nommer la colonne des effectifs obtenus (“effectifs”, par exemple).   
+    Par défaut, R la nomme `n`.  
 
-    `sort =` : booléen qui permet, s’il est à TRUE, de classer le tableau par ordre décroissant des valeurs de la colonne `n` (ou “effectifs” si on l’a renommée)
+    `sort =` : booléen qui permet, s’il est à TRUE, de classer le tableau   
+    par ordre décroissant des valeurs de la colonne `n`   
+    (ou “effectifs” si on l’a renommée)
 
 ```{r , eval = FALSE}
 departements |>
-  count(libreg, name = "effectifs", sort= TRUE)
+  count(libreg, name = "effectifs", sort = TRUE)
 ```
+
+```{r , eval = FALSE}
+# Nombre d'exploitations par département
+nb_exploit_pdl_2020 <- exploit_pdl_2020 |>
+  select(nom_dossier, dep) |>
+  group_by(dep) |>
+  summarise(nb_exploitations = n() ) |>
+  ungroup()
+
+# autre méthode
+nb_exploit_pdl_2020_b <- exploit_pdl_2020 |>
+  count(dep, name = "nombre total d'exploitations")
+```
+
 
 
 **La fonction `summarise()` permet de calculer une ou plusieurs statistiques à partir de la table de données.** Cette fonction est souvent utilisée après la fonction `group_by()` pour calculer des statistiques par groupe, et elle conduit à une agrégation de la table en fonction des groupes définis par la fonction `group_by` (par défaut une agrégation sur l'ensemble de la table). Le code suivant calcule le nombre total d'équipements dans la BPE `sum(NB_EQUIP, na.rm = TRUE)`, et le nombre total de boulangeries `sum(NB_EQUIP * (TYPEQU == "B203"), na.rm = TRUE)`.
@@ -3748,7 +3767,7 @@ exports_pdl_2020_pays_vol_vivantes <- exports_pdl_an_pays_vol |>
          annee == 2020) |> 
   # Réorganisation des colonnes pour le total pour s'assurer que "lib_cpf4", et "pays" restent à blanc
   relocate(annee, lib_cpf4, pays, .after = last_col()) |> 
-  adorn_totals(where = c("row"), name = "Pays de la Loire") |> 
+  adorn_totals("row", name = "Pays de la Loire") |> 
   # Réinitialisation de la valeur du total pour la colonne "annee"
   mutate(annee = if_else(lib_pays == "Pays de la Loire", NA, annee)) |> 
   # Réorganisation des colonnes pour s'assurer que "annee", "lib_cpf4", et "pays" restent en tête
@@ -3773,7 +3792,7 @@ filtrer_an_type_produit <- function(data,
            annee == an) |>
     # Réorganisation des colonnes pour le total pour s'assurer que "type_de_produit", et "pays" restent à blanc
     relocate(annee, type_de_produit, .after = last_col()) |>
-    adorn_totals(where = c("row"), name = "Pays de la Loire") |>
+    adorn_totals("row", name = "Pays de la Loire") |>
     # Réinitialisation de la valeur du total pour la colonne "annee"
     mutate(annee = if_else(lib_pays == "Pays de la Loire", NA, annee)) |>
     # Réorganisation des colonnes pour s'assurer que "annee", "type_de_produit", et "pays" restent en tête
@@ -3917,11 +3936,19 @@ La fonction `bind_cols()` permet de juxtaposer des tables (qui doivent avoir le 
 
 ## Ajout de ligne Total 
 
-adorn_totals
+La fonction `adorn_totals` du package `janitor` permet d'ajouter une ligne ou une colonne de totaux à un tableau de données (un data.frame ou un tibble).
+
+**adorn_totals("row")** : ajoute une ligne "Total" en bas du tableau, qui contient la somme de chaque colonne.  
+**adorn_totals("col")** : ajoute une colonne "Total" à droite du tableau, qui contient la somme de chaque ligne.  
+**adorn_totals(c("row", "col"))** : ajoute à la fois une ligne et une colonne de totaux.
+    
+Le paramètre `name` permet de choisir l'intitulé de la ligne (ou de la colonne) de total (par défaut "Total").  
+
+
 ```{r , eval = FALSE}
 library(dplyr)
 library(tidyr)
-library(janitor) # pour round_half_up
+library(janitor) 
 
 # nb exploitations par département et pour la région
 nb_exploit_2020_dep_reg <- exploit_2020 |> 
@@ -3929,7 +3956,7 @@ nb_exploit_2020_dep_reg <- exploit_2020 |>
   group_by(territoire = siege_dep) |> 
   summarise(nb_total_exploitations = n() ) |> 
   ungroup() |> 
-  adorn_totals(where = c("row"), name = "Pays de la Loire")
+  adorn_totals("row", name = "Pays de la Loire")
 
 # ajout ligne Total
 nb_exploitants_age_sau_2010_2020 <- exploitants_age_sau_2010_2020 |> 
@@ -3942,7 +3969,7 @@ nb_exploitants_age_sau_2010_2020 <- exploitants_age_sau_2010_2020 |>
          sau_ha_an_2010_percent = round_half_up(sau_ha_an_2010 / sum(sau_ha_an_2010) * 100, 2),
          n_exploit_an_2020_percent = round_half_up(n_exploit_an_2020 / sum(n_exploit_an_2020) * 100, 2),
          sau_ha_an_2020_percent = round_half_up(sau_ha_an_2020 / sum(sau_ha_an_2020) * 100, 2)) |> 
-  adorn_totals(where = c("row"), name="Ensemble") |> 
+  adorn_totals("row", name="Ensemble") |> 
   relocate(tr_age_10,
            sau_ha_an_2010_percent,
            sau_ha_an_2020_percent,
@@ -9355,7 +9382,7 @@ nb_exploit_vaches_pdl <- exploit_bovins_c |>
   summarise(nb_expl=n(),
             vaches = sum(cheptq_111000)) |> 
   ungroup() |> 
-  adorn_totals(where = c("row"), name="Pays de la Loire")
+  adorn_totals("row", name="Pays de la Loire")
 
 # Calculer par département, le nombre d’exploitations ayant des vaches, avec l’effectif de vaches
 # La fonction summarise() permet d’agréger des données, en appliquant une fonction sur les variables 
@@ -9374,7 +9401,7 @@ nb_exploit_vaches_dep_reg <- nb_exploit_vaches_dep |>
          vaches_reg = sum(vaches),
          part_expl = nb_expl / nb_expl_reg * 100,
          part_vaches = vaches / vaches_reg * 100) |> 
-  adorn_totals(where = c("row"), name="Pays de la Loire") |> 
+  adorn_totals("row", name="Pays de la Loire") |> 
   mutate(across(c(part_expl,part_vaches), \(x) round_half_up(x, digits = 3)))
 
 ```
@@ -9824,12 +9851,12 @@ nb_exploit_2020_dep_reg <- exploit_2020 |>
   group_by(territoire = siege_dep) |> 
   summarise(nb_total_exploitations = n() ) |> 
   ungroup() |> 
-  adorn_totals(where = c("row"), name = "Pays de la Loire")
+  adorn_totals("row", name = "Pays de la Loire")
 
 # ajouter le total régional (sauf pour les variables avec %)
 bio_pdl_dep <- bio_pdl_dep |>
   select(-c(contains("_pct"))) |> 
-  adorn_totals(where = c("row"), name = "Pays de la Loire")
+  adorn_totals("row", name = "Pays de la Loire")
 
 ```
 
