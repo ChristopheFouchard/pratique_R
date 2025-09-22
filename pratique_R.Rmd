@@ -134,6 +134,9 @@ knitr::opts_chunk$set(cache = TRUE,
 largeur max colonne : 116 caractères
 -->
 
+
+Le **"Guide pratique R"** est un manuel expliquant l'utilisation du langage de programmation **R** pour la **manipulation des données**.
+
 # Environnement de travail
 
 On trouvera ici l'environnement permettant de faire tourner des scripts R.
@@ -1920,7 +1923,7 @@ On souhaite créer de nouvelles variables
 
 <center>![](images/mutate.png)</center>
 
-* `mutate()` : ajouter et modifier des variables
+### `mutate()` pour ajouter et modifier des variables
 
 La fonction `mutate()` permet de créer/modifier une variable (ou plusieurs).
 
@@ -2129,6 +2132,114 @@ beneficiaires_pdl_2020 <- beneficiaires_2020 |>
     nb_beneficiaires_p1_p2_reg = sum(benef_p1_p2, na.rm = TRUE),
     .after = benef_p1_p2
   )
+```
+
+#### L'argument `.keep`
+L'argument `.keep` dans `mutate()` permet de contrôler quelles colonnes du dataframe d'origine sont conservées dans le résultat.  
+
+L'argument `.keep` donne un contrôle fin sur les colonnes qui doivent être conservées après l'opération `mutate()`. Il peut prendre plusieurs valeurs :  
+"all" (par défaut) : Conserve toutes les colonnes originales + les nouvelles.  
+"used" : Conserve les colonnes qui ont été utilisées pour créer les nouvelles colonnes + les nouvelles.  
+"unused" : Conserve les colonnes qui n'ont pas été utilisées pour créer les nouvelles colonnes + les nouvelles.    
+"none" : Ne conserve aucune des colonnes originales, seulement les nouvelles. 
+
+Le paramètre .keep = "none" indique à mutate() de supprimer toutes les colonnes existantes sauf celles explicitement mentionnées.
+On ne conserve que les nouvelles colonnes qu'on vient de créer. Toutes les colonnes qui existaient déjà dans le tableau de données sont supprimées.
+
+```{r, eval = FALSE}
+# Données d'exemple
+ventes <- tibble(
+  produit = c("A", "B", "C"),
+  prix = c(10, 15, 20),
+  quantite = c(5, 3, 8),
+  region = c("Nord", "Sud", "Est")
+)
+
+# Calcul avec .keep = "none"
+ventes |> 
+  mutate(
+    chiffre_affaires = prix * quantite,
+    profit = chiffre_affaires * 0.2,
+    .keep = "none"
+  )
+# Résultat : seulement chiffre_affaires et profit
+
+# Comparé à .keep = "all" (défaut)
+ventes |> 
+  mutate(
+    chiffre_affaires = prix * quantite,
+    profit = chiffre_affaires * 0.2
+  )
+# Résultat : produit, prix, quantite, region, chiffre_affaires, profit
+```
+
+```{r, eval = FALSE}
+
+# calcul des ratios import / export par secteur ----
+# Ajouter une ligne part export/import pour chaque secteur
+# On considère le ratio non pas comme une variable, mais comme une nouvelle observation.
+# Créer une nouvelle ligne avec le rapport export/import pour les secteurs AZ et C1
+ratios_az_c1 <- produits_long_az_c1_det_reg |>
+   # Filtrer pour garder seulement export et import (pas solde)
+   filter(flux %in% c("export", "import")) |>
+   # Pivoter pour avoir export et import en colonnes
+   pivot_wider(
+      id_cols = a_17,
+      names_from = flux,
+      values_from = starts_with("an_")
+      # values_from = c(
+      #    an_2021_sem1, an_2021_sem2, an_2022_sem1, an_2022_sem2,
+      #    an_2023_sem1, an_2023_sem2, an_2024_sem1, an_2024_sem2,
+      #    an_2025_sem1)
+   )
+
+# Calculer les deux ratios (export/import et import/export) pour chaque période
+# Le paramètre .keep = "none" indique à mutate() de supprimer toutes les colonnes existantes
+# sauf celles explicitement mentionnées
+# On ne conserve que les nouvelles colonnes qu'on vient de créer.
+# Toutes les colonnes qui existaient déjà dans le tableau de données sont supprimées.
+ratios_export_sur_import <- ratios_az_c1 |>
+   mutate(
+      a_17 = a_17,
+      flux = "export_sur_import",
+      an_2021_sem1 = an_2021_sem1_export / an_2021_sem1_import * 100,
+      an_2021_sem2 = an_2021_sem2_export / an_2021_sem2_import * 100,
+      an_2022_sem1 = an_2022_sem1_export / an_2022_sem1_import * 100,
+      an_2022_sem2 = an_2022_sem2_export / an_2022_sem2_import * 100,
+      an_2023_sem1 = an_2023_sem1_export / an_2023_sem1_import * 100,
+      an_2023_sem2 = an_2023_sem2_export / an_2023_sem2_import * 100,
+      an_2024_sem1 = an_2024_sem1_export / an_2024_sem1_import * 100,
+      an_2024_sem2 = an_2024_sem2_export / an_2024_sem2_import * 100,
+      an_2025_sem1 = an_2025_sem1_export / an_2025_sem1_import * 100,
+      .keep = "none"
+   ) |>
+   # Arrondir les valeurs
+   mutate(across(starts_with("an_"), \(x) round_half_up(x, digits = 2)))
+
+ratios_import_sur_export <- ratios_az_c1 |>
+   mutate(
+      a_17 = a_17,
+      flux = "import_sur_export",
+      an_2021_sem1 = an_2021_sem1_import / an_2021_sem1_export * 100,
+      an_2021_sem2 = an_2021_sem2_import / an_2021_sem2_export * 100,
+      an_2022_sem1 = an_2022_sem1_import / an_2022_sem1_export * 100,
+      an_2022_sem2 = an_2022_sem2_import / an_2022_sem2_export * 100,
+      an_2023_sem1 = an_2023_sem1_import / an_2023_sem1_export * 100,
+      an_2023_sem2 = an_2023_sem2_import / an_2023_sem2_export * 100,
+      an_2024_sem1 = an_2024_sem1_import / an_2024_sem1_export * 100,
+      an_2024_sem2 = an_2024_sem2_import / an_2024_sem2_export * 100,
+      an_2025_sem1 = an_2025_sem1_import / an_2025_sem1_export * 100,
+      .keep = "none"
+   ) |>
+   mutate(across(starts_with("an_"), \(x) round_half_up(x, digits = 2)))
+
+# Ajouter ces deux types de ratios au tableau original
+produits_az_c1_reg_ratios_imp_exp <- bind_rows(
+   produits_long_az_c1_det_reg,
+   ratios_export_sur_import,
+   ratios_import_sur_export
+)
+
 ```
 
 ### `separate` : scinder une colonne en plusieurs
