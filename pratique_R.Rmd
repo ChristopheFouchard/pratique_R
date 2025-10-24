@@ -1359,6 +1359,85 @@ https://book.utilitr.org/03_Fiches_thematiques/Fiche_import_fichiers_plats.html
 
 https://book.utilitr.org/03_Fiches_thematiques/Fiche_import_fichiers_plats.html#utiliser-la-fonction-read_delim
 
+### Importer des fichiers parquet 
+
+Le format **Parquet** est un format de stockage particulièrement adapté aux données volumineuses.  
+
+Le package **`arrow`** permet de lire ces fichiers de manière performante, sans devoir tout charger en mémoire. 
+
+On privilégiera l’approche `open_dataset()` lorsque la volumétrie des données est importante.
+
+L'ordre optimal pour l'import pour minimiser la charge en mémoire est :
+```{r, eval = FALSE}
+donnees <- open_dataset("chemin/vers/fichier.parquet") |>
+  filter()    # 1. Filtrer d'abord (réduit les lignes)
+  select()    # 2. Sélectionner les colonnes (réduit les colonnes)
+  collect()   # 3. Charger en mémoire
+```
+
+L'appel à `collect()` ne charge en mémoire que les sous-ensembles filtrés, ce qui est très utile pour les gros volumes. `collect()` renvoie le résultat du traitement sous la forme d’un `tibble`.
+
+```{r, eval = FALSE}
+library(arrow) # pour lire les fichiers parquet
+library(dplyr) # pour la manipulation de données
+library(fs)    # pour la gestion des chemins de fichiers
+
+# source : insee, flores
+
+# import fichiers ----
+chemin_entree <- "~/CERISE/03-Espace-de-Diffusion/150_Sources_externes/15070_INSEE/FLORES/1_TABLES/"
+
+chemin_an <- "2023/"
+
+fichier_entree_etab <- "flores_etab_2023.parquet"
+
+# méthode conseillée pour des fichiers volumineux
+# Établir la connexion aux données
+donnees_flores <- open_dataset(sources = path(chemin_entree,
+                                              chemin_an,
+                                              fichier_entree_etab))
+
+# Afficher les noms de colonnes 
+names(donnees_flores)
+
+# Obtenir les valeurs distinctes et triées de 'reg' (exécution lors du collect)
+liste_reg <- donnees_flores |>
+  distinct(reg) |>
+  arrange(reg) |>
+  collect()
+
+# Conversion en vecteur simple
+reg_vecteur <- liste_reg$reg
+print(reg_vecteur)
+
+# Variante avec pull() pour obtenir directement un vecteur
+liste_a17 <- donnees_flores |>
+  select(a17) |>
+  distinct() |>        # optionnel : valeurs uniques
+  collect() |>
+  pull(a17)
+
+print(liste_a17)
+
+# Définir une requête optimisée
+# Filtrer d'abord pour réduire le volume
+# Sélectionner uniquement les colonnes nécessaires
+requete <- donnees_flores |>
+  filter(reg == "52",
+         a17 %in% c("C1")) |> # réduire d'abord le nombre de lignes
+  select(reg, a17, siren, eff_etab) # limiter les colonnes 
+
+# Récupérer le résultat sous forme d'un tibble
+iaa_etab_pdl <- requete |> 
+  collect()
+
+# nom, type et extrait des variables
+str(iaa_etab_pdl)
+
+```
+
+https://book.utilitr.org/03_Fiches_thematiques/Fiche_import_fichiers_parquet.html  
+https://book.utilitr.org/03_Fiches_thematiques/Fiche_arrow.html  
 
 ### Importer des fichiers SPSS (.sav)
 
@@ -1380,6 +1459,7 @@ fichier_entree_mensuel <- "COLLECTE_TOUS_LAITS.sav"
 laits_mensuel_1 <- haven::read_spss(path(chemin_entree_mensuel, fichier_entree_mensuel)) |> 
   as_tibble(.name_repair = make_clean_names) 
 ```
+
 ### Importer des fichiers SAS
 
 L'utilisateur souhaite importer dans `R` des données stockées sous forme de tables SAS.
