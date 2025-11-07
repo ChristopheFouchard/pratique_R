@@ -144,7 +144,9 @@ On trouvera ici l'environnement permettant de faire tourner des scripts R.
 ## Cerise
 
 L'accès à R peut se réaliser via Cerise, la plateforme de stockage et de traitement des données.  
-Cerise permet l'accès aux ressources déposées sur le serveur, la sauvegarde, le partage de code et le travail simultané. C'est l'usage recommandé.
+Cerise permet l'accès aux ressources déposées sur le serveur, la sauvegarde, le partage de code et le travail simultané. C'est l'usage recommandé.  
+
+https://ssm-agriculture.github.io/formation-cerise/
 
 ### Version de R
 
@@ -186,20 +188,22 @@ Puis choisir la version de R à travers la fenêtre :
 
 ![](images/Cerise_nouvelle_session_version_R.png){fig-align="center" width="50%"}
 
-et enfin cliquer sur 'Start'.
+et enfin cliquer sur `Start`.
 
 https://orion.agriculture/confluence/display/CER/Bon+usage+des+sessions+RStudio
 
 ### Comment récupérer un chemin pour l'utiliser dans un programme R
 
-Dans la fenêtre de parcours des dossiers (fenêtre en bas à droite dans RStudio Server), choisir More   
-puis Set as Working Directory.
+Dans la fenêtre de parcours des dossiers (fenêtre en bas à droite dans RStudio Server), choisir `Plus`  
+puis `Copier le chemin du dossier dans le presse-papiers`.  
 
+
+On peut aussi utiliser `Plus` puis `Définir comme répertoire de travail`.  
 ```{r}
 # setwd("~/CERISE/01-Espace-de-Partage/SRISE/Pays-De-La-Loire/Partage_R")
 
 ```
-Le chemin peut-être aussi copié depuis la console (fenêtre en bas à gauche).
+Le chemin peut alors être copié depuis la console (fenêtre en bas à gauche).
 
 ### Comment se déplacer rapidement vers un autre répertoire
 
@@ -232,7 +236,7 @@ Une fois sur l'interface Rstudio de Cerise, il faut naviguer vers le dossier con
 
 Pour cela, il faut utiliser le navigateur de fichier, dans la partie bas droite de l'écran.
 
-Il faut naviguer dans les dossiers jusqu'au fichier et ensuite sélectionner celui-ci pour pouvoir le télécharger, puis aller dans More > Export
+Il faut naviguer dans les dossiers jusqu'au fichier et ensuite sélectionner celui-ci pour pouvoir le télécharger, puis aller dans Plus > Exporter
 
 #### Comment téléverser un fichier vers Cerise
 
@@ -241,7 +245,7 @@ les “bons droits” sur ces fichiers (notamment qu’ils soient modifiables pa
 
 Dans le cas d'un fichier ayant vocation à  être déposé sur Cerise, il faut utiliser le navigateur de fichier de RStudio, dans la partie bas droite de l'écran.
 
-Une fois placé dans le dossier de dépôt du fichier, choisir Upload.
+Une fois placé dans le dossier de dépôt du fichier, choisir `Télécharger` (Télécharger des fichiers vers le serveur)
 
 Puis récupérer le fichier sur son poste de travail en utilisant Parcourir, puis OK.
 
@@ -591,7 +595,7 @@ Lorsqu'on ouvre un projet `RStudio` (en double-cliquant sur le fichier `.Rproj` 
 
 Le répertoire de travail se situant à la racine du dossier créé, cela signifie que lors de l’importation, le chemin d’accès aux données sera automatiquement fixé à partir de cet endroit. De même, pour l'export, les fichiers seront également enregistrés à partir de la racine du dossier. 
 
-Les projets permettent de ne pas avoir à spécifier un chemin complet vers un fichier (comme `D:\\...\\data\\donnees.xlsx`) mais un chemin relatif au dossier du projet (juste `data/donnees.xlsx` si le fichier se trouve trouve dans un sous-dossier `data`.)
+Les projets permettent de ne pas avoir à spécifier un chemin complet vers un fichier (comme `D:\\...\\data\\donnees.xlsx`) mais un chemin relatif au dossier du projet (juste `data/donnees.xlsx` si le fichier se trouve dans un sous-dossier `data`.)
 
 Il est conseillé pour chaque projet de créer une arborescence avec les répertoires 'entree', 'pgm', 'sortie'.
 
@@ -889,12 +893,6 @@ install.packages("remotes")
 # Tidyverse
 remotes::install_version("tidyverse", "1.3.0")
 
-# arrow
-remotes::install_version("arrow", version = "3.0.0")
-
-# btb
-remotes::install_version("btb", version = "0.1.30.3")
-
 # COGugaison
 # Téléchargement de https://github.com/antuki/COGugaison/archive/refs/heads/master.zip
  
@@ -902,21 +900,8 @@ remotes::install_version("btb", version = "0.1.30.3")
 
 devtools::install_local("/mon/chemin/vers/le/COGugaison.zip", INSTALL_opts = c("--no-lock"))
 
-# FactoMineR
-remotes::install_version("nloptr", version = "1.2.0")
-remotes::install_version("FactoMineR", version = "2.0")
-
-# Hmisc
-remotes::install_version("Hmisc", version = "4.6-0")
-
 # sf
 remotes::install_version("sf", version = "0.9-0")
-
-#raster
-remotes::install_version("raster", version = "3.0-12")
-
-# gstat
-remotes::install_version("gstat", version = "2.0-6")
 
 ```
 
@@ -960,27 +945,15 @@ install.packages(
                  repos = NULL, type = "source")
 # Error in loadNamespace(j <- i[[1L]], c(lib.loc, .libPaths()), versionCheck = vI[[j]]) : 
 # namespace ‘forcats’ 0.5.0 is being loaded, but >= 0.5.1 is required
-# namespace ‘ggplot2’ 3.3.2 is being loaded, but >= 3.3.5 is required
-# namespace ‘haven’ 2.3.1 is being loaded, but >= 2.4.3 is required
-# namespace ‘hms’ 0.5.3 is already loaded, but >= 1.1.1 is required
-# namespace ‘jsonlite’ 1.7.1 is being loaded, but >= 1.7.2 is required
-# namespace ‘lubridate’ 1.7.9 is being loaded, but >= 1.8.0 is required
 # namespace ‘readr’ 1.3.1 is being loaded, but >= 2.1.1 is required
-# namespace ‘xml2’ 1.3.2 is already loaded, but >= 1.3.3 is required
 install.packages("forcats")
-install.packages("ggplot2")
-install.packages("haven")
-install.packages("hms")
-install.packages("jsonlite")
-install.packages("lubridate")
-install.packages("readr")
-install.packages("xml2")
 install.packages("readr")
 install.packages(
   "~/CERISE/01-Espace-de-Partage/SRISE/Pays-De-La-Loire/Partage_R/Christophe/packages/tidyverse_1.3.2.tar.gz", 
                  repos = NULL, type = "source")
 # * DONE (tidyverse)
 ```
+
 ## Utilisation des packages
 
 Une fois le package installé, il faut le "charger" avant de pouvoir utiliser les fonctions qu'il propose. 
@@ -1049,12 +1022,12 @@ chemin_fichier <- path(repertoire_ra_2020, fichier_ra_exploit_2020)
 exploit_2020 <- readRDS(file = chemin_fichier)
 ```
 
-Le package `fs` offre des fonctionnalités pour manipuler les fichiers et les répertoires, comme :
-dir_ls() : Lister les fichiers dans un répertoire.
-file_move() : Déplacer des fichiers.
-file_copy() : Copier des fichiers.
-file_delete() : Supprimer des fichiers.
-dir_create() : Créer des répertoires.
+Le package `fs` offre des fonctionnalités pour manipuler les fichiers et les répertoires, comme :  
+dir_ls() : Lister les fichiers dans un répertoire.  
+file_move() : Déplacer des fichiers.  
+file_copy() : Copier des fichiers.  
+file_delete() : Supprimer des fichiers.  
+dir_create() : Créer des répertoires.  
 
 
 ### Importer des fichiers RDS
@@ -1209,7 +1182,7 @@ volailles_pdl_espece_siqo <- read_xls(path = path(chemin, fichier),
     * `"list"` : crée une liste ;
     * `"logical` pour une variable booléenne, `"numeric"` pour une variable numérique, `"date"` pour une date et `"text"` pour une variable caractère.
   
-    Le type de la variable sera appliqué aux colonnes dans l'ordre défini par le vecteur. Exemple : `c("text","text","numeric","guess","skip","logical")`. Dans le cas où on souhaite définir le même type pour toutes les colonnes, il suffit de préciser une seule fois le type attendu (exemple `col_types = "text"`).
+    Le type de la variable sera appliqué aux colonnes dans l'ordre défini par le vecteur. Exemple : `c("text","text","numeric","guess","skip","logical")`. Dans le cas où on souhaite définir le même type pour toutes les colonnes, il suffit de préciser une seule fois le type attendu (exemple `col_types = "text"`).  
 
 * **Gestion des `NA` ** : il est possible de préciser les valeurs qu'on souhaite considérer comme des `NA` avec le paramètre `na`. Par défaut, la valeur `""` est considérée comme `NA`.
 
@@ -1257,9 +1230,11 @@ vol_oeufs_cot <- read_ods(path = path(chemin, fichier_cotation),
 
 ```
 
-### Importer des fichiers csv
+### Importer des fichiers plats (csv, txt)
 
-L'utilisateur souhaite importer dans `R` des données stockées sous forme de fichiers plats (formats `.txt`, `.csv`, `.tsv`).
+L'utilisateur souhaite importer dans `R` des données stockées sous forme de fichiers plats (formats `.txt`, `.csv`, `.tsv`).  
+Les "fichiers plats" sont des fichiers texte qui stockent des données avec des délimiteurs pour séparer les colonnes.  
+Ces fichiers contiennent des données tabulaires, c'est-à-dire des données organisées sous forme de tableau, avec en lignes les observations et en colonnes les variables. 
 
 Le *package* `readr` propose plusieurs fonctions adaptées pour importer des fichiers plats de taille limitée (moins de 1 Go) :
 
@@ -1347,12 +1322,12 @@ exploitations <- read_csv2("mes_donnees_exploitations.csv",
 ```
 
 On spécifie le type des variables à l'aide des fonctions suivantes : 
-- `col_character()` pour une variable de type caractère
-- `col_double()` pour une variable de type numérique (décimal)
-- `col_integer()` pour une variable de type entier
-- `col_logical()` pour une variable de type booléen (TRUE ou FALSE)
-- `col_date()` pour une variable de type date (jour, mois, année)
-- `col_factor()` pour une variable de type facteur (variable qualitative, avec un nombre prédéfini et limité de modalités)
+- `col_character()` pour une variable de type caractère  
+- `col_double()` pour une variable de type numérique (décimal)  
+- `col_integer()` pour une variable de type entier  
+- `col_logical()` pour une variable de type booléen (TRUE ou FALSE)  
+- `col_date()` pour une variable de type date (jour, mois, année)  
+- `col_factor()` pour une variable de type facteur (variable qualitative, avec un nombre prédéfini et limité de modalités)  
 
 
 https://book.utilitr.org/03_Fiches_thematiques/Fiche_import_fichiers_plats.html
@@ -1382,13 +1357,10 @@ library(arrow) # pour lire les fichiers parquet
 library(dplyr) # pour la manipulation de données
 library(fs)    # pour la gestion des chemins de fichiers
 
-# source : insee, flores
-
 # import fichiers ----
+# source : insee, flores
 chemin_entree <- "~/CERISE/03-Espace-de-Diffusion/150_Sources_externes/15070_INSEE/FLORES/1_TABLES/"
-
 chemin_an <- "2023/"
-
 fichier_entree_etab <- "flores_etab_2023.parquet"
 
 # méthode conseillée pour des fichiers volumineux
@@ -1399,6 +1371,9 @@ donnees_flores <- open_dataset(sources = path(chemin_entree,
 
 # Afficher les noms de colonnes 
 names(donnees_flores)
+
+# Nom et type des variables
+donnees_flores
 
 # Obtenir les valeurs distinctes et triées de 'reg' (exécution lors du collect)
 liste_reg <- donnees_flores |>
@@ -1413,7 +1388,7 @@ print(reg_vecteur)
 # Variante avec pull() pour obtenir directement un vecteur
 liste_a17 <- donnees_flores |>
   select(a17) |>
-  distinct() |>        # optionnel : valeurs uniques
+  distinct() |>        
   collect() |>
   pull(a17)
 
@@ -1438,6 +1413,8 @@ str(iaa_etab_pdl)
 
 https://book.utilitr.org/03_Fiches_thematiques/Fiche_import_fichiers_parquet.html  
 https://book.utilitr.org/03_Fiches_thematiques/Fiche_arrow.html  
+https://ssm-agriculture.github.io/formation-R-perf-06-parquet/  
+https://ssm-agriculture.github.io/formation-R-perf-06-parquet/#/comment-bien-utiliser-des-fichiers-partitionn%C3%A9s-avec-arrow-12  
 
 ### Importer des fichiers SPSS (.sav)
 
@@ -1473,7 +1450,7 @@ library(haven)
 # Importer une table SAS.
 # Utilisation de la table de passage des codes communes depuis 1943
 # vers les codes communes en vigueur en 2022,
-comdepuis1943_com2022 <- read_sas("S:/ETUDES/En cours/memento_Christophe/entree/geographie/geo2022/fcodcomm.sas7bdat")
+comdepuis1943_com2022 <- read_sas("S:/ETUDES/memento/entree/geographie/geo2022/fcodcomm.sas7bdat")
 
 ```
 
@@ -1543,7 +1520,7 @@ entetes_vol_2023_2lignes <- paste(slice(entetes_vol_2023_ligne1, 1),
 
 # On restreint les lignes à lire avec skip et n_max
 # La fonction setNames() permet de renommer l’ensemble des colonnes d’un data frame 
-#à partir d’un vecteur de nouveaux noms.
+# à partir d’un vecteur de nouveaux noms.
 vol_2023 <- read_xls(path = path(chemin_entree,
                                    chemin_2023,
                                    fichier_entree_2023), 
@@ -1763,7 +1740,7 @@ identical(bio_anim_fm, bio_anim_fm2)
 
 ### Exporter dans des fichiers RDS
 
-Pour exporter un fichier au format rds (le format R), on peut utiliser la fonction `saveRDS` :
+Pour exporter un fichier au format rds (le format R), on peut utiliser la fonction `saveRDS` :  
 saveRDS(x, "mon_fichier.rds")
 
 ```{r , eval = FALSE}
@@ -1781,9 +1758,8 @@ Pour exporter un tableau de données dans R vers un fichier au format xlsx, on p
 Les arguments principaux de `write.xlsx` sont :  
 data : le tableau de données à exporter  
 file : le chemin et le nom du fichier de sortie, y compris l'extension .xlsx.  
-sheetName (facultatif) :le nom de la feuille Excel dans laquelle écrire les données. Par défaut, "Sheet1".  
-overwrite (facultatif) : indique s'il faut écraser un fichier existant. Par défaut, FALSE.  
-col.names (facultatif) : si TRUE, les noms de colonnes sont exportés. Par défaut, TRUE.  
+sheetName (facultatif) : le nom de la feuille Excel dans laquelle écrire les données. Par défaut, "Sheet1".  
+overwrite (facultatif) : indique s'il faut écraser un fichier existant. Par défaut, TRUE.  
 
 On peut exporter plusieurs tableaux de données dans un même fichier Excel en utilisant `write.xlsx` avec une liste de tableaux de données.
 Écrire une liste de data frames dans un fichier xlsx dans des feuilles individuelles en utilisant les noms de la liste comme noms de feuilles. 
@@ -1986,7 +1962,7 @@ str(pull(base, DEP))
 
 ## Création de variables 
 
-On assigne un contenu à une variable au moyen de `<-`
+On assigne un contenu à une variable au moyen de `<-`  
 La flèche d'assignation peut être écrite avec le raccourci clavier alt + "-" (tiret du 6 ou signe 'moins' du pavé numérique).
 
 ATTENTION : un nom de variable ne peut pas commencer par un chiffre.
@@ -2671,7 +2647,7 @@ agreg_anim_produit_grand_dep_pdl_b <- agreg_anim_produit_grand_dep_pdl_a |>
 
 ## Conversion d'une variable caractère en numérique
 
-On utilise la fonction 'as.numeric'.
+On utilise la fonction `as.numeric`.
 
 ```{r , eval = FALSE}
 agri_bio_vegetal_fr <- agri_bio_vegetal_fr |> 
@@ -2749,7 +2725,7 @@ bio_producteurs_vege_pdl <- bio_producteurs_vege_pdl |>
 
 ## Conversion d'une variable numérique en caractère
 
-On utilise la fonction 'as.character'.
+On utilise la fonction `as.character`.
 
 ```{r , eval = FALSE}
 library(janitor) # pour round_half_up
@@ -3289,7 +3265,7 @@ donnees |>
   summarise(Effectifs = n())
 ```
 
-### Selon un facteur
+### Selon un regroupement
 
 <center>![](images/groupby.png)</center>
 
@@ -4765,7 +4741,7 @@ eff_volailles_evol_part <- eff_volailles_evol |>
   pivot_wider(names_from = reg,
               names_prefix = '',
               names_sep = "_",
-              values_from= c(an_2021, evol_2021_2020)) |> 
+              values_from = c(an_2021, evol_2021_2020)) |> 
   mutate(part_pdl_france_2021 = paste0(round_half_up(an_2021_pdl / an_2021_fm * 100, 0), " %")) |>
   relocate(an_2021_pdl, evol_2021_2020_pdl, an_2021_fm,evol_2021_2020_fm,
            part_pdl_france_2021, .after = espece)
@@ -5897,15 +5873,15 @@ La fonction  gsub() remplace toutes les occurrences d'un motif dans une chaîne 
 
 ```{r , eval = FALSE}
 # enlever le préfixe prod_ de tous les noms de colonnes dans le dataframe viande_volaille_annee_pdl
-colnames(viande_volaille_annee_pdl) <- gsub("prod_","",colnames(viande_volaille_annee_pdl))
+colnames(viande_volaille_annee_pdl) <- gsub("prod_", "", colnames(viande_volaille_annee_pdl))
 
 # ou bien
-# names(viande_volaille_annee_pdl) <- gsub("prod_","",names(viande_volaille_annee_pdl))
+# names(viande_volaille_annee_pdl) <- gsub("prod_", "", names(viande_volaille_annee_pdl))
 ```
 
 ```{r , eval = FALSE}
 # Pour enlever le préfixe « surf_ ».
-# On modifie le libellé espece avec la fonction gsub ou avec la fonction remove (c'est équivalent)
+# On modifie le libellé espece avec la fonction gsub ou avec la fonction str_remove (c'est équivalent)
 balsa_dep <- balsa_dep |> 
   mutate(espece = gsub("surf_", "", espece))
 balsa_reg <- balsa_reg |> 
@@ -5942,10 +5918,10 @@ La fonction  gsub() remplace toutes les occurrences d'un motif dans une chaîne 
 
 ```{r , eval = FALSE}
 # enlever le suffixe _valeur_en_k de tous les noms de colonnes dans le dataframe produits
-colnames(produits) <- gsub("_valeur_en_k","",colnames(produits))
+colnames(produits) <- gsub("_valeur_en_k", "", colnames(produits))
 
 # ou bien
-# names(produits) <- gsub("_valeur_en_k","",names(produits))
+# names(produits) <- gsub("_valeur_en_k", "", names(produits))
 
 ```
 
@@ -8958,10 +8934,10 @@ itavi <- itavi |>
   mutate(an_mois_date = convertToDate(an_mois))
 
 # itavi <- itavi |> 
-# mutate(an_mois = substr(as.character(an_mois_date),1,7)) 
+# mutate(an_mois = substr(as.character(an_mois_date), 1, 7)) 
 
 # itavi <- itavi |>
-# gsub("-","_",itavi$an_mois)
+# gsub("-", "_", itavi$an_mois)
 
 # itavi <- itavi |> 
 # str_replace_all("-","_")
@@ -10085,8 +10061,9 @@ nb_exploit_2020_dep_reg2b <- bind_rows(nb_exploit_2020_dep, nb_exploit_2020_reg_
 ```
 ## Calcul de rangs
 
-On cherche par exemple à déterminer en quelle position se trouve la région d'intérêt, comme dans le fichier https://draaf.pays-de-la-loire.agriculture.gouv.fr/IMG/xls/annexe_regionale_2023.xls
-présent dans https://draaf.pays-de-la-loire.agriculture.gouv.fr/dossier-territorial-a1657.html.
+On cherche par exemple à déterminer en quelle position se trouve la région d'intérêt, comme dans le fichier   https://draaf.pays-de-la-loire.agriculture.gouv.fr/IMG/xlsx/annexe_regionale_2025.xlsx  
+présent dans  
+https://draaf.pays-de-la-loire.agriculture.gouv.fr/dossier-territorial-a1657.html.  
 
 ```{r,  eval = FALSE}
 # ajouter le rang du département en ordre décroissant
