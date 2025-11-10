@@ -2063,7 +2063,8 @@ nb_exploit_dont_volailles_2020_pdl <- exploit_dont_volailles_2020 |>
   filter(reg == "52") |> 
   group_by(dep) |> 
   mutate(nb_exploit_volailles_dep = sum(volaillefil, na.rm = TRUE),
-         part_exploit_volailles_dep = nb_exploit_volailles_dep / n() * 100)
+         part_exploit_volailles_dep = nb_exploit_volailles_dep / n() * 100) |>
+  ungroup()
 
 # ajout niveau dep, reg et fm
 recolte_bois_dep_reg <- recolte_bois_depart |>  
@@ -2084,7 +2085,8 @@ recolte_bois_dep_reg <- recolte_bois_depart |>
 repart_diplome_max_groupe1 <-  mo_2020_diplome_max |> 
   mutate(n_tot = n()) |>
   group_by(dipl_max_groupe1) |> 
-  summarise(nb = n(), percent = n() / n_tot * 100) |> 
+  summarise(nb = n(), percent = n() / n_tot * 100) |>
+  ungroup() |> 
   distinct() |> 
   adorn_totals("row", name = "Ensemble")
 
@@ -2172,22 +2174,19 @@ beneficiaires_pdl_2020 <- beneficiaires_2020 |>
     benef_p1_p2 = as.numeric((benef_p1 > 0) |
                                (benef_bio_maec > 0) |
                                (benef_ichn_aras > 0)),
-    .after = benef_p1
-  ) |>
+    .after = benef_p1) |>
   group_by(dep) |>
   mutate(
     nb_beneficiaires_p1_dep = sum(benef_p1, na.rm = TRUE),
     nb_beneficiaires_p2_dep = sum(benef_p2, na.rm = TRUE),
     nb_beneficiaires_p1_p2_dep = sum(benef_p1_p2, na.rm = TRUE),
-    .after = benef_p1_p2
-  ) |>
+    .after = benef_p1_p2) |>
   ungroup() |>
   mutate(
     nb_beneficiaires_p1_reg = sum(benef_p1, na.rm = TRUE),
     nb_beneficiaires_p2_reg = sum(benef_p2, na.rm = TRUE),
     nb_beneficiaires_p1_p2_reg = sum(benef_p1_p2, na.rm = TRUE),
-    .after = benef_p1_p2
-  )
+    .after = benef_p1_p2)
 ```
 
 #### L'argument `.keep`
@@ -3281,7 +3280,8 @@ Par exemple, si on souhaite avoir la médiane de la variable P14_POP, pour chaqu
 ```{r , eval = FALSE}
 base_reg_ann <- base_extrait |> 
   group_by(ZE, REG) |>
-  summarise(population_med = median (P14_POP, na.rm = TRUE))
+  summarise(population_med = median (P14_POP, na.rm = TRUE)) |>
+  ungroup()
 ```
 
 
@@ -3293,8 +3293,8 @@ flights |>
   summarise(
       max_delay = max(dep_delay, na.rm = TRUE),
       min_delay = min(dep_delay, na.rm = TRUE),
-      mean_delay = mean(dep_delay, na.rm = TRUE)
-  )
+      mean_delay = mean(dep_delay, na.rm = TRUE)) |>
+  ungroup()
 ```
 
 `summarise` dispose d'un opérateur spécial, `n()`, qui retourne le nombre de lignes du groupe. Ainsi si on veut le nombre de vols par destination, on peut utiliser :
@@ -3302,7 +3302,8 @@ flights |>
 ```{r , eval = FALSE}
 flights |> 
   group_by(dest) |> 
-  summarise(nb = n())
+  summarise(nb = n()) |>
+  ungroup()
 ```
 
 ```{r , eval = FALSE}
@@ -3311,25 +3312,11 @@ library(janitor) # pour round_half_up
 # calcul somme pdl fm + evolution
 viande_volaille_sum <- viande_volaille_tec_lib |> 
   group_by(reg) |>
-  summarise(an_2021 = sum(an_2021), an_2020 = sum(an_2020)) |>
+  summarise(an_2021 = sum(an_2021), 
+            an_2020 = sum(an_2020)) |>
   mutate(espece = "07_Total") |> 
   ungroup()
 
-# moyenne
-# age moyen
-age_moyen <- exploitants_2010 |> 
-            mutate(annee = annee_ra_2010,
-                  age = annee_ra_2010 - as.integer(famanais)) |>
-  bind_rows(mo_2020 |> 
-            mutate(annee = annee_ra_2020,
-                  anais = replace(anais, which(anais == 0 | anais == 9999), NA), 
-                  # il existe des valeurs nulles d'années de naissance (2 dans la Manche !)
-                  age = annee_ra_2020 - anais)) |> 
-  group_by(annee = factor(annee, levels = c(annee_ra_2010, annee_ra_2020)),
-           nom = "âge moyen des chefs d'exploitation et coexploitants",
-           .drop = FALSE) |> 
-  summarise(age_moy = mean(age, na.rm = TRUE))
-  
 ```
 
 
@@ -3415,7 +3402,8 @@ Dans l'exemple qui suit on calcule, pour les trois aéroports de départ de la t
 ```{r , eval = FALSE}
 flights |> 
   group_by(origin) |> 
-  summarise(n_dest = n_distinct(dest))
+  summarise(n_dest = n_distinct(dest)) |>
+  ungroup()
 ```
 
 ```{r , eval = FALSE}
@@ -3460,15 +3448,17 @@ Les fonctions `mutate()` et `summarise()` calculent toutes les deux de nouvelles
   ```{r, eval = FALSE, warning= FALSE}
   bpe_ens_2018_tbl |>  
     group_by(DEPCOM) |> 
-    summarise(NB_EQUIP_TOT = sum(NB_EQUIP, na.rm = TRUE))
+    summarise(NB_EQUIP_TOT = sum(NB_EQUIP, na.rm = TRUE)) |>
+    ungroup()
   ```
 
 - Si on souhaite ajouter une information dans une table (en conservant toutes les autres variables), il faut utiliser `mutate()`. Exemple : ajouter dans la table `bpe_ens_2018_tbl` une colonne donnant le nombre total d'équipements pour chaque commune.
 
   ```{r, eval = FALSE, warning= FALSE}
   bpe_ens_2018_tbl |>  
-  group_by(DEPCOM) |> 
-  mutate(NB_EQUIP_TOT = sum(NB_EQUIP, na.rm = TRUE))
+    group_by(DEPCOM) |> 
+    mutate(NB_EQUIP_TOT = sum(NB_EQUIP, na.rm = TRUE)) |>
+    ungroup()
   ```
 Avec `distinct` en fin d'un traitement utilisant `mutate`, on obtient un résumé équivalent à `summarise`. 
 `distinct` filtre les lignes du tableau pour ne conserver que les lignes distinctes, en supprimant toutes les lignes en double.
@@ -3525,9 +3515,11 @@ nb_exploit_2020 <- exploit_2020 |>
               select(nom_dossier,
                      dep_2020 = siege_dep,
                      annee) |> 
-  group_by(annee = factor(annee, levels = c(annee_ra_2020)), dep_2020,
+  group_by(annee = factor(annee, levels = c(annee_ra_2020)), 
+           dep_2020,
            .drop = FALSE) |> 
-  summarise(`nombre total d'exploitations` = n() )
+  summarise(`nombre total d'exploitations` = n() ) |>
+  ungroup()
 
 # nb exploitations par dep
 nb_exploit_2020_dep <- exploit_2020 |> 
@@ -3538,10 +3530,11 @@ nb_exploit_2020_dep <- exploit_2020 |>
 
 # somme des regroupements par abattoir par type de volailles
 volailles_abattoir <- volailles_pdl |>   
-  group_by(siret,espece_regrpt1) |>     
-  filter(espece_regrpt1 %in% c("b11-poulets", "c12-dindes", "d14-canards", "e17-lapins"))  |> 
-  mutate(tec_regrpt = sum(poids / 1000, na.rm = TRUE)) |> 
-  filter(!is.na(tec_regrpt) & tec_regrpt != 0)  |> 
+  group_by(siret, espece_regrpt1) |>     
+  filter(espece_regrpt1 %in% c("b11-poulets", "c12-dindes", "d14-canards", "e17-lapins")) |> 
+  mutate(tec_regrpt = sum(poids / 1000, na.rm = TRUE)) |>
+  ungroup() |> 
+  filter(!is.na(tec_regrpt) & tec_regrpt != 0) |> 
   select(reg, dep, siret, rsoc, espece_regrpt1, tec_regrpt) |> 
   distinct()
 
@@ -3703,7 +3696,8 @@ L'utilisation de `group_by()` rend très utiles les opérations avec `summarise(
 bpe_ens_2018_tbl |> 
   group_by(DEP) |>
   summarise(NB_EQUIP_TOT = sum(NB_EQUIP, na.rm = TRUE),
-            NB_BOULANGERIES_TOT = sum(NB_EQUIP * (TYPEQU == "B203"), na.rm = TRUE))
+            NB_BOULANGERIES_TOT = sum(NB_EQUIP * (TYPEQU == "B203"), na.rm = TRUE)) |>
+  ungroup()
 ```
 
 La fonction `group_by` peut également modifier le comportement des fonctions `filter` ou `mutate`, comme pour `summarise`. L'instruction suivante permet ainsi d'ajouter à la BPE une variable égale au nombre total de boulangeries dans le département.
@@ -3711,7 +3705,8 @@ La fonction `group_by` peut également modifier le comportement des fonctions `f
 ```{r , eval = FALSE}
 bpe_ens_2018_tbl |> 
   group_by(DEP) |>
-  mutate(NB_BOULANGERIES_DEP = sum(NB_EQUIP * (TYPEQU == "B203"), na.rm = TRUE))
+  mutate(NB_BOULANGERIES_DEP = sum(NB_EQUIP * (TYPEQU == "B203"), na.rm = TRUE)) |>
+  ungroup()
 ```
 
 L'instruction suivante permet de ne conserver que les communes pour lesquelles le nombre d'équipements est le plus important de leur région.
@@ -3719,7 +3714,8 @@ L'instruction suivante permet de ne conserver que les communes pour lesquelles l
 ```{r , eval = FALSE}
 bpe_ens_2018_tbl |> 
   group_by(REG) |>
-  filter(NB_EQUIP == max(NB_EQUIP))
+  filter(NB_EQUIP == max(NB_EQUIP)) |>
+  ungroup()
 ```
 
 Ainsi, les opérations à la suite d'un `group_by()`, comme ici `sum` et `max`, sont calculées par groupe de lignes (ici suivant la colonne `DEP`). 
@@ -3740,8 +3736,10 @@ dim_eco_dep <-  exploit_2020 |>
 Par exemple, si on applique `slice` à un tableau préalablement groupé, il va sélectionner les lignes aux positions indiquées *pour chaque groupe*. Ainsi la commande suivante affiche le premier vol de chaque mois, selon leur ordre d'apparition dans le tableau :
 
 ```{r , eval = FALSE}
-flights |> group_by(month) |> 
-  slice(1)
+flights |> 
+  group_by(month) |> 
+  slice(1) |>
+  ungroup()
 ```
 
 En utilisant une variante comme `slice_min` ou `slice_max`, on peut sélectionner les lignes ayant les valeurs les plus grandes ou les plus petites *pour chaque groupe*. 
@@ -3756,8 +3754,10 @@ df |>
 Par exemple la commande suivante sélectionne, pour chaque mois de l'année, le vol ayant eu le retard le plus important.
 
 ```{r , eval = FALSE}
-flights |> group_by(month) |> 
-  slice_max(dep_delay)
+flights |> 
+  group_by(month) |> 
+  slice_max(dep_delay) |>
+  ungroup()
 ``` 
 
 ```{r , eval = FALSE}
@@ -3767,14 +3767,16 @@ region_max_pop <- recensement |>
   summarise(population_totale = sum(population_totale)) |>
   slice_max(order_by = population_totale, 
             n = 1, 
-            with_ties = TRUE) # conserve les égalités si nécessaire  
+            with_ties = TRUE) |> # conserve les égalités si nécessaire  
+  ungroup()
 
 # ou bien
 region_max_pop <- recensement |>
   group_by(nom_de_la_region) |>
   summarise(population_totale = sum(population_totale)) |>
   arrange(desc(population_totale)) |>
-  slice(1)
+  slice(1) |>
+  ungroup()
 ```
 
 Remarques sur l'utilisation de `group_by()` :
@@ -3828,7 +3830,8 @@ agri_bio_vegetal_fr_tab2 <- agri_bio_vegetal_fr_cultures |>
   filter(cultures_2 %not_in% c("autre cas - doublon")) |> 
   group_by(annee_2 = annee,territoire, cultures_2) |> 
   summarise(surface_bio_conversion_en_ha = sum(surface_bio_et_en_conversion_en_ha, na.rm = TRUE)) |> 
-  arrange(desc(territoire), cultures_2)
+  arrange(desc(territoire), cultures_2) |>
+  ungroup()
 ```
 
 Combiné avec `slice`, `arrange` permet par exemple de sélectionner les trois vols ayant eu le plus de retard :
@@ -4224,7 +4227,8 @@ exploitants_age_dim_hors_micro_2010_2020 <- bind_rows(exploitants_2010,exploitan
   group_by(annee = factor(annee, levels = c(annee_ra_2010, annee_ra_2020)),
            tr_age_10) |>
   summarise(n_exploit = n(),
-            .groups = "drop_last")
+            .groups = "drop_last") |>
+  ungroup()
 
 # Créer le sous-tableau contenant l'établissement de collecte ou le producteur en Pays de la Loire
 # Pour des conditions non cumulatives (au moins une des conditions doit être remplie), le ou “|”
@@ -4684,6 +4688,7 @@ library(janitor) # pour round_half_up
 bpe_ens_2018_tbl |>
 	group_by(REG, TYPEQU) |>
 	summarise(NB_EQUIP_TOT = sum(NB_EQUIP)) |>
+  ungroup() |>
 	pivot_wider(id_cols = TYPEQU,  
 	            names_from = REG, 
 	            values_from = NB_EQUIP_TOT, 
@@ -5254,23 +5259,26 @@ bio_pdl_test_doublons <- bio_pdl |>
   filter(n() > 1) |> # Compter occurrences
   summarise(
     nb_doublons = n() - 1,  # Soustrait 1 car première occurrence n'est pas un doublon
-    .groups = "drop"
-  )
+    .groups = "drop")
 
 # afficher les lignes en doublon pour l'ensemble des variables servant d'identifiant
 bio_pdl_test_doublons_var_ok <- bio_pdl |> 
   # group_by par colonnes d'identification
-  group_by(raisonsociale,numeropacage,numerobio,libelleonab,ss_groupe_onab_libelle,nomoc) |>
+  group_by(raisonsociale, numeropacage, numerobio, 
+           libelleonab, ss_groupe_onab_libelle, nomoc) |>
   filter(n() > 1) |>
-  arrange(raisonsociale,numeropacage,numerobio,libelleonab,ss_groupe_onab_libelle,nomoc) |>
+  arrange(raisonsociale, numeropacage, numerobio, 
+          libelleonab, ss_groupe_onab_libelle, nomoc) |>
   ungroup()
 
 # afficher les lignes en doublon pour l'ensemble des variables servant d'identifiant sans nomoc
 # il reste 11 lignes en double, soit 22 observations
 bio_pdl_test_doublons_var_doubl <- bio_pdl |> 
-  group_by(raisonsociale,numeropacage,numerobio,libelleonab,ss_groupe_onab_libelle) |>
+  group_by(raisonsociale, numeropacage, numerobio, 
+           libelleonab, ss_groupe_onab_libelle) |>
   filter(n() > 1) |>
-  arrange(raisonsociale,numeropacage,numerobio,libelleonab,ss_groupe_onab_libelle) |>
+  arrange(raisonsociale, numeropacage, numerobio, 
+          libelleonab, ss_groupe_onab_libelle)|>
   ungroup()
   
 ```
@@ -5317,8 +5325,7 @@ recherche_doublons <- function(df, vars) {
     group_by(across(all_of(vars))) |>
     summarise(
       nb_obs = n(),
-      .groups = "drop"
-    ) |>
+      .groups = "drop") |>
     filter(nb_obs > 1) |>
     arrange(desc(nb_obs))
     
@@ -5506,8 +5513,7 @@ test_tab1_tab2 <- tab1_tab2 |>
   summarise(
       nombre = n(),
       pourcentage = round_half_up(n() / nrow(tab1_tab2) * 100, 1),
-      .groups = "drop"
-    ) 
+      .groups = "drop") 
     
 test_tab1_tab2
 ```
@@ -5531,8 +5537,7 @@ comparer_tables <- function(tab1, tab2, identifiant) {
     mutate(in_tab1 = TRUE) |>
     full_join(
       tab2 |> mutate(in_tab2 = TRUE),
-      join_by(identifiant)
-    ) |>
+      join_by(identifiant)) |>
     mutate(
       # Remplacer NA par FALSE
       across(starts_with("in_"), \(x) replace_na(x, FALSE)),
@@ -5541,9 +5546,7 @@ comparer_tables <- function(tab1, tab2, identifiant) {
         in_tab1 & in_tab2 ~ "Présent dans les deux tables",
         in_tab1 ~ "Uniquement dans table 1",
         in_tab2 ~ "Uniquement dans table 2",
-        .default = "Absent des deux tables"
-      )
-    )
+        .default = "Absent des deux tables"))
     
   # Résumé statistique
   resume <- comparaison |>
@@ -5551,13 +5554,11 @@ comparer_tables <- function(tab1, tab2, identifiant) {
     summarise(
       nombre = n(),
       pourcentage = round_half_up(n() / nrow(comparaison) * 100, 1),
-      .groups = "drop"
-    )
+      .groups = "drop")
     
   return(list(
     details = comparaison,
-    resume = resume
-  ))
+    resume = resume))
 }
 
 # Utilisation
@@ -6315,7 +6316,8 @@ Le code suivant groupe les données de la BPE avec les deux colonnes dont le nom
 ```{r , eval = FALSE}
 bpe_ens_2018_tbl |> 
   group_by(across(starts_with('DEP'))) |>
-  summarise(across(where(is.numeric), sum)) 
+  summarise(across(where(is.numeric), sum)) |>
+  ungroup() 
 
 ```
 
@@ -6573,8 +6575,7 @@ bio_vege2_dep_pdl_an <- bio_vege_clean_pdl_an |>
     echelle_geographique,
     type_de_production,
     groupe_de_productions,
-    sous_groupe_de_productions
-  ) |>
+    sous_groupe_de_productions) |>
   mutate(across(starts_with("surf_tot_bio"), list(
     reg = \(x) sum(x, na.rm = TRUE),
     part_reg = \(x) x / sum(x, na.rm = TRUE) * 100
@@ -7729,30 +7730,26 @@ calculer_nb_beneficiaires_par_departement <- function(annee) {
                                     (.data[[paste0("maec_", an)]] > 0)),
       benef_p1_p2_ligne = as.numeric((benef_p1_ligne > 0) |
                                        (benef_p2_ligne > 0)),
-      .after = pacage
-    ) |>
+      .after = pacage) |>
     group_by(dep) |>
     mutate(
       nb_beneficiaires_p1_dep = sum(benef_p1_ligne, na.rm = TRUE),
       nb_beneficiaires_p2_dep = sum(benef_p2_ligne, na.rm = TRUE),
       nb_beneficiaires_p1_p2_dep = sum(benef_p1_p2_ligne, na.rm = TRUE),
-      .after = pacage
-    ) |>
+      .after = pacage) |>
     ungroup() |>
     mutate(
       nb_beneficiaires_p1_reg = sum(benef_p1_ligne, na.rm = TRUE),
       nb_beneficiaires_p2_reg = sum(benef_p2_ligne, na.rm = TRUE),
       nb_beneficiaires_p1_p2_reg = sum(benef_p1_p2_ligne, na.rm = TRUE),
-      .after = nb_beneficiaires_p1_p2_dep
-    ) |>
+      .after = nb_beneficiaires_p1_p2_dep) |>
     distinct(
       dep, nb_beneficiaires_p1_dep,
       nb_beneficiaires_p2_dep,
       nb_beneficiaires_p1_p2_dep,
       nb_beneficiaires_p1_reg,
       nb_beneficiaires_p2_reg,
-      nb_beneficiaires_p1_p2_reg
-    ) |>
+      nb_beneficiaires_p1_p2_reg) |>
     arrange(dep)
   
   return(nb_beneficiaires_pdl)
@@ -8251,8 +8248,8 @@ resume_groupe <- function(df, col_group, col_var) {
         summarise(
             moyenne = mean({{col_var}}),
             min = min({{ col_var }}),
-            max = max({{ col_var }})
-        )
+            max = max({{ col_var }})) |>
+        ungroup()
 }
 
 resume_groupe(restos, style, evaluation)
@@ -8267,14 +8264,12 @@ Si on souhaite grouper ou appliquer une fonction sur une série de colonnes, il 
 resume_groupe <- function(df, cols_group, cols_var) {
     df |>
         group_by(
-            across({{ cols_group }})
-        ) |>
+            across({{ cols_group }})) |>
         summarise(
             across(
                 {{ cols_var }},
-                mean
-            )
-        )
+                mean)) |>
+        ungroup()
 }
 ```
 
@@ -8393,9 +8388,9 @@ Quand on veut plutôt sélectionner des colonnes avec `select()` ou `across()` e
 evaluation_par_groupe <- function(cols_group) {
     restos |>
         group_by(
-            across(all_of(cols_group))
-        ) |>
-        summarise(evaluation = mean(.data$evaluation))
+            across(all_of(cols_group))) |>
+        summarise(evaluation = mean(.data$evaluation)) |>
+        ungroup()
 }
 
 evaluation_par_groupe("ville")
@@ -8481,7 +8476,8 @@ Si l'argument est un symbole on l'entoure avec des doubles accolades `{{ }}`, si
 add_mean_by_species <- function(col_var) {
     starwars |>
         group_by(species) |>
-        mutate("moyenne_{{col_var}}" := mean({{ col_var}}))
+        mutate("moyenne_{{col_var}}" := mean({{ col_var}})) |>
+        ungroup()
 }
 
 add_mean_by_species(height)
@@ -9536,7 +9532,8 @@ nombre <- bpe_ens_2018 |>
   as_tibble() |>
   filter(TYPEQU == "B316") |> 
   group_by(DEP) |> 
-  summarise(nombre_station_serv = sum(NB_EQUIP, na.rm = TRUE)) 
+  summarise(nombre_station_serv = sum(NB_EQUIP, na.rm = TRUE)) |>
+  ungroup() 
 
 # on ne conserve que les exploitations avec des bovins
 exploit_bovins_a <- exploit_anim_sel |>  
@@ -9556,9 +9553,9 @@ nb_exploit_vaches_pdl <- exploit_bovins_c |>
 # pour construire une statistique sur les observations de la table.
 # C’est une fonction dite de “résumé”.
 nb_exploit_vaches_dep <- exploit_bovins_c |>
-  filter(cheptq_111000>0) |> 
+  filter(cheptq_111000 > 0) |> 
   group_by(siege_dep) |> 
-  summarise(nb_expl=n(),
+  summarise(nb_expl = n(),
             vaches = sum(cheptq_111000)) |> 
   ungroup()
   
@@ -9568,8 +9565,8 @@ nb_exploit_vaches_dep_reg <- nb_exploit_vaches_dep |>
          vaches_reg = sum(vaches),
          part_expl = nb_expl / nb_expl_reg * 100,
          part_vaches = vaches / vaches_reg * 100) |> 
-  adorn_totals("row", name="Pays de la Loire") |> 
-  mutate(across(c(part_expl,part_vaches), \(x) round_half_up(x, digits = 3)))
+  adorn_totals("row", name = "Pays de la Loire") |> 
+  mutate(across(c(part_expl, part_vaches), \(x) round_half_up(x, digits = 3)))
 
 ```
 https://book.utilitr.org/03_Fiches_thematiques/Fiche_tidyverse.html#encha%C3%AEner-les-manipulations-avec-lop%C3%A9rateur-pipe
@@ -9815,9 +9812,8 @@ exploit_volailles_com_secret_2 <- exploit_volailles_com_secret_1 |>
          part_max_eff_02_dindes_com = max_eff_02_dindes_com / eff_02_dindes_com * 100 |>
                     round_half_up(digits = 2)) |>  
   mutate(across(everything(),
-    \(x) replace(x, is.nan(x), 0)
-  )
-)
+    \(x) replace(x, is.nan(x), 0))) |>
+  ungroup()
   
 exploit_volailles_com_secret_3 <- exploit_volailles_com_secret_2 |> 
   mutate(secret_eff_01_canards_com = if_else(part_max_eff_01_canards_com >= 85,
@@ -10083,8 +10079,7 @@ bio_anim2_dep_pdl_an <- bio_anim2_dep_pdl_an |>
     rang_nb_tetes_2023 = rank(-nb_tetes_2023, ties.method = "min"),
     rang_nombre_deleveurs_2023 = rank(-nombre_deleveurs_2023, ties.method = "min"),
     rang_part_du_bio_en_percent_2023 = rank(-part_du_bio_en_percent_2023, ties.method = "min"),
-    .after = groupe_de_productions
-  ) |>
+    .after = groupe_de_productions) |>
   ungroup()
 ```
 
