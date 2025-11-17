@@ -170,7 +170,7 @@ et doit être entre accolades après le chemin de l'image
 Il est possible d'avoir plusieurs sessions R ouvertes.
 On peut choisir la version de R utilisée au lancement de la session, en allant en haut à droite.
 
-On peut aussi créer une nouvelle session, en cliquant sur le '+' en haut à droite, via :
+On peut aussi créer une nouvelle session, en cliquant sur le `+` en haut à droite, via :
 
 ![](images/Cerise_ouvrir_nouvelle_session_R.png){fig-align="center" width="50%"}
 
@@ -178,7 +178,7 @@ puis choisir de l'associer à un projet ou à un dossier :
 
 ![](images/Cerise_nouvelle_session_R_directory.png){fig-align="center" width="50%"}
 
-'~' (obtenu par AltGr+2 puis espace) permet d’indiquer le répertoire racine dans Cerise, relatif au répertoire personnel de l'utilisateur (correspond à ~/CERISE/00-Espace-Personnel/prenom.nom/).
+`~` (obtenu par AltGr+2 puis espace) permet d’indiquer le répertoire racine dans Cerise, relatif au répertoire personnel de l'utilisateur (correspond à ~/CERISE/00-Espace-Personnel/prenom.nom/).
 
 On peut préciser le chemin du dossier en cliquant sur 'Parcourir', puis cliquer sur 'Choisissez'
 
@@ -443,11 +443,11 @@ Cela signifie qu'il "attend la suite". On peut alors soit compléter la commande
 
 Pour effacer le contenu de la console : cliquer sur l'icone "balai" à droite, ou menu Edit > Clear console ou Ctrl + L
 
-### L'espace de travail - le 'workspace'
+### L'espace de travail - le `workspace`
 
-L'espace de travail (ou 'workspace') est l’environnement de la session R. Il comprend tous les objets créés durant une session de travail sous R. Par exemple, lorsqu'on importe des données, elles deviennent un objet de type data.frame et sont intégrées à l’environnement global. De même lorsqu'on crée un objet, il vient s’inclure dans l'environnement.
+L'espace de travail (ou `workspace`) est l’environnement de la session R. Il comprend tous les objets créés durant une session de travail sous R. Par exemple, lorsqu'on importe des données, elles deviennent un objet de type data.frame et sont intégrées à l’environnement global. De même lorsqu'on crée un objet, il vient s’inclure dans l'environnement.
 
-Ces différents objets (éléments en mémoire) sont alors visibles dans l’onglet 'Environnement' de la fenêtre en haut à droite. 
+Ces différents objets (éléments en mémoire) sont alors visibles dans l’onglet `Environnement` de la fenêtre en haut à droite. 
 
 Pour conserver le résultat d'une opération, on peut le stocker dans un *objet* à l'aide de l'opérateur d'assignation `<-`. Cette "flèche" stocke ce qu'il y a à sa droite dans un objet dont le nom est indiqué à sa gauche.
 
@@ -476,7 +476,7 @@ Les objets peuvent contenir tout un tas d'informations, comme des nombres, ou de
 Pour lister les objets de l'environnement courant, il faut utiliser la fonction ls().
 
 R va accumuler en mémoire un certain nombre d’objets (listes, vecteurs, fonctions…)
-Pour tous les effacer pour repartir d’une mémoire vierge (au lancement d’un script par exemple), on peut utiliser la commande 'rm(list = ls())', suivie de 'gc()'
+Pour tous les effacer pour repartir d’une mémoire vierge (au lancement d’un script par exemple), on peut utiliser la commande `rm(list = ls())`, suivie de `gc()`
 
 On peut aussi cliquer sur l'icône "balai" en haut à droite de la fenêtre de l'environnement, pour vider les éléments en mémoire.
 
@@ -519,7 +519,7 @@ Dans RStudio, les caractères marchant par paires (parenthèses, guillemets, acc
 Modifier la couleur des parenthèses pour faciliter la lecture du code. 
 
 Aller dans le même menu "Tools" (Outils) > "Global Options" (Options globales).  
-Sélectionner "Code" dans la barre latérale de gauche, puis choisir l'onglet "Display" (Afficher).  
+Sélectionner "Code" dans la barre latérale de gauche, puis choisir l'onglet `Display` (Afficher).  
 Cocher l’option "Use rainbow parentheses" (Parenthèses arc-en-ciel) en bas pour colorer les parenthèses en fonction de leur niveau d'imbrication.    
 Cela changera la couleur des parenthèses, des accolades et des crochets pour qu’ils correspondent entre eux.   
 
@@ -597,7 +597,7 @@ Le répertoire de travail se situant à la racine du dossier créé, cela signif
 
 Les projets permettent de ne pas avoir à spécifier un chemin complet vers un fichier (comme `D:\\...\\data\\donnees.xlsx`) mais un chemin relatif au dossier du projet (juste `data/donnees.xlsx` si le fichier se trouve dans un sous-dossier `data`.)
 
-Il est conseillé pour chaque projet de créer une arborescence avec les répertoires 'entree', 'pgm', 'sortie'.
+Il est conseillé pour chaque projet de créer une arborescence avec les répertoires `entree`, `pgm`, `sortie`.
 
 ```{r, eval = FALSE}
 library(fs)
@@ -1023,11 +1023,11 @@ exploit_2020 <- readRDS(file = chemin_fichier)
 ```
 
 Le package `fs` offre des fonctionnalités pour manipuler les fichiers et les répertoires, comme :  
-dir_ls() : Lister les fichiers dans un répertoire.  
-file_move() : Déplacer des fichiers.  
-file_copy() : Copier des fichiers.  
-file_delete() : Supprimer des fichiers.  
-dir_create() : Créer des répertoires.  
+`dir_ls()` : Lister les fichiers dans un répertoire.  
+`file_move()` : Déplacer des fichiers.  
+`file_copy()` : Copier des fichiers.  
+`file_delete()` : Supprimer des fichiers.  
+`dir_create()` : Créer des répertoires.  
 
 
 ### Importer des fichiers RDS
@@ -1321,7 +1321,7 @@ exploitations <- read_csv2("mes_donnees_exploitations.csv",
                          UGB = col_double()))
 ```
 
-On spécifie le type des variables à l'aide des fonctions suivantes : 
+On spécifie le type des variables à l'aide des fonctions suivantes :  
 - `col_character()` pour une variable de type caractère  
 - `col_double()` pour une variable de type numérique (décimal)  
 - `col_integer()` pour une variable de type entier  
@@ -1963,7 +1963,7 @@ str(pull(base, DEP))
 ## Création de variables 
 
 On assigne un contenu à une variable au moyen de `<-`  
-La flèche d'assignation peut être écrite avec le raccourci clavier alt + "-" (tiret du 6 ou signe 'moins' du pavé numérique).
+La flèche d'assignation peut être écrite avec le raccourci clavier alt + "-" (tiret du 6 ou signe `moins`du pavé numérique).
 
 ATTENTION : un nom de variable ne peut pas commencer par un chiffre.
 ```{r inter_1}
@@ -2041,7 +2041,7 @@ groupe_produits_laitiers_2021_France <- produits_laitiers_2021_2 |>
     établissements_2020 = sum(nbfiniqte1, na.rm = TRUE),
     établissements_2021 = sum(nbfiniqte, na.rm = TRUE)) |> 
   ungroup() |> 
-  mutate(territoire="France", .before = 1)
+  mutate(territoire = "France", .before = 1)
 
 # lors d'un mutate avec un group_by, 
 # il est conseillé d'ajouter le suffixe correspondant au nom de variable
@@ -2198,7 +2198,7 @@ L'argument `.keep` donne un contrôle fin sur les colonnes qui doivent être con
 "unused" : Conserve les colonnes qui n'ont pas été utilisées pour créer les nouvelles colonnes + les nouvelles.    
 "none" : Ne conserve aucune des colonnes originales, seulement les nouvelles. 
 
-Le paramètre .keep = "none" indique à mutate() de supprimer toutes les colonnes existantes sauf celles explicitement mentionnées.
+Le paramètre `.keep = "none"` indique à `mutate()` de supprimer toutes les colonnes existantes sauf celles explicitement mentionnées.
 On ne conserve que les nouvelles colonnes qu'on vient de créer. Toutes les colonnes qui existaient déjà dans le tableau de données sont supprimées.
 
 ```{r, eval = FALSE}
@@ -2563,7 +2563,7 @@ population_monde |>
   select(pays, pop, everything(), -continent, -pib_par_habitant)
 ```
 
-La fonction `where()`, combinée avec le verbe `select()`, permet de sélectionner une colonne selon un “prédicat”, c’est-à-dire un test. Dans l’exemple ci-dessous, on n’affiche que les colonnes dont le format est de type numérique (à l’aide de la fonction is.numeric() qui teste justement ce type-là). L’expression est simplifiée en n’utilisant pas les parenthèses de `is.numeric()`.
+La fonction `where()`, combinée avec le verbe `select()`, permet de sélectionner une colonne selon un “prédicat”, c’est-à-dire un test. Dans l’exemple ci-dessous, on n’affiche que les colonnes dont le format est de type numérique (à l’aide de la fonction `is.numeric()` qui teste justement ce type-là). L’expression est simplifiée en n’utilisant pas les parenthèses de `is.numeric()`.
 
 ```{r , eval = FALSE}
 # selection des colonnes de type numérique
@@ -2656,11 +2656,11 @@ agri_bio_vegetal_fr <- agri_bio_vegetal_fr |>
                   part_bio_de_la_sau_en_percent),
                 as.numeric)) 
 ```
-En cas de lignes vides, cela crée des valeurs NA (not available) et produit un messsage d'avertissement dans la console. C'est un message non bloquant.
-   ***Warning messages:***
-   1: Problem with `mutate()` input `..1`.
-   NAs introduits lors de la conversion automatique
-   Input `..1` is `across(...)`.
+En cas de lignes vides, cela crée des valeurs NA (not available) et produit un messsage d'avertissement dans la console. C'est un message non bloquant.  
+   ***Warning messages:***  
+   1: Problem with `mutate()` input `..1`.  
+   NAs introduits lors de la conversion automatique  
+   Input `..1` is `across(...)`.  
    
 On utilise la fonction `as.numeric`, combinée à `across` pour l'appliquer à un ensemble de variables.  
    
@@ -2871,8 +2871,8 @@ data <- data |>
 
 `if_else` de `dplyr` prend trois arguments : un test, une valeur à renvoyer si le test est vrai, et une valeur à renvoyer si le test est faux.
 
-Avec `if_else` :
-- `variable = if_else(condition(x), valeur_si_oui, valeur_si_non)` permet d'affecter *valeur_si_oui* ou  *valeur_si_non* à *variable* en fonction du fait que *x* répond à *condition*.
+Avec `if_else` :   
+`variable = if_else(condition(x), valeur_si_oui, valeur_si_non)` permet d'affecter *valeur_si_oui* ou  *valeur_si_non* à *variable* en fonction du fait que *x* répond à *condition*.  
 Exemple : création d'une variable résultat pour savoir si les résultats de nos analyses sont bons, ou non.
 
 ```{r , eval = FALSE}
@@ -3053,7 +3053,7 @@ mo_2020_diplome_max <-  mo_2020_install2010 |>
                                mofagri == "23" ~ "Niveau CAP (certificat d'aptitude professionnelle)",
                                mofagri == "24" ~ "Niveau BEP (brevet d'études professionnelles)",
                                mofagri == "25" ~ "Niveau baccalauréat technologique agricole, bac pro agricole",
-                               mofagri == "26" ~ "Niveau baccalauréat de technicien agricole (BTA), BEA,BPREA",
+                               mofagri == "26" ~ "Niveau baccalauréat de technicien agricole (BTA), BEA, BPREA",
                                mofagri == "27" ~ "Niveau diplôme de 1er cycle universitaire, BTS, DUT",
                                mofagri == "28" ~ "Niveau d'études supérieures longues, diplôme d'ingénieur, ...",
                                .default = mofagri)
@@ -3105,7 +3105,8 @@ bio_vege_clean_pdl_an <- bio_vege_clean_pdl_an |>
 
 ### comparaisons entre `case_match()`, `if_else()` et `case_when()`
 
-case_when(), comparativement à case_match() et if_else()
+`case_when()`, comparativement à `case_match()` et `if_else()`
+
 ```{r , eval = FALSE}
 # Créer un type_regroupement à partir de la variable 'type'
 unique(exploit_lait2_production$type)
@@ -3982,7 +3983,7 @@ exports_pdl_2021_pays_vol_vivantes <- filtrer_an_type_produit(exports_pdl_fr_an_
 
 ## Ajout de colonne Total 
 
-sum avec rowwise() au préalable, `"rowwise"`considère chaque ligne comme un groupe
+`sum` avec `rowwise()` au préalable, `rowwise` considère chaque ligne comme un groupe
 
 ```{r , eval = FALSE}
 # somme de chaque ligne
@@ -4139,7 +4140,7 @@ nb_exploitants_age_sau_2010_2020 <- exploitants_age_sau_2010_2020 |>
          sau_ha_an_2010_percent = round_half_up(sau_ha_an_2010 / sum(sau_ha_an_2010) * 100, 2),
          n_exploit_an_2020_percent = round_half_up(n_exploit_an_2020 / sum(n_exploit_an_2020) * 100, 2),
          sau_ha_an_2020_percent = round_half_up(sau_ha_an_2020 / sum(sau_ha_an_2020) * 100, 2)) |> 
-  adorn_totals("row", name="Ensemble") |> 
+  adorn_totals("row", name = "Ensemble") |> 
   relocate(tr_age_10,
            sau_ha_an_2010_percent,
            sau_ha_an_2020_percent,
@@ -4491,7 +4492,7 @@ La fonction `pivot_longer` permet de restructurer des données en transformant d
 - `values_to` : nom de la deuxième colonne à créer qui recevra les valeurs des colonnes pivotantes.   
 
 La fonction `pivot_longer` prend comme premier argument `cols` contenant la liste des colonnes à rassembler.  
-On peut spécifier les colonnes à exclure en utilisant le signe négatif - suivi des noms des colonnes à exclure (avec cols = - ).
+On peut spécifier les colonnes à exclure en utilisant le signe négatif `-` suivi des noms des colonnes à exclure (avec cols = - ).
 
 
 `names_prefix` : préfixe à enlever des noms de colonnes à pivoter, qui seront transformées en modalités.
@@ -5115,7 +5116,7 @@ Dans le cas de `full_join(x, y)`, toutes les lignes de `x` et toutes les lignes 
 ![](./images/full_join.png){fig-align="center" width="50%"}
 
 ```{r , eval = FALSE}
-full_join(x, y, join_by(A,B))
+full_join(x, y, join_by(A, B))
 ```
 
 Identifiants portant des noms différents
@@ -5767,7 +5768,7 @@ a <- data.frame(x = c(" libeatg", "delivo y"))
 b <- mutate(a, y = stri_sub_replace(str = x, from = 6, to = 9, value = "rer"))
 ```
 
-https://stringr.tidyverse.org/
+https://stringr.tidyverse.org/  
 https://stringi.gagolewski.com/
 
 
@@ -5866,11 +5867,11 @@ montants_pdl_2020_p1_p2 <- montants_pdl_2020_p1_p2 |>
 
 ## Supprimer un préfixe à un nom de variable pour l'ensemble des noms de colonnes
 
-La fonction colnames() renvoie la liste des noms de colonnes d'un tableau. 
+La fonction `colnames()` renvoie la liste des noms de colonnes d'un tableau. 
 
 colnames(df) <- ... : Cette partie de la commande assigne les nouveaux noms de colonnes dans df
 
-La fonction  gsub() remplace toutes les occurrences d'un motif dans une chaîne de caractères. Pour supprimer un préfixe, on peut spécifier le motif du préfixe à supprimer et le remplacer par une chaîne vide. 
+La fonction  `gsub()` remplace toutes les occurrences d'un motif dans une chaîne de caractères. Pour supprimer un préfixe, on peut spécifier le motif du préfixe à supprimer et le remplacer par une chaîne vide. 
 
 ```{r , eval = FALSE}
 # enlever le préfixe prod_ de tous les noms de colonnes dans le dataframe viande_volaille_annee_pdl
@@ -5895,7 +5896,8 @@ balsa_reg <- balsa_reg |>
 # rename_with : renommer les colonnes en utilisant une fonction de transformation anonyme `\(x)`
 # rename_with() renames columns using a function.
 # rename_with(.data, .fn, .cols = everything(), ...)
-# str_replace(x, "nb_tetes_", "") : remplacer le préfixe "nb_tetes_" par une chaîne vide dans les noms de colonnes.
+# str_replace(x, "nb_tetes_", "") : remplacer le préfixe "nb_tetes_" 
+# par une chaîne vide dans les noms de colonnes.
 # starts_with("nb_tetes") : s'applique uniquement aux colonnes dont les noms commencent par "nb_tetes".
 bio_anim_nb_tetes_pdl_an <- bio_anim2_pdl_an_export |>
   filter(echelle_geographique == "Régional") |>
@@ -5911,11 +5913,11 @@ bio_anim_nb_tetes_pdl_an <- bio_anim2_pdl_an_export |>
 
 ## Supprimer un suffixe à un nom de variable pour l'ensemble des noms de colonnes
 
-La fonction colnames() renvoie la liste des noms de colonnes d'un tableau. 
+La fonction `colnames()` renvoie la liste des noms de colonnes d'un tableau. 
 
 colnames(df) <- ... : Cette partie de la commande assigne les nouveaux noms de colonnes dans df
 
-La fonction  gsub() remplace toutes les occurrences d'un motif dans une chaîne de caractères. Pour supprimer un suffixe, on peut spécifier le motif du suffixe à supprimer et le remplacer par une chaîne vide. 
+La fonction  `gsub()` remplace toutes les occurrences d'un motif dans une chaîne de caractères. Pour supprimer un suffixe, on peut spécifier le motif du suffixe à supprimer et le remplacer par une chaîne vide. 
 
 ```{r , eval = FALSE}
 # enlever le suffixe _valeur_en_k de tous les noms de colonnes dans le dataframe produits
@@ -5960,7 +5962,7 @@ str_detect(df$nom, regex("mme", ignore_case = TRUE))
 ## `str_pad` pour ajouter des caractères en début ou en fin de chaîne
 
 La fonction `str_pad` remplit une chaîne de caractères avec des espaces (par défaut) ou une valeur choisie (argument pad) à une largeur fixe, de sorte que str_length(str_pad(x, n)) soit toujours supérieur ou égal à n.  
-Il est possible de remplir avant et / ou après la chaîne de caractères existant (argument side).
+Il est possible de remplir avant et / ou après la chaîne de caractères existant (avec l'argument `side`).
 
 str_pad(x, width = longueur_format, side = ''left'', pad = caractère_a_ajouter).  
 
@@ -6258,7 +6260,7 @@ On peut par exemple détecter une date de la façon suivante :
 ```{r}
 library(stringr)
 
-textes <- c("14/07/1789", "J'ai 10 ans.", "Une date importante est le 16/04/1972")
+textes <- c("14/07/1789", "J'ai 10 ans.", "Une date importante est le 01/01/2000")
 
 str_detect(string = textes, 
 pattern = r"(\d{2}/\d{2}/\d{4})") # On cherche 2 chiffres puis "/" puis 2 chiffres puis "/" puis 4 chiffres
@@ -6528,7 +6530,7 @@ df |>
     )
 ```
 
-Exemple d'utilisation de la fonction across() pour appliquer une liste de fonctions statistiques à une seule variable.
+Exemple d'utilisation de la fonction `across()` pour appliquer une liste de fonctions statistiques à une seule variable.
 
 ```{r , eval = FALSE}
 # Calculer plusieurs agrégats sur une seule variable
@@ -6930,7 +6932,7 @@ On ne peut pas utiliser plusieurs `return()` pour renvoyer plusieurs résultats 
 
 Est-ce à dire qu'une fonction R ne pourrait renvoyer qu'une seule valeur ? Non, car si elle ne peut retourner qu'un seul objet, celui-ci peut être complexe et comporter plusieurs valeurs.  
 
-L’instruction return() ne peut renvoyer qu’un seul objet.  
+L’instruction `return()` ne peut renvoyer qu’un seul objet.  
 Pour renvoyer plusieurs éléments dans une fonction, il faut les placer dans une liste.
 
 Exemple avec une fonction nommée `indicateurs()`, où on retourne une liste contenant la moyenne et l'écart-type d'un vecteur :
@@ -7178,7 +7180,7 @@ transform_data <- function(data_entree) {
 }
 
 # utilisation de la fonction transform_data
-agreg_tr_surf_logt_vol_chair_grand_dep_reg_2 <- transform_data(data_entree=agreg_tr_surf_logt_vol_chair_grand)
+agreg_tr_surf_logt_vol_chair_grand_dep_reg_2 <- transform_data(data_entree = agreg_tr_surf_logt_vol_chair_grand)
 ```
 
 ```{r, eval = FALSE}
@@ -7401,7 +7403,7 @@ graph_var(c(1, 5, 10, 3, 1, 4))
 
 
 
-### "`if`" / "`else if`" / "`else`"
+### `if` / `else if` / `else`
 
 On peut enchaîner plusieurs blocs d’instructions `if` / `else if` / `else`.  
 
@@ -7548,6 +7550,8 @@ x_rec <- if_else(x >= 10, ">=10", "<10")
 x_rec
 ```
 
+Exemple de fonction avec `if` / `else`
+
 ```{r, eval = FALSE}
 # fonction montants par departement pour les différentes années ----
 # Fonction pour calculer les montants par département
@@ -7687,112 +7691,6 @@ montants_pac_2020_2023 <- montants_pac_2020 |>
   left_join(montants_2023$montants_pdl, join_by(indicateur))
 ```
 
-```{r, eval = FALSE}
-# fonction nb_beneficiaires pour les différentes années ----
-calculer_nb_beneficiaires_par_departement <- function(annee) {
-  an <- substr(as.character(annee), 3, 4)
-  fichier_beneficiaires <- get(glue("fichier_beneficiaires_{annee}"))
-  fichier_paiements_p1 <- get(glue("fichier_paiements_p1_{annee}"))
-  fichier_paiements_ichn_aras <- get(paste0("fichier_paiements_ichn_aras_", annee))
-  fichier_paiements_bio_maec <- get(paste0("fichier_paiements_bio_maec_", annee))
-  
-  # Construire la partie dynamique du chemin
-  chemin_pac_annee <- get(glue("pac_{annee}"))
-  
-  # Construire le chemin complet
-  chemin_fichier_benef <- glue("{chemin_aides_pac}{chemin_pac_annee}{fichier_beneficiaires}")
-  chemin_fichier_paiements_p1 <- glue("{chemin_aides_pac}{chemin_pac_annee}{fichier_paiements_p1}")
-  chemin_fichier_paiements_ichn_aras <- glue("{chemin_aides_pac}{chemin_pac_annee}{fichier_paiements_ichn_aras}")
-  chemin_fichier_paiements_bio_maec <- glue("{chemin_aides_pac}{chemin_pac_annee}{fichier_paiements_bio_maec}")
-  
-  fic_benef <- readRDS(file = chemin_fichier_benef) |>
-    as_tibble(.name_repair = make_clean_names) |>
-    filter(nreg == "52")
-  
-  fic_paiements_p1 <- readRDS(file = chemin_fichier_paiements_p1) |>
-    as_tibble(.name_repair = make_clean_names)
-  
-  fic_paiements_ichn_aras <- readRDS(file = chemin_fichier_paiements_ichn_aras) |>
-    as_tibble(.name_repair = make_clean_names)
-  
-  fic_fichier_paiements_bio_maec <- readRDS(file = chemin_fichier_paiements_bio_maec) |>
-    as_tibble(.name_repair = make_clean_names)
-  
-  nb_beneficiaires_pdl <- fic_benef |>
-    left_join(fic_paiements_p1, join_by(pacage)) |>
-    left_join(fic_paiements_ichn_aras, join_by(pacage)) |>
-    left_join(fic_fichier_paiements_bio_maec, join_by(pacage)) |>
-    mutate(
-      benef_p1_ligne = as.numeric(.data[[paste0("aides_p1_", an)]] > 0),
-      benef_p2_ligne = as.numeric((.data[[paste0("ichn_", an)]] > 0) |
-                                    (.data[[paste0("aras_", an)]] > 0) |
-                                    (.data[[paste0("bio_", an)]] > 0) |
-                                    (.data[[paste0("maec_", an)]] > 0)),
-      benef_p1_p2_ligne = as.numeric((benef_p1_ligne > 0) |
-                                       (benef_p2_ligne > 0)),
-      .after = pacage) |>
-    group_by(dep) |>
-    mutate(
-      nb_beneficiaires_p1_dep = sum(benef_p1_ligne, na.rm = TRUE),
-      nb_beneficiaires_p2_dep = sum(benef_p2_ligne, na.rm = TRUE),
-      nb_beneficiaires_p1_p2_dep = sum(benef_p1_p2_ligne, na.rm = TRUE),
-      .after = pacage) |>
-    ungroup() |>
-    mutate(
-      nb_beneficiaires_p1_reg = sum(benef_p1_ligne, na.rm = TRUE),
-      nb_beneficiaires_p2_reg = sum(benef_p2_ligne, na.rm = TRUE),
-      nb_beneficiaires_p1_p2_reg = sum(benef_p1_p2_ligne, na.rm = TRUE),
-      .after = nb_beneficiaires_p1_p2_dep) |>
-    distinct(
-      dep, nb_beneficiaires_p1_dep,
-      nb_beneficiaires_p2_dep,
-      nb_beneficiaires_p1_p2_dep,
-      nb_beneficiaires_p1_reg,
-      nb_beneficiaires_p2_reg,
-      nb_beneficiaires_p1_p2_reg) |>
-    arrange(dep)
-  
-  return(nb_beneficiaires_pdl)
-}
-
-# uitilisation de la fonction pour les différentes années
-nb_beneficiaires_2020 <- calculer_nb_beneficiaires_par_departement(annee = 2020)
-nb_beneficiaires_2021 <- calculer_nb_beneficiaires_par_departement(annee = 2021)
-nb_beneficiaires_2022 <- calculer_nb_beneficiaires_par_departement(annee = 2022)
-nb_beneficiaires_2023 <- calculer_nb_beneficiaires_par_departement(annee = 2023)
-
-# Combiner les resultats des différentes années
-# Renommer les colonnes de chaque dataframe pour éviter les conflits
-nb_beneficiaires_2020_suffixe <- nb_beneficiaires_2020 |>
-rename_with(
-  \(x) paste0(x, "_2020"),
-  -dep
-)
-
-nb_beneficiaires_2021_suffixe <- nb_beneficiaires_2021 |>
-rename_with(
-  \(x) paste0(x, "_2021"),
-  -dep
-)
-
-nb_beneficiaires_2022_suffixe <- nb_beneficiaires_2022 |>
-rename_with(
-  \(x) paste0(x, "_2022"),
-  -dep
-)
-
-nb_beneficiaires_2023_suffixe <- nb_beneficiaires_2023 |>
-rename_with(
-  \(x) paste0(x, "_2023"),
-  -dep
-)
-
-# Effectuer les jointures
-nb_beneficiaires_pac_2020_2023 <- nb_beneficiaires_2020_suffixe |>
-  left_join(nb_beneficiaires_2021_suffixe, join_by(dep)) |>
-  left_join(nb_beneficiaires_2022_suffixe, join_by(dep)) |>
-  left_join(nb_beneficiaires_2023_suffixe, join_by(dep))
-```
 
 ## Les boucles `for` et `while` pour répéter des instructions
 
@@ -7818,9 +7716,9 @@ diag_IMC <- function(poids,taille) {
   return(diag)
 }
 
-diag_IMC (poids=60,taille=1.89)
-diag_IMC (poids=80,taille=1.89)
-diag_IMC (poids=80,taille=1.55)
+diag_IMC (poids = 60, taille = 1.89)
+diag_IMC (poids = 80, taille = 1.89)
+diag_IMC (poids = 80, taille = 1.55)
 ```
 
 On peut utiliser une boucle `for` :
@@ -8715,6 +8613,115 @@ vol_2024_2 <- regrouper_especes(vol_2024_2, espece)
 vol_2023_2 <- regrouper_especes(vol_2023_2, espece)
 ```
 
+
+```{r, eval = FALSE}
+# fonction nb_beneficiaires pour les différentes années ----
+calculer_nb_beneficiaires_par_departement <- function(annee) {
+  an <- substr(as.character(annee), 3, 4)
+  fichier_beneficiaires <- get(glue("fichier_beneficiaires_{annee}"))
+  fichier_paiements_p1 <- get(glue("fichier_paiements_p1_{annee}"))
+  fichier_paiements_ichn_aras <- get(paste0("fichier_paiements_ichn_aras_", annee))
+  fichier_paiements_bio_maec <- get(paste0("fichier_paiements_bio_maec_", annee))
+  
+  # Construire la partie dynamique du chemin
+  chemin_pac_annee <- get(glue("pac_{annee}"))
+  
+  # Construire le chemin complet
+  chemin_fichier_benef <- glue("{chemin_aides_pac}{chemin_pac_annee}{fichier_beneficiaires}")
+  chemin_fichier_paiements_p1 <- glue("{chemin_aides_pac}{chemin_pac_annee}{fichier_paiements_p1}")
+  chemin_fichier_paiements_ichn_aras <- glue("{chemin_aides_pac}{chemin_pac_annee}{fichier_paiements_ichn_aras}")
+  chemin_fichier_paiements_bio_maec <- glue("{chemin_aides_pac}{chemin_pac_annee}{fichier_paiements_bio_maec}")
+  
+  fic_benef <- readRDS(file = chemin_fichier_benef) |>
+    as_tibble(.name_repair = make_clean_names) |>
+    filter(nreg == "52")
+  
+  fic_paiements_p1 <- readRDS(file = chemin_fichier_paiements_p1) |>
+    as_tibble(.name_repair = make_clean_names)
+  
+  fic_paiements_ichn_aras <- readRDS(file = chemin_fichier_paiements_ichn_aras) |>
+    as_tibble(.name_repair = make_clean_names)
+  
+  fic_fichier_paiements_bio_maec <- readRDS(file = chemin_fichier_paiements_bio_maec) |>
+    as_tibble(.name_repair = make_clean_names)
+  
+  nb_beneficiaires_pdl <- fic_benef |>
+    left_join(fic_paiements_p1, join_by(pacage)) |>
+    left_join(fic_paiements_ichn_aras, join_by(pacage)) |>
+    left_join(fic_fichier_paiements_bio_maec, join_by(pacage)) |>
+    mutate(
+      benef_p1_ligne = as.numeric(.data[[paste0("aides_p1_", an)]] > 0),
+      benef_p2_ligne = as.numeric((.data[[paste0("ichn_", an)]] > 0) |
+                                    (.data[[paste0("aras_", an)]] > 0) |
+                                    (.data[[paste0("bio_", an)]] > 0) |
+                                    (.data[[paste0("maec_", an)]] > 0)),
+      benef_p1_p2_ligne = as.numeric((benef_p1_ligne > 0) |
+                                       (benef_p2_ligne > 0)),
+      .after = pacage) |>
+    group_by(dep) |>
+    mutate(
+      nb_beneficiaires_p1_dep = sum(benef_p1_ligne, na.rm = TRUE),
+      nb_beneficiaires_p2_dep = sum(benef_p2_ligne, na.rm = TRUE),
+      nb_beneficiaires_p1_p2_dep = sum(benef_p1_p2_ligne, na.rm = TRUE),
+      .after = pacage) |>
+    ungroup() |>
+    mutate(
+      nb_beneficiaires_p1_reg = sum(benef_p1_ligne, na.rm = TRUE),
+      nb_beneficiaires_p2_reg = sum(benef_p2_ligne, na.rm = TRUE),
+      nb_beneficiaires_p1_p2_reg = sum(benef_p1_p2_ligne, na.rm = TRUE),
+      .after = nb_beneficiaires_p1_p2_dep) |>
+    distinct(
+      dep, nb_beneficiaires_p1_dep,
+      nb_beneficiaires_p2_dep,
+      nb_beneficiaires_p1_p2_dep,
+      nb_beneficiaires_p1_reg,
+      nb_beneficiaires_p2_reg,
+      nb_beneficiaires_p1_p2_reg) |>
+    arrange(dep)
+  
+  return(nb_beneficiaires_pdl)
+}
+
+# uitilisation de la fonction pour les différentes années
+nb_beneficiaires_2020 <- calculer_nb_beneficiaires_par_departement(annee = 2020)
+nb_beneficiaires_2021 <- calculer_nb_beneficiaires_par_departement(annee = 2021)
+nb_beneficiaires_2022 <- calculer_nb_beneficiaires_par_departement(annee = 2022)
+nb_beneficiaires_2023 <- calculer_nb_beneficiaires_par_departement(annee = 2023)
+
+# Combiner les resultats des différentes années
+# Renommer les colonnes de chaque dataframe pour éviter les conflits
+nb_beneficiaires_2020_suffixe <- nb_beneficiaires_2020 |>
+rename_with(
+  \(x) paste0(x, "_2020"),
+  -dep
+)
+
+nb_beneficiaires_2021_suffixe <- nb_beneficiaires_2021 |>
+rename_with(
+  \(x) paste0(x, "_2021"),
+  -dep
+)
+
+nb_beneficiaires_2022_suffixe <- nb_beneficiaires_2022 |>
+rename_with(
+  \(x) paste0(x, "_2022"),
+  -dep
+)
+
+nb_beneficiaires_2023_suffixe <- nb_beneficiaires_2023 |>
+rename_with(
+  \(x) paste0(x, "_2023"),
+  -dep
+)
+
+# Effectuer les jointures
+nb_beneficiaires_pac_2020_2023 <- nb_beneficiaires_2020_suffixe |>
+  left_join(nb_beneficiaires_2021_suffixe, join_by(dep)) |>
+  left_join(nb_beneficiaires_2022_suffixe, join_by(dep)) |>
+  left_join(nb_beneficiaires_2023_suffixe, join_by(dep))
+```
+
+
 ## Paramétrer une chaîne de caractères avec le package `glue`
 
 Construire une chaîne de caractères agrégeant des parties fixes et des parties variables peut devenir fastidieux avec la fonction `paste0 `(beaucoup de quotes et de virgules).  
@@ -8824,7 +8831,7 @@ Les lettres du groupe des utilisateurs de R (GUR) sont aussi très utiles :
 
 Elles sont disponibles sur : *~/CERISE/01-Espace-de-Partage/SSP/BMIS/comment_fair*.
 
-On peut aussi s'appuyer sur des [aide-mémoire](https://posit.co/resources/cheatsheets) (antisèches ou 'feuilles de triche').
+On peut aussi s'appuyer sur des [aide-mémoire](https://posit.co/resources/cheatsheets) (antisèches ou "feuilles de triche").
 
 
 ## Comment nommer les fichiers  ?
@@ -8853,14 +8860,14 @@ Les vignettes sont des documents qui aident à prendre en main un package en ide
 Pour lister les vignettes relatives à un package (par exemple dplyr):
 
 ```{r, eval = TRUE}
-vignette(package="dplyr")
+vignette(package = "dplyr")
 ```
 
 Pour visualiser une vignette donnée :
 
 ```{r, eval = FALSE}
-vignette("rowwise", package="dplyr") # dans RStudio
-RShowDoc("rowwise", package="dplyr") # dans le navigateur web
+vignette("rowwise", package = "dplyr") # dans RStudio
+RShowDoc("rowwise", package = "dplyr") # dans le navigateur web
 ```
 
 
@@ -8897,7 +8904,8 @@ Il suffit alors de les convertir :
 base <- mutate(base0, LIBGEO = as.character(LIBGEO))
 ```
 
-On peut convertir un vecteur d'un type à un autre avec les fonctions de forme as.XXX (`as.character()`, `as.numeric()`, `as.factor()` et `as.logical()`).  
+On peut convertir un vecteur d'un type à un autre avec les fonctions de forme as.XXX :   
+`as.character()`, `as.numeric()`, `as.factor()` et `as.logical()`.  
 
 Si une valeur ne peut pas être convertie, elle est remplacée par un `NA`, et R affiche un avertissement.
 
@@ -9517,7 +9525,7 @@ Voici un petit tableau qui donne des exemples :
 | `fonction3(fonction2(fonction1(x)))` | `x |> fonction1() |> fonction2() |> fonction3()` |
 | `mutate(tibble, y = log(x))`        | `tibble |> mutate(y = x |> log())`               |
 
-Avec l'usage du pipe, le premier argument -qui devrait être une table- disparaît de l'appel aux fonctions 'dplyr' (filter, arrange...) En effet, le pipe envoie le résultat de la ligne précédente comme premier argument de la ligne suivante.
+Avec l'usage du pipe, le premier argument -qui devrait être une table- disparaît de l'appel aux fonctions `dplyr` (filter, arrange...) En effet, le pipe envoie le résultat de la ligne précédente comme premier argument de la ligne suivante.
 
 ### Comment utiliser l'opérateur `pipe` avec le `tidyverse`
 
@@ -9546,7 +9554,7 @@ nb_exploit_vaches_pdl <- exploit_bovins_c |>
   summarise(nb_expl=n(),
             vaches = sum(cheptq_111000)) |> 
   ungroup() |> 
-  adorn_totals("row", name="Pays de la Loire")
+  adorn_totals("row", name = "Pays de la Loire")
 
 # Calculer par département, le nombre d’exploitations ayant des vaches, avec l’effectif de vaches
 # La fonction summarise() permet d’agréger des données, en appliquant une fonction sur les variables 
@@ -9663,7 +9671,7 @@ Comme le nom de fonction %in% ne contient pas que des lettres, on utilise les �
 La fonction `round` arrondit selon le principe de la parité.
 Pour arrondir systématiquement à l'excès (en valeur absolue) au-delà de 5, on peut utiliser une fonction spécifique, comme la fonction `round_half_up()` du package `janitor`.
 
-La fonction 'round' standard de R applique la norme IEC 60559 qui indique que pour l'arrondi de 5 on arrondit au chiffre pair le plus proche (ce qui évite de surestimer systématiquement les valeurs en arrondissant toujours au dessus).
+La fonction `round` standard de R applique la norme IEC 60559 qui indique que pour l'arrondi de 5 on arrondit au chiffre pair le plus proche (ce qui évite de surestimer systématiquement les valeurs en arrondissant toujours au dessus).
 
 https://fr.wikipedia.org/wiki/Arrondi_(math%C3%A9matiques)
 
@@ -10004,7 +10012,7 @@ hist(df$age, col = "skyblue",
 
 ## Comment ajouter le total régional à des données par département ?
 
-La première méthode consiste à utiliser la fonction 'adorn_totals' du package `janitor`. 
+La première méthode consiste à utiliser la fonction `adorn_totals` du package `janitor`. 
 
 ```{r,  eval = FALSE}
 # nb exploitations par département et pour la région
@@ -10138,7 +10146,7 @@ recolte_bois_dep_reg_2 <-  recolte_bois_dep_reg |>
 
 ## Erreurs fréquentes
 
-R est prêt à exécuter une commande lorsque le chevron > est affiché dans la console. Si le chevron n'apparaît pas, c'est qu'une commande est incomplète. Appuyer sur 'Echap' ('ESC') pour sortir de cette commande.
+R est prêt à exécuter une commande lorsque le chevron > est affiché dans la console. Si le chevron n'apparaît pas, c'est qu'une commande est incomplète. Appuyer sur `Echap` pour sortir de cette commande.
 
 
 ### `Error in nom_de_la_fonction()`
