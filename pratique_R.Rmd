@@ -135,7 +135,7 @@ largeur max colonne : 116 caractères
 -->
 
 
-Le **"Guide pratique R"** est un manuel expliquant l'utilisation du langage de programmation **R** pour la **manipulation des données**.
+Ce **"guide pratique R"** est un manuel expliquant l'utilisation du langage de programmation **R** pour la **manipulation des données**.
 
 # Environnement de travail
 
@@ -551,8 +551,8 @@ Utiliser des projets procure plusieurs avantages :
 - L'onglet *Files* de la zone en bas à droite de l'interface de RStudio permet de naviguer facilement dans les fichiers du projet.
 - Cela permet la portabilité : le répertoire de travail par défaut d'un projet est le répertoire où est ce projet.
 
-**Pour créer un projet : **
-- Cliquer sur *Project* en haut à droite puis *New Project*.
+**Pour créer un projet : **  
+- Cliquer sur *Project* en haut à droite puis *New Project*.  
 _ ou bien faire `File > New Project`. 
 
 On peut créer un projet `RStudio` :
@@ -725,7 +725,7 @@ Cette réinstallation est facilitée en utilisant un script `installation_packag
 
 Il peut arriver qu'un programme génère une erreur parce qu'on utilise un _package_ dans une version trop ancienne. Pour mettre à jour un _package_, il suffit de le réinstaller avec `install.packages`.
 
-Des problèmes d’installation ?
+**Des problèmes d’installation ?**
 
 Ce n’est pas parce que vous avez des messages/ des warnings/ du rouge dans votre console que vous avez eu un problème d’installation.
 Les problèmes d’installation sont relativement souvent liés à un problème dans l’installation des dépendances. Une dépendance est un package dont a besoin le package qu’on est en train d’installer et qui peut donc s'installer en même temps.  
@@ -971,7 +971,7 @@ Cela permet aussi d'éviter les conflits de noms de fonctions entre les packages
 # Charger les packages nécessaires
 # Packages souvent utilisés
 library(dplyr)
-library(openxlsx)
+library(openxlsx2)
 library(janitor) # pour nettoyer et préparer des données ('make_clean_names')
 library(tidyr) # pour pivot
 library(fs) # pour path
@@ -1079,24 +1079,22 @@ pa_fr_2020 <- readRDS(file = path(chemin_fr_20, "RA2020_PRODANIM_220415.rds")) |
 
 ### Importer des fichiers xlsx
 
-L'utilisateur souhaite importer dans `R` des données issues de tableurs (extension`xlsx`).
+Pour importer dans `R` des données issues de tableurs avec l'extension`xlsx`, il est recommandé d'utiliser la fonction `read_xlsx()` du _package_ `openxlsx2`.
 
-- **Il est recommandé d'utiliser la fonction `read.xlsx()` du _package_ `openxlsx` pour importer des fichiers `xlsx`.**
-
-Voici les principaux arguments et options de `read.xlsx()` :
+Voici les principaux arguments et options de `read_xlsx()` :
 
 | Argument         | Valeur par défaut     | Fonction                                                                                   |
 |------------------|-----------------------|--------------------------------------------------------------------------------------------|
-| `xlsxFile`       | Aucune                | Chemin d'accès vers un objet classeur ou une url vers un fichier `xlsx` à importer           |
-| `sheet`          | `1`                     | Onglet à importer. Soit le nom de l'onglet, soit un numéro de l'onglet |
-| `startRow`       | `1`                     | Ligne à partir de laquelle les données sont importées. Les lignes vides en haut d'un fichier sont toujours ignorées, quelle que soit la valeur de `startRow`    |
-| `colNames`       | `TRUE`                  | Si `TRUE`, la première ligne de données sera utilisée comme nom de colonnes   |
+| `file`       | Aucune                | Chemin d'accès vers un fichier `xlsx` à importer           |
+| `sheet`          | `1`                     | Onglet à importer. Soit le nom de l'onglet (entre guillemets), soit un numéro de l'onglet |
+| `start_row`      | `1`                     | Ligne à partir de laquelle les données sont importées.     |
+| `col_names`      | `TRUE`                  | Si `TRUE`, la première ligne de données sera utilisée comme nom de colonnes   |
 |
 
 
 ```{r, eval = FALSE}
 library(dplyr)
-library(openxlsx)
+library(openxlsx2)
 library(janitor) # pour 'make_clean_names'
 library(fs) # pour path
 
@@ -1104,18 +1102,19 @@ library(fs) # pour path
 chemin_entree <- "S:/ETUDES/En cours/memento_Christophe/entree/SAA/"
 fichier_entree <- "cd2022-5_SAA_2021_provisoire_resultats_LIB.xlsx"
 
-eff_volailles <- read.xlsx(xlsxFile = path(chemin_entree, fichier_entree), 
-                         sheet = "Eff. volailles", colNames = TRUE, startRow = 1) |> 
+eff_volailles <- read_xlsx(file = path(chemin_entree, fichier_entree), 
+                           sheet = "Eff. volailles") |> 
   as_tibble(.name_repair = make_clean_names) |> 
-  filter(region %in% c("52  -  Pays de la Loire","98  -  Total France métropolitaine"))
+  filter(region %in% c("52  -  Pays de la Loire",
+                       "98  -  Total France métropolitaine"))
 
 
 chemin <- "S:/ETUDES/En cours/memento_Christophe/entree/AgenceBio/"
 fichier_nat <- "Export Productions Bio - National.xlsx"
-an <- "2021"
+an <- "2025"
 
-agri_bio_vegetal_fr <- read.xlsx(xlsxFile = path(chemin,fichier_nat), 
-                                 sheet = "Productions végétales", colNames = TRUE, startRow = 1) |> 
+agri_bio_vegetal_fr <- read_xlsx(file = path(chemin,fichier_nat), 
+                                 sheet = "Productions végétales") |> 
   as_tibble(.name_repair = make_clean_names) |> 
   filter(annee %in% c(an) & territoire %in% c("National","Pays de la Loire"))
 
@@ -1128,16 +1127,12 @@ chemin_entree_2021 <- "~/CERISE/03-Espace-de-Diffusion/070_Production_lait/
 
 fichier_entree_liv_reg_dep <- "LIVRAISON_REGNDEP_2020_2021.xlsx"
 
-laits_reg_dep_2021 <- read.xlsx(xlsxFile = path(chemin_entree_2021, fichier_entree_liv_reg_dep), 
-                                sheet = "Sheet 1", colNames = TRUE, startRow = 1) |> 
+laits_reg_dep_2021 <- read_xlsx(file = path(chemin_entree_2021, fichier_entree_liv_reg_dep), 
+                                sheet = "Sheet 1") |> 
   as_tibble(.name_repair = make_clean_names) |> 
   mutate(reg_dep_prod = paste0(regnprod,sep = "_", depprod),
          dep_prod = substr(depprod, 2, 3))  
 ```
-
-Pour récupérer le nom des différents onglets, on peut utiliser la fonction openxlsx::getSheetNames.
-
-https://book.utilitr.org/03_Fiches_thematiques/Fiche_import_tableurs.html#importer-un-fichier-xlsx-avec-le-package-openxlsx
 
 
 ### Importer des fichiers xls
@@ -1608,7 +1603,7 @@ Dans ce cas la fonction peut ne pas inclure d'instruction `return()`.
 
 ```{r, eval = FALSE}
 library(dplyr)
-library(openxlsx)
+library(openxlsx2)
 library(janitor) # pour 'make_clean_names'
 library(readr)
 library(purrr) # pour map
@@ -1623,7 +1618,8 @@ annees <- 2000:2010
 
 # Ce code utilise la fonction map() de la bibliothèque purrr pour itérer sur la liste annees
 # Utilisation de map pour appliquer une fonction à chaque année
-# La fonction map permet d'appliquer une fonction à chaque élément d'une liste et de renvoyer une nouvelle liste résultante.
+# La fonction map permet d'appliquer une fonction à chaque élément d'une liste 
+# et de renvoyer une nouvelle liste résultante.
 list_eff_annees <- map(annees, function(annee) {
   fichier_entree_eff_annee <- path("FDS_SAANR_8_", annee, ".csv")
 
@@ -1647,6 +1643,8 @@ eff_volailles_2000_2010 <- list_rbind(list_eff_annees)
 ```
 
 ```{r, eval = FALSE}
+library(openxlsx2)
+
 # fichiers agrégés ----
 chemin_entree_agreg <- "S:/Fichiers source/Agence_BIO/2023/"
 
@@ -1672,29 +1670,26 @@ fichiers_entree <- list(
   fichier_entree_28, fichier_entree_32, fichier_entree_44,
   fichier_entree_52, fichier_entree_53, fichier_entree_75,
   fichier_entree_76, fichier_entree_84, fichier_entree_93,
-  fichier_entree_94
-)
+  fichier_entree_94)
 
 # Créer une liste des codes région
 codes_region <- c(11, 24, 27, 28, 32, 44, 52, 53, 75, 76, 84, 93, 94)
 
 # Créer une fonction pour lire et transformer les données
-# Ajouter la colonne 'reg' avec la valeur de 'territoire' pour les lignes où 'echelle_geographique' vaut "Régional"
+# Ajouter la colonne 'reg' avec la valeur de 'territoire' 
+# pour les lignes où 'echelle_geographique' vaut "Régional"
 # Remplir les valeurs manquantes de 'reg' avec la dernière valeur non manquante
 # Supprimer les lignes où 'echelle_geographique' vaut "Régional"
 # Renommer la colonne 'territoire' en 'dep'
 # Supprimer la colonne 'echelle_geographique'
 lire_et_transformer <- function(fichier, feuille) {
-  read.xlsx(
-    xlsxFile = path(chemin_entree_agreg, fichier),
-    sheet = feuille,
-    colNames = TRUE, startRow = 1
-  ) |>
+  read_xlsx(
+    file = path(chemin_entree_agreg, fichier),
+    sheet = feuille) |>
     as_tibble(.name_repair = make_clean_names) |>
     mutate(
       reg = if_else(echelle_geographique == "Régional", territoire, NA),
-      .after = echelle_geographique
-    ) |>
+      .after = echelle_geographique) |>
     fill(reg) |>
     filter(echelle_geographique != "Régional") |>
     rename(dep = territoire) |>
@@ -1728,8 +1723,7 @@ bio_anim_fm <- list_rbind(bio_anim_list) |>
 # On souhaite combiner les résultats verticalement, en empilant les lignes de chaque tableau de données.
 bio_anim_fm2 <- map(
   fichiers_entree,
-  \(x) lire_et_transformer(x, feuille = "Productions animales")
-) |>
+  \(x) lire_et_transformer(x, feuille = "Productions animales")) |>
   list_rbind() |>
   mutate(ident_anim1 = row_number(), .before = 1)
 
@@ -1754,63 +1748,69 @@ saveRDS(object = oeufs_cot_det_2022_2021_an_mois, file = path(chemin_sortie,fich
 
 ### Exporter dans des fichiers xlsx
 
-Pour exporter un tableau de données dans R vers un fichier au format xlsx, on peut utiliser `write.xlsx` du package `openxlsx`.
-Les arguments principaux de `write.xlsx` sont :  
-data : le tableau de données à exporter  
-file : le chemin et le nom du fichier de sortie, y compris l'extension .xlsx.  
-sheetName (facultatif) : le nom de la feuille Excel dans laquelle écrire les données. Par défaut, "Sheet1".  
-overwrite (facultatif) : indique s'il faut écraser un fichier existant. Par défaut, TRUE.  
+Pour exporter un tableau de données dans R vers un fichier au format `.xlsx`, on peut utiliser `write_xlsx` du package `openxlsx2`.  
 
-On peut exporter plusieurs tableaux de données dans un même fichier Excel en utilisant `write.xlsx` avec une liste de tableaux de données.
-Écrire une liste de data frames dans un fichier xlsx dans des feuilles individuelles en utilisant les noms de la liste comme noms de feuilles. 
+Les arguments principaux de `write_xlsx` sont :  
+
+- x : le tableau de données à exporter (ou une liste de tableaux pour un export multi-feuilles)  
+- file : le chemin et le nom du fichier de sortie, y compris l'extension .xlsx.  
+- sheet (facultatif) : le nom de la feuille Excel dans laquelle écrire les données. Par défaut, "Sheet 1".  
+- overwrite (facultatif) : indique s'il faut écraser un fichier existant. Par défaut, TRUE.  
+
+On peut exporter plusieurs tableaux de données dans un même fichier Excel en utilisant `write_xlsx` avec une liste de tableaux de données.
+On utilise alors les noms des éléments de la liste comme noms de feuilles.  
+
 ```{r , eval = FALSE}
-# Export simple
-write.xlsx(donnees, "export/fichier.xlsx")
+library(openxlsx2)
 
-# Export multi-feuilles
-# Liste de tableaux de données
+# Export simple d'un seul tableau
+write_xlsx(donnees, "export/fichier.xlsx")
+
+# Export multi-feuilles à partir d'une liste de data.frames
+# Liste nommée de tableaux de données
+# Les noms de la liste servent de noms de feuilles
 liste_tableaux <- list(
   'table1' = df1,
-  'table2' = df2
-)
+  'table2' = df2)
 
 # Exporter la liste de tableaux de données dans un fichier Excel avec plusieurs feuilles
-write.xlsx(liste_tableaux, file = "fichier_multi_feuilles.xlsx")
+# à chaque élément de la liste va correspondre une feuille
+write_xlsx(liste_tableaux, file = "fichier_multi_feuilles.xlsx")
 ```
 
 ```{r , eval = FALSE}
-library(openxlsx)
+library(openxlsx2)
 library(fs) # pour path
 
-# export 
+# export simple d'un seul tableau
 # Chargement du chemin 
-chemin_sortie <- "S:/ETUDES/En cours/memento_Christophe/sortie/"
+chemin_sortie <- "S:/ETUDES/memento/sortie/"
+fichier_sortie <- "abattoirs_volaille_pdl_2025.xlsx"
 
-fichier_sortie <- "abattoirs_volaille_pdl_2021.xlsx"
-
-write.xlsx(volailles_sum,
+write_xlsx(volailles_sum,
            file = path(chemin_sortie, fichier_sortie),
-           sheetName = "abattoirs_volailles")
+           sheet = "abattoirs_volailles")
 
 # export dans plusieurs feuilles
-chemin_sortie <- "S:/ETUDES/En cours/memento_Christophe/sortie/"
-
-fichier_sortie <- "agri_bio_2021.xlsx"
+# avec un chemin construit via fs::path 
+chemin_sortie <- "S:/ETUDES/memento/sortie/"
+fichier_sortie <- "agri_bio_2025.xlsx"
 
 # définir les noms de feuilles pour chaque tableau (data frame)
+# les noms de la liste deviendront les noms des feuilles
 liste_tableaux <- list('tab1' = agri_bio_vegetal_tab1_final, 
                        'tab2' = agri_bio_vegetal_tab2_final,
                        'tab3' = agri_bio_animal_tab3_final)
 
 # exporter chaque tableau vers des feuilles séparées dans le même fichier Excel
-write.xlsx(liste_tableaux, file = path(chemin_sortie, fichier_sortie))
+write_xlsx(liste_tableaux, file = path(chemin_sortie, fichier_sortie))
 
 ```
-https://www.statology.org/r-export-to-excel-multiple-sheets/
+https://janmarvin.github.io/openxlsx2/reference/write_xlsx.html
 
 ### Exporter dans des fichiers ods
 
-Le package `readOD`S permet d'exporter une data.frame dans un fichier au format ods :
+Le package `readODS` permet d'exporter une data.frame dans un fichier au format ods :
 ```{r , eval = FALSE}
 library(readODS)
 write_ods(donnees, 
@@ -1997,6 +1997,7 @@ base <- mutate(base,
 La fonction `mutate()` permet également de modifier une variable. Dans ce cas la syntaxe est la même que ci-dessus, mais les noms d'entrée et de sortie sont les mêmes :
 
 ```{r,  eval = FALSE}
+library(openxlsx2)
 library(janitor) # pour round_half_up
 
 # Par exemple pour modifier une variable existante :
@@ -2018,8 +2019,8 @@ agri_bio_vegetal_fr_tab1 <- agri_bio_vegetal_fr |>
   mutate(part_bio_sau_plus_percent = paste0(part_bio_de_la_sau_en_percent," %"))
 
 # ajout d'une variable avec une modalité déterminée
-volailles_fr <- read.xlsx(xlsxFile = path(chemin, fichier), 
-                           sheet = "res-France", colNames = TRUE, startRow = 1) |> 
+volailles_fr <- read_xlsx(file = path(chemin, fichier),
+                          sheet = "res-France") |> 
   as_tibble(.name_repair = make_clean_names) |> 
   mutate(reg = "France") |> 
   select(reg, espece, total_poids)
@@ -2134,8 +2135,7 @@ flights <- mutate(
     flights,
     duree_h = air_time / 60,
     distance_km = distance / 0.62137,
-    vitesse = distance_km / duree_h
-)
+    vitesse = distance_km / duree_h)
 
 select(flights, air_time, duree_h, distance, distance_km, vitesse)
 ```
@@ -2193,10 +2193,10 @@ beneficiaires_pdl_2020 <- beneficiaires_2020 |>
 L'argument `.keep` dans `mutate()` permet de contrôler quelles colonnes du dataframe d'origine sont conservées dans le résultat.  
 
 L'argument `.keep` donne un contrôle fin sur les colonnes qui doivent être conservées après l'opération `mutate()`. Il peut prendre plusieurs valeurs :  
-"all" (par défaut) : Conserve toutes les colonnes originales + les nouvelles.  
-"used" : Conserve les colonnes qui ont été utilisées pour créer les nouvelles colonnes + les nouvelles.  
-"unused" : Conserve les colonnes qui n'ont pas été utilisées pour créer les nouvelles colonnes + les nouvelles.    
-"none" : Ne conserve aucune des colonnes originales, seulement les nouvelles. 
+`all` (par défaut) : Conserve toutes les colonnes originales + les nouvelles.  
+`used` : Conserve les colonnes qui ont été utilisées pour créer les nouvelles colonnes + les nouvelles.  
+`unused` : Conserve les colonnes qui n'ont pas été utilisées pour créer les nouvelles colonnes + les nouvelles.    
+`none` : Ne conserve aucune des colonnes originales, seulement les nouvelles. 
 
 Le paramètre `.keep = "none"` indique à `mutate()` de supprimer toutes les colonnes existantes sauf celles explicitement mentionnées.
 On ne conserve que les nouvelles colonnes qu'on vient de créer. Toutes les colonnes qui existaient déjà dans le tableau de données sont supprimées.
@@ -2207,24 +2207,21 @@ ventes <- tibble(
   produit = c("A", "B", "C"),
   prix = c(10, 15, 20),
   quantite = c(5, 3, 8),
-  region = c("Nord", "Sud", "Est")
-)
+  region = c("Nord", "Sud", "Est"))
 
 # Calcul avec .keep = "none"
 ventes |> 
   mutate(
     chiffre_affaires = prix * quantite,
     profit = chiffre_affaires * 0.2,
-    .keep = "none"
-  )
+    .keep = "none")
 # Résultat : seulement chiffre_affaires et profit
 
 # Comparé à .keep = "all" (défaut)
 ventes |> 
   mutate(
     chiffre_affaires = prix * quantite,
-    profit = chiffre_affaires * 0.2
-  )
+    profit = chiffre_affaires * 0.2)
 # Résultat : produit, prix, quantite, region, chiffre_affaires, profit
 ```
 
@@ -2266,8 +2263,7 @@ ratios_export_sur_import <- ratios_az_c1 |>
       an_2024_sem1 = an_2024_sem1_export / an_2024_sem1_import * 100,
       an_2024_sem2 = an_2024_sem2_export / an_2024_sem2_import * 100,
       an_2025_sem1 = an_2025_sem1_export / an_2025_sem1_import * 100,
-      .keep = "none"
-   ) |>
+      .keep = "none") |>
    # Arrondir les valeurs
    mutate(across(starts_with("an_"), \(x) round_half_up(x, digits = 2)))
 
@@ -2284,16 +2280,14 @@ ratios_import_sur_export <- ratios_az_c1 |>
       an_2024_sem1 = an_2024_sem1_import / an_2024_sem1_export * 100,
       an_2024_sem2 = an_2024_sem2_import / an_2024_sem2_export * 100,
       an_2025_sem1 = an_2025_sem1_import / an_2025_sem1_export * 100,
-      .keep = "none"
-   ) |>
+      .keep = "none") |>
    mutate(across(starts_with("an_"), \(x) round_half_up(x, digits = 2)))
 
 # Ajouter ces deux types de ratios au tableau original
 produits_az_c1_reg_ratios_imp_exp <- bind_rows(
    produits_long_az_c1_det_reg,
    ratios_export_sur_import,
-   ratios_import_sur_export
-)
+   ratios_import_sur_export)
 
 ```
 
@@ -2369,11 +2363,13 @@ df |>
 row.names
 
 ```{r , eval = FALSE}
+library(openxlsx2)
+
 # ajout colonne numéro de ligne
 # creation d'une variable identifiant reprenant le numéro de ligne 
-produits_laitiers <- read.xlsx(xlsxFile = path(chemin_entree, fichier_entree), 
-                               sheet = "produits laitiers", colNames = TRUE, 
-                               startRow = 12) |> 
+produits_laitiers <- read_xlsx(file = path(chemin_entree, fichier_entree), 
+                               sheet = "produits laitiers", 
+                               start_row = 12) |> 
   as_tibble(.name_repair = make_clean_names) 
 
 produits_laitiers <- produits_laitiers |> 
@@ -2395,9 +2391,8 @@ vab_agri_2020_2 <- vab_agri_2020 |>
 
 <center>![](images/select.png)</center>
 
-* `select()` : sélectionner des variables par leur nom
 
-La fonction `select()` permet de sélectionner les variables voulues.
+La fonction `select()` permet de sélectionner les variables voulues par leur nom.
 
 - sélection par liste blanche
 ```{r, eval = FALSE}
@@ -2584,8 +2579,6 @@ https://tidyselect.r-lib.org/reference/language.html
 
 ## Renommer des colonnes (variables)
 
-* `rename()` : renommer des variables ;
-
 La fonction `rename()` permet de renommer une variable (ou plusieurs).
 
 ```{r, eval = FALSE}
@@ -2599,8 +2592,7 @@ volailles_pdl_siqo2 <- volailles_pdl_siqo |>
   rename(espece_poulets_coquelets_siqo_label_rouge = label_rouge_2,
          espece_poulets_coquelets_siqo_aoc_aop = aoc_aop_3,       
          espece_poulets_coquelets_siqo_agri_bio = agri_bio_4,       
-         espece_poulets_coquelets_siqo_aut_signe_off = aut_signe_off_5 
-        )
+         espece_poulets_coquelets_siqo_aut_signe_off = aut_signe_off_5)
 ```
 
 La syntaxe est la suivante :  `rename(data, nouveau_nom = ancien nom)`. Voici un exemple :
@@ -2616,8 +2608,8 @@ Si les noms de colonnes comportent des espaces ou des caractères spéciaux, on 
 tmp <- rename(
     flights,
     "retard départ" = dep_delay,
-    "retard arrivée" = arr_delay
-)
+    "retard arrivée" = arr_delay)
+    
 select(tmp, `retard départ`, `retard arrivée`)
 ```
 
@@ -2665,12 +2657,15 @@ En cas de lignes vides, cela crée des valeurs NA (not available) et produit un 
 On utilise la fonction `as.numeric`, combinée à `across` pour l'appliquer à un ensemble de variables.  
    
 ```{r , eval = FALSE}
+library(openxlsx2)
+
 # import fichiers
 chemin_entree <- "S:/ETUDES/En cours/memento_Christophe/entree/BAEA/"
 fichier_entree <- "baea_diff_2020_reg_52_Pays_de_la_Loire.xlsx"
 
-otex <- read.xlsx(xlsxFile = path(chemin_entree, fichier_entree), 
-                         sheet = "ETP - OTEX",colNames = TRUE,startRow = 7) |> 
+otex <- read_xlsx(file = path(chemin_entree, fichier_entree),
+                  sheet = "ETP - OTEX",
+                  start_row = 7) |> 
   # Quand on passe une fonction comme argument à une autre fonction, on utilise la notation sans les parenthèses.
   mutate(across(-c("Orientation.technico-économique.(OTEX)"), as.numeric)) |> 
   rename(otex_lib = "Orientation.technico-économique.(OTEX)") |> 
@@ -2693,11 +2688,13 @@ produits_a17_percent <- produits_a17_large |>
           .after=a17_lib_detail) |> 
    mutate(across(where(is.numeric), \(x) round_half_up(x, digits = 3)))
 
-# type.convert pour transformer en numérique poids_produit_en_tec (caractère) qui a comme séparateur décimal ","
-viande_volaille_tec_2021 <- read.xlsx(xlsxFile = path(chemin, "cd2022-5_SAA_2021_provisoire_resultats_LIB.xlsx"), 
-                         sheet = "Volailles finies produites", colNames = TRUE, startRow = 1) |> 
+# type.convert pour transformer en numérique poids_produit_en_tec (caractère) 
+# qui a comme séparateur décimal ","
+viande_volaille_tec_2021 <- read_xlsx(file = path(chemin, fichier_saa),
+                                      sheet = "Volailles finies produites") |> 
   as_tibble(.name_repair = make_clean_names) |> 
-  filter(region %in% c("52  -  Pays de la Loire","98  -  Total France métropolitaine")) |> 
+  filter(region %in% c("52  -  Pays de la Loire",
+                       "98  -  Total France métropolitaine")) |> 
   mutate(an_2021 = type.convert(poids_produit_en_tec, dec = ","),
          reg = case_when(
            region %in% c("52  -  Pays de la Loire") ~ "pdl",
@@ -3170,8 +3167,7 @@ Si on souhaite recoder une modalité de la variable en `NA`, il faut (contre int
 ```{r , eval = FALSE}
 hdv2003$qualif_rec <- fct_collapse(
     hdv2003$qualif, 
-    NULL = "Autre"
-)
+    NULL = "Autre")
 
 ```
 
@@ -3362,8 +3358,7 @@ Il existe quelques paramètres qui peuvent s’avérer utiles :
     `name =` : permet de nommer la colonne des effectifs obtenus (“effectifs”, par exemple).   
     Par défaut, R la nomme `n`.  
 
-    `sort =` : booléen qui permet, s’il est à TRUE, de classer le tableau   
-    par ordre décroissant des valeurs de la colonne `n`   
+    `sort =` : booléen qui permet, s’il est à TRUE, de classer le tableau par ordre décroissant des valeurs de la colonne `n`   
     (ou “effectifs” si on l’a renommée)
 
 ```{r , eval = FALSE}
@@ -3392,8 +3387,7 @@ nb_exploit_pdl_2020_b <- exploit_pdl_2020 |>
 bpe_ens_2018_tbl |> 
   summarise(
     NB_EQUIP_TOT = sum(NB_EQUIP, na.rm = TRUE),
-    NB_BOULANGERIES_TOT = sum(NB_EQUIP * (TYPEQU == "B203"), na.rm = TRUE)
-  )
+    NB_BOULANGERIES_TOT = sum(NB_EQUIP * (TYPEQU == "B203"), na.rm = TRUE))
 ```
 
 La fonction `n_distinct` renvoie le nombre de valeurs distinctes d'un vecteur. On peut notamment l'utiliser dans un `summarise`.
@@ -3628,7 +3622,8 @@ nb_exploit_2020_mop_non_fam_reg <- exploit_2020 |>
 ```{r , eval = FALSE}
 # nb exploitations avec signes de qualité ----
 # coef_f	: Coefficient d'extrapolation des données
-# qualca_ech : Part de la commercialisation sous AOP/AOC, IGP, Label Rouge ou Spécialité Traditionnelle Garantie
+# qualca_ech : Part de la commercialisation sous AOP/AOC, IGP, 
+# Label Rouge ou Spécialité Traditionnelle Garantie
 # dans le chiffre d'affaires de l'exploitation
 # 10	moins de 25% 
 # 20	plus de 25% à 50%
@@ -4353,9 +4348,12 @@ slice_head(airlines, prop = 0.2)
 ```
 
 ```{r , eval = FALSE}
+library(openxlsx2)
+
 # lait_chevre_mensuel, sélection des 13 premières lignes
-lait_chevre <- read.xlsx(xlsxFile = path(chemin_entree, fichier_entree), 
-                        sheet = "lait chevre", colNames = TRUE, startRow = 8) |> 
+lait_chevre <- read_xlsx(file = path(chemin_entree, fichier_entree),
+                         sheet = "lait chevre", 
+                         start_row = 8) |> 
   as_tibble(.name_repair = make_clean_names) |> 
   slice_head(n = 13) |> 
   # Quand on passe une fonction comme argument à une autre fonction, on utilise la notation sans les parenthèses.
@@ -4662,6 +4660,11 @@ iaa_vol_total_pdl_long2 <- iaa_vol_total_pdl |>
               values_from = valeurs) |> 
   arrange(indicateurs)
 ```
+
+***
+
+<br>
+
 
 ## Transposition de lignes en colonnes (plus de colonnes)
 
@@ -5850,10 +5853,11 @@ par exemple \(x) x + 1 est interprété comme function(x) x + 1.
 ## Ajouter un suffixe à un nom de variable
 
 ```{r , eval = FALSE}
+library(openxlsx2)
+
 # ajout suffixe annee aux variables
-bio_2023 <- read.xlsx(xlsxFile = path(chemin, fichier_2023), 
-                      sheet = "Feuil1",
-                      colNames = TRUE, startRow = 1) |> 
+bio_2023 <- read_xlsx(file = path(chemin, fichier_2023), 
+                      sheet = "Feuil1") |> 
   as_tibble(.name_repair = make_clean_names) |>
   rename_with(.cols = c(nombre_dassocies_gaec, quantite_declaree), 
               function(x) {paste0(x, "_2023")})
@@ -6341,6 +6345,7 @@ exemple across(..., mean)
 
 Exemples d'utilisation de la fonction `across()`
 ```{r , eval = FALSE}
+library(openxlsx2)
 library(janitor) # pour round_half_up
 
 # Ajout de la variable livraison_dep_perc (pourcentage par rapport au niveau régional)
@@ -6363,8 +6368,9 @@ laits_mensuel_chevre_livr_coll_large_2 <- laits_mensuel_chevre_livr_coll_large_1
   
 # lait_chevre_mensuel, sélection des 13 premières lignes
 # slice_head(13) est équivalent à slice(1:13)
-lait_chevre <- read.xlsx(xlsxFile = path(chemin_entree, fichier_entree), 
-                        sheet = "lait chevre", colNames = TRUE, startRow = 8) |> 
+lait_chevre <- read_xlsx(file = path(chemin_entree, fichier_entree),
+                         sheet = "lait chevre",
+                         start_row = 8) |> 
   as_tibble(.name_repair = make_clean_names) |> 
   slice_head(n = 13) |> 
   # Quand on passe une fonction comme argument à une autre fonction, on utilise la notation sans les parenthèses.
@@ -6431,9 +6437,9 @@ Le symbole `|` signifie `ou` dans les expressions régulières.
 bio_anim2_pdl_an_evol <- bio_anim2_pdl_an_evol |>
   mutate(
     nb_tetes_2023_2010_evol_an = ((nb_tetes_2023 / nb_tetes_2010)**(1 / 13) - 1) * 100,
-    nombre_deleveurs_2023_2010_evol_an = ((nombre_deleveurs_2023 / nombre_deleveurs_2010)**(1 / 13) - 1) * 100,
+    nb_eleveurs_2023_2010_evol_an = ((nombre_deleveurs_2023 / nombre_deleveurs_2010)**(1 / 13) - 1) * 100,
     solde_eleveurs_2023_2010_evol_an = (nombre_deleveurs_2023 - nombre_deleveurs_2010) / 13,
-    part_du_bio_en_percent_2023_2010_evol_an = (part_du_bio_en_percent_2023 - part_du_bio_en_percent_2010) / 13,
+    part_bio_percent_2023_2010_evol_an = (part_du_bio_en_percent_2023 - part_du_bio_en_percent_2010) / 13,
     .after = groupe_de_productions
   ) |>
   mutate(across(matches("nb_tetes|nombre_deleveurs"), \(x) round_half_up(x, digits = 3)))
@@ -6777,6 +6783,9 @@ df |>
 
 # Ecriture de fonctions
 
+
+<center>![Schéma général d'une fonction](images/principe_fonction.png)</center>
+
 ## Principe des fonctions
 
 On utilise les *fonctions* pour effectuer des calculs, obtenir des résultats et accomplir des actions. 
@@ -7027,15 +7036,20 @@ Identifier et écrire une fonction en suivant plusieurs étapes :
 
 Étape 1 : repérer un bloc de code qui se répète
 => bloc d'instructions de la fonction. Le *corps* de la fonction, situé à l’intérieur d’un bloc `{}`, est la partie de la fonction qui permet d’appliquer les manipulations voulues pour obtenir le résultat à retourner.  
+On peut commencer par réaliser une instruction simple sur quelques données. Une fois que ça fonctionne pour un élément, il sera plus simple de généraliser. 
 
-Étape 2 : identifier ce qui varie dans le code
-=> arguments (éléments *variables*) de la fonction. Il peut s’agir de l’objet qui sera transformé par la fonction (par exemple un dataframe) ou d’un paramètre utilisé dans la fonction (par exemple un entier).  
+Étape 2 : identifier ce que sera l’entrée de la fonction  
 
-Étape 3 : définir ce que renvoie la fonction
+Étape 3 : identifier ce qui varie dans le code
+=> arguments (éléments *variables*) de la fonction (avec ou sans valeur par défaut). Il peut s’agir de l’objet qui sera transformé par la fonction (par exemple un dataframe) ou d’un paramètre utilisé dans la fonction (par exemple un entier).  
+
+Étape 4 : définir ce que renvoie la fonction (sortie de la fonction)
 => objet retourné par return
 
-Étape 4 : définir ce que fait la fonction
-=> nom de la fonction. On conseille de donner un verbe comme nom de fonction (par exemple calculer_moyenne, renommer_colonnes).
+Étape 5 : définir ce que fait la fonction
+=> nom de la fonction. On conseille de donner un verbe comme nom de fonction (par exemple calculer_moyenne, renommer_colonnes).  
+
+Étape 6 : tester et vérifier la fonction  
 
 Une fonction personnelle s’utilise comme n’importe quelle autre fonction de R. On l’appelle en tapant son nom suivi de la valeur de ses arguments entre parenthèses.  
 Notamment, on récupère la sortie de la fonction en **affectant le résultat à un objet**  
@@ -7567,10 +7581,10 @@ calculer_montants_par_departement <- function(annee) {
   # Les noms des fichiers sont construits dynamiquement en fonction de l'année passée en paramètre.
   # Pour accéder à la valeur de la variable dont le nom est contenu dans une chaîne de caractères,
   # on utilise `get` (pour interpréter cette chaîne comme le nom d'une variable et accéder à sa valeur).
-  # get` permet d'évaluer une chaîne de caractères comme un nom de variable
+  # get permet d'évaluer une chaîne de caractères comme un nom de variable
   # et de récupérer la valeur associée à ce nom de variable
   # get() prend cette chaîne de caractères et recherche une variable avec ce nom dans l'environnement actuel.
-  # La fonction get() prend en entrée une chaîne de caractères représentant le nom d'un objet et retourne cet objet
+  # get() prend en entrée une chaîne de caractères représentant le nom d'un objet et retourne cet objet
   # Dans notre cas, la chaîne de caractères est le nom du fichier à charger.
   # get() va donc chercher dans l'environnement global l'objet ayant ce nom et le renvoyer.
   fichier_beneficiaires <- get(glue("fichier_beneficiaires_{annee}"))
@@ -7993,6 +8007,8 @@ names(dfs_nb_tetes_par_groupe_production)
 names(dfs_nb_eleveurs_par_groupe_production)
 
 # Exporter les résultats dans un fichier Excel ----
+library(openxlsx2)
+
 # Chargement du chemin
 chemin_sortie <- "./sortie/pdl/"
 # animaux ----
@@ -8010,10 +8026,10 @@ dfs_nb_tetes_par_groupe_production_clean <- map(dfs_nb_tetes_par_groupe_producti
 
 # Exporter les dataframes dans un fichier Excel
 # Chaque élément de la liste (chaque dataframe) devient une feuille Excel
-# na.string : spécifie comment les valeurs manquantes doivent être représentées dans le fichier Excel 
-write.xlsx(dfs_nb_tetes_par_groupe_production_clean,
+# na.strings : spécifie comment les valeurs manquantes doivent être représentées dans le fichier Excel 
+write_xlsx(dfs_nb_tetes_par_groupe_production_clean,
   file = path(chemin_sortie, fic_bio_anim_nb_tetes_dep_pdl_part_reg),
-  na.string = "NA"
+  na.strings = "NA"
 )
 
 ```
@@ -8564,7 +8580,8 @@ ajouter_ligne <- function(df, var, valeur, modalite_1, modalite_2, modalite_3) {
 }
 
 # Utiliser la fonction
-# modalite_1/2/3 avec guillemets dans l'appel de la fonction car utilisés comme chaine de caractères dans filter()
+# modalite_1/2/3 avec guillemets dans l'appel de la fonction 
+# car utilisés comme chaine de caractères dans filter()
 rica_2018_2021_vol_pdl_test <- ajouter_ligne(df = rica_2018_2021_vol_pdl_filtre_2, 
                     var = rica_reg_dim4,
                     valeur = valeur_100,
@@ -8585,24 +8602,24 @@ rica_2018_2021_vol_pdl_test2 <- rica_2018_2021_vol_pdl_test |>
 regrouper_especes <- function(data, colonne) {
   data <- data |>
     mutate("{{ colonne }}_regrpt1" := fct_collapse({{ colonne }},
-                                                 "1-poulets" = c("Poulets (y c. coquelets)", "Chapons, poulardes",
-                                                                 "Poules de réforme (filière œufs de consommation)", 
-                                                                 "Coqs et poules de réforme (reproducteurs)"),
-                                                 "2-dindes" = c("Dindes"),
-                                                 "3-pintades" = c("Pintades (y c. chaponnées)"),
-                                                 "4-canards" = c("Canards à rôtir", "Canards gras"),
-                                                 "5-oies" = c("Oies à rôtir", "Oies grasses"),
-                                                 "6-petites_volailles" = c("Pigeons", "Cailles"),
-                                                 "7-lapins" = c("Lapins")
+                                    "1-poulets" = c("Poulets (y c. coquelets)", "Chapons, poulardes",
+                                                  "Poules de réforme (filière œufs de consommation)", 
+                                                  "Coqs et poules de réforme (reproducteurs)"),
+                                    "2-dindes" = c("Dindes"),
+                                    "3-pintades" = c("Pintades (y c. chaponnées)"),
+                                    "4-canards" = c("Canards à rôtir", "Canards gras"),
+                                    "5-oies" = c("Oies à rôtir", "Oies grasses"),
+                                    "6-petites_volailles" = c("Pigeons", "Cailles"),
+                                    "7-lapins" = c("Lapins")
     )) |>
     mutate("{{ colonne }}_regrpt2" := fct_collapse({{ colonne }},
-                                                 "1-volailles" = c("Poulets (y c. coquelets)", "Chapons, poulardes", 
-                                                                   "Poules de réforme (filière œufs de consommation)", 
-                                                                   "Coqs et poules de réforme (reproducteurs)", 
-                                                                   "Dindes", "Pintades (y c. chaponnées)", 
-                                                                   "Canards à rôtir", "Canards gras", "Oies à rôtir",
-                                                                   "Oies grasses", "Pigeons", "Cailles"),
-                                                 "2-lapins" = c("Lapins")
+                                    "1-volailles" = c("Poulets (y c. coquelets)", "Chapons, poulardes", 
+                                                    "Poules de réforme (filière œufs de consommation)", 
+                                                    "Coqs et poules de réforme (reproducteurs)", 
+                                                    "Dindes", "Pintades (y c. chaponnées)", 
+                                                    "Canards à rôtir", "Canards gras", "Oies à rôtir",
+                                                    "Oies grasses", "Pigeons", "Cailles"),
+                                    "2-lapins" = c("Lapins")
     ))
   
   return(data)
@@ -8744,8 +8761,7 @@ paste0("Je m'appelle ", name, " et j'ai ", age, " ans")
 data <- data.frame(
   prenom = c("Alice", "Bob"),
   age = c(30, 25),
-  ville = c("Paris", "Lyon")
-)
+  ville = c("Paris", "Lyon"))
 
 # Avec glue
 glue_data(data, 
@@ -9873,20 +9889,21 @@ nb_benef_montants_pac_2020_2023_secret1 <- nb_benef_montants_pac_2020_2023 |>
 # - `startsWith(indicateur, "dont_nb_benef")` en base R
 
 # Étape 2 : Secret induit
-# Pour les noms de colonnes commençant par des chiffres, on doit les entourer de backticks (`) pour les utiliser
+# Pour les noms de colonnes commençant par des chiffres, 
+# on doit les entourer de backticks (`) pour les utiliser
 nb_benef_montants_pac_2020_2023_secret2 <- nb_benef_montants_pac_2020_2023_secret1 |>
   mutate(
     # Secret 2020
-    `44_2020` = if_else(indicateur == "dont_nb_benef_aide_legumineuses_fourrage_deshy", "Secret", `44_2020`),
-    `53_2020` = if_else(indicateur == "dont_nb_benef_aide_legumineuses_fourrage_deshy", "Secret", `53_2020`),
+    `44_2020` = if_else(indicateur == "dont_nb_benef_aide_legum_fourrage_deshy", "Secret", `44_2020`),
+    `53_2020` = if_else(indicateur == "dont_nb_benef_aide_legum_fourrage_deshy", "Secret", `53_2020`),
     # Secret 2021
-    `44_2021` = if_else(indicateur == "dont_nb_benef_aide_legumineuses_fourrage_deshy", "Secret", `44_2021`),
-    `49_2021` = if_else(indicateur == "dont_nb_benef_aide_semences_legumineuses_fourrageres", "Secret", `49_2021`),
+    `44_2021` = if_else(indicateur == "dont_nb_benef_aide_legum_fourrage_deshy", "Secret", `44_2021`),
+    `49_2021` = if_else(indicateur == "dont_nb_benef_aide_semences_legum_fourrageres", "Secret", `49_2021`),
     # Secret 2022
-    `44_2022` = if_else(indicateur == "dont_nb_benef_aide_legumineuses_fourrage_deshy", "Secret", `44_2022`),
-    `53_2022` = if_else(indicateur == "dont_nb_benef_aide_legumineuses_fourrage_deshy", "Secret", `53_2022`),
-    `49_2022` = if_else(indicateur == "dont_nb_benef_aide_semences_legumineuses_fourrageres", "Secret", `49_2022`),
-    `72_2022` = if_else(indicateur == "dont_nb_benef_aide_semences_legumineuses_fourrageres", "Secret", `72_2022`)
+    `44_2022` = if_else(indicateur == "dont_nb_benef_aide_legum_fourrage_deshy", "Secret", `44_2022`),
+    `53_2022` = if_else(indicateur == "dont_nb_benef_aide_legum_fourrage_deshy", "Secret", `53_2022`),
+    `49_2022` = if_else(indicateur == "dont_nb_benef_aide_semences_legum_fourrageres", "Secret", `49_2022`),
+    `72_2022` = if_else(indicateur == "dont_nb_benef_aide_semences_legum_fourrageres", "Secret", `72_2022`)
   )
 
 # Étape 3 : Secret sur les montants correspondants
