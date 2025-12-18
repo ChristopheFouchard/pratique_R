@@ -1626,6 +1626,7 @@ list_eff_annees <- map(annees, function(annee) {
   df <- read_csv2(file = path(chemin_entree_avant_2010, fichier_entree_eff_annee)) |> 
     as_tibble(.name_repair = make_clean_names)
   
+  # return facultatif. Certains considèrent que l'ajouter permet de rendre le code plus lisible. 
   return(df)
 })
 
@@ -1637,7 +1638,7 @@ eff_volailles_2000_2010 <- list_rbind(list_eff_annees)
 
 # En R, si une fonction ne contient pas d’instruction return(), 
 # elle renvoie par défaut la dernière expression évaluée dans la fonction. 
-# Cependant, l’utilisation de return() rend le code plus lisible et explicite, 
+# Cependant, certains considèrent que l’utilisation de return rend le code plus lisible et explicite, 
 # en indiquant clairement quel est le résultat renvoyé par la fonction.
 
 ```
@@ -2441,7 +2442,7 @@ agri_bio_vegetal_fr_tab1_car <- agri_bio_vegetal_fr_tab1 |>
                   surface_en_conversion_en_ha, surface_bio_en_ha,
                   part_bio_de_la_sau_en_percent), 
                 as.character)) |> 
-  select(-c(part_bio_de_la_sau_en_percent))
+  select(-part_bio_de_la_sau_en_percent)
 ```
 
 `select()` possède ce qu'on appelle des [helpers](https://dplyr.tidyverse.org/reference/select.html) qui permettent de gagner du temps dans l'écriture d'une sélection. 
@@ -2458,7 +2459,7 @@ Exemple : enlever de la sélection les variables dont les noms contiennent "type
 # A partir du tableau transposé, ajout du total régional
 bio_pdl_animaux_large_2 <- bio_pdl_animaux_large |> 
   adorn_totals(where = "row", name = "Pays de la Loire") |> 
-  select(-c(contains("type_reg")))
+  select(-contains("type_reg"))
 ```
 
 Exemple : sélectionner les variables dont les noms sont contenus dans un vecteur de chaînes de caractères :
@@ -2732,7 +2733,7 @@ agri_bio_vegetal_fr_tab1_car <- agri_bio_vegetal_fr_tab1 |>
   mutate(across(c(nombre_de_producteurs,surface_bio_et_en_conversion_en_ha,
                   surface_en_conversion_en_ha,surface_bio_en_ha,
                   part_bio_de_la_sau_en_percent), as.character)) |> 
-  select(-c(part_bio_de_la_sau_en_percent))
+  select(-part_bio_de_la_sau_en_percent)
 ```
 
 
@@ -3071,6 +3072,7 @@ clean_names <- function(name) {
   # Enlever les underscores en début et fin de chaîne
   name <- str_replace_all(name, "^_|_$", "")
 
+  # return facultatif. Certains considèrent que l'ajouter permet de rendre le code plus lisible. 
   return(name)
 }
 
@@ -3964,6 +3966,7 @@ filtrer_an_type_produit <- function(data,
     # Réorganisation des colonnes pour s'assurer que "annee", "type_de_produit", et "pays" restent en tête
     relocate(annee, type_de_produit, .before = lib_pays)
   
+  # return facultatif. Certains considèrent que l'ajouter permet de rendre le code plus lisible. 
   return(data_an_type_produit)
 }
 
@@ -4159,7 +4162,7 @@ lait_production_vache_large <- lait_production_vache_2 |>
   pivot_wider(names_from = type,
               values_from = c(livraison_reg, livraison_dep, livraison_dep_perc)) |> 
   adorn_totals(where = "row", name = "Pays de la Loire") |> 
-  select(-c(starts_with("livraison_reg")))
+  select(-starts_with("livraison_reg"))
 
 ```
 
@@ -4801,7 +4804,7 @@ surf_fruits_tonnes_large <- surf_fruits_tonnes |>
 
 # autre enchainement de pivots
 otex_regroupe <- otex_transp  |> 
-  select(-c(ends_with('temp'), otex_4813, otex_4840, otex_5100, otex_5374)) |> 
+  select(-ends_with('temp'), otex_4813, otex_4840, otex_5100, otex_5374) |> 
   pivot_longer(cols = -c(annee), 
                names_to = c("otex_code_regr"),
                values_to = "etp") |> 
@@ -4852,19 +4855,16 @@ bio_vege2_pdl_reg_ensemble_long <- bio_vege2_pdl_reg_ensemble |>
 bio_vege2_pdl_an_reg_ensemble_long <- bio_vege2_pdl_an_reg_ensemble |>
   select(-c(
     echelle_geographique, type_de_production,
-    groupe_de_productions, sous_groupe_de_productions
-  )) |>
+    groupe_de_productions, sous_groupe_de_productions)) |>
   pivot_longer(
     cols = contains("an_"),
     names_to = c("indicateur", "annee"),
     names_sep = "_an_",
-    values_to = "valeur"
-  ) |>
+    values_to = "valeur") |>
   # Pivoter à nouveau pour avoir les années en colonnes
   pivot_wider(
     names_from = annee,
-    values_from = valeur
-  )
+    values_from = valeur)
 ```
 
 Il peut arriver que certaines variables soient absentes pour certaines observations.   
@@ -5340,6 +5340,7 @@ recherche_doublons <- function(df, vars) {
     details_doublons = doublons
   )
   
+  # return facultatif. Certains considèrent que l'ajouter permet de rendre le code plus lisible. 
   return(resume)
 }
 
@@ -6609,7 +6610,7 @@ viande_volaille_apres_2010_regroupt_1 <- viande_volaille_apres_2010 |>
   # L’argument na.rm = TRUE est utilisé pour ignorer les valeurs NA lors de l’addition.
   # mutate(across(c(starts_with("nbtete_"), starts_with("prod")), \(x) sum(x, na.rm = TRUE))) |>
   ungroup() |> 
-  select(-c(code,lib_code)) |> 
+  select(-c(code, lib_code)) |> 
   distinct()
 ```
 
@@ -6825,6 +6826,7 @@ nom_de_la_fonction <- function(parametre1, parametre2, ...) {
   # ...
 
   # La fonction peut retourner une valeur à l'appelant (ou NULL si aucune valeur n'est spécifiée)
+  # return facultatif. Certains considèrent que l'ajouter permet de rendre le code plus lisible. 
   return(resultat)
 }
 ```  
@@ -6931,7 +6933,7 @@ On utilise dans le corps de la fonction les arguments qui lui sont passés (rens
 
 Le plus souvent, pour qu'elle soit utile, la fonction doit renvoyer un résultat. Ceci se fait via l'instruction `return` à qui on passe la valeur à retourner.
 
-En réalité, l'utilisation de `return()` n'est pas obligatoire : une fonction retourne automatiquement le résultat de la dernière instruction qu'elle exécute. Mais il est souvent préférable de l'utiliser pour rendre le code plus lisible.
+En réalité, l'utilisation de `return()` n'est pas obligatoire : une fonction retourne automatiquement le résultat de la dernière instruction qu'elle exécute. Mais certains considèrent qu'il est souvent préférable de l'utiliser pour rendre le code plus lisible.
 
 Lorsque R rencontre une instruction `return()` dans une fonction, il interrompt immédiatement son exécution et "sort" de la fonction en renvoyant le résultat.
 
@@ -6950,7 +6952,10 @@ Exemple avec une fonction nommée `indicateurs()`, où on retourne une liste con
 indicateurs <- function(v) {
   moyenne <- mean(v)
   ecart_type <- sd(v)
+  
   resultat <- list(moyenne = moyenne, ecart_type = ecart_type)
+  
+  # return facultatif. Certains considèrent que l'ajouter permet de rendre le code plus lisible. 
   return(resultat)
 }
 ```
@@ -6990,8 +6995,10 @@ Par exemple : calculer_somme() ; convertir_en_majuscules()
 ```{r}
 # Exemple du calcul de l'IMC
 calcul_IMC <- function (poids, taille) {
-  ## La taille est exprimée en mètres
+  # La taille est exprimée en mètres
   imc <- poids / taille ^ 2
+  
+  # return facultatif. Certains considèrent que l'ajouter permet de rendre le code plus lisible. 
   return(imc)
 }
 
@@ -7044,7 +7051,7 @@ On peut commencer par réaliser une instruction simple sur quelques données. Un
 => arguments (éléments *variables*) de la fonction (avec ou sans valeur par défaut). Il peut s’agir de l’objet qui sera transformé par la fonction (par exemple un dataframe) ou d’un paramètre utilisé dans la fonction (par exemple un entier).  
 
 Étape 4 : définir ce que renvoie la fonction (sortie de la fonction)
-=> objet retourné par return
+=> dernier objet ou objet retourné par return(). En effet, return est facultatif. Certains considèrent que l'ajouter permet de rendre le code plus lisible. 
 
 Étape 5 : définir ce que fait la fonction
 => nom de la fonction. On conseille de donner un verbe comme nom de fonction (par exemple calculer_moyenne, renommer_colonnes).  
@@ -7190,6 +7197,7 @@ transform_data <- function(data_entree) {
     left_join(data_reg, 
                 join_by(indicateur, modalites))
   
+  # return facultatif. Certains considèrent que l'ajouter permet de rendre le code plus lisible. 
   return(agreg_data_dep_reg)
 }
 
@@ -7237,6 +7245,7 @@ process_data_avant_2010 <- function(data, filter_espece, espece_modalite, negate
     select(-c(reg, reg_court, produit, valeur)) |>
     distinct()
   
+  # return facultatif. Certains considèrent que l'ajouter permet de rendre le code plus lisible. 
   return(result)
 }
 
@@ -7308,6 +7317,7 @@ Si on souhaite modifier un objet global, on doit le passer comme argument en ent
 ```{r, eval = FALSE}
 recode_taille <- function(d) {
   d$taille <- d$taille / 100
+  
   return(d)
 }
 
@@ -7724,9 +7734,12 @@ Exemple de fonction
 ```{r}
 diag_IMC <- function(poids,taille) {
   imc <- poids / taille ^ 2
+  
   if (imc < 18.5) {diag <- "maigre"}
-  else if (imc < 25) {diag <- "normal"}
+    else if (imc < 25) {diag <- "normal"}
        else {diag <- "surpoids"}
+  
+  # return facultatif. Certains considèrent que l'ajouter permet de rendre le code plus lisible.      
   return(diag)
 }
 
@@ -7973,6 +7986,8 @@ creer_dfs_filtre <- function(data, prefix, group_col) {
   \(x) {
     nom_var <- str_replace_all(x, " ", "_")
     nom_final <- paste0(prefix, tolower(nom_var), "_pdl")
+    
+    # return facultatif. Certains considèrent que l'ajouter permet de rendre le code plus lisible. 
     return(nom_final)
   }
 )
@@ -8417,22 +8432,19 @@ vege_creer_df_part_reg <- function(
       echelle_geographique, territoire, type_de_production,
       groupe_de_productions, sous_groupe_de_productions,
       # paste0("rang_groupe_prod_", {{ nom_indicateur }}, "an_2023"),
-      contains(nom_indicateur)
-    ) |>
+      contains(nom_indicateur)) |>
     select(-matches("ss_groupe_prod")) |>
     rename_with(
         \(x) str_replace(
         x,
         paste0(
           {{ nom_indicateur }},
-          "an_(\\d{4})_group_prod_part_reg"
-        ),
-        "an_\\1"
-      ),
-      .cols = starts_with({{ nom_indicateur }})
-    ) |>
+          "an_(\\d{4})_group_prod_part_reg"),
+          "an_\\1"),
+      .cols = starts_with({{ nom_indicateur }})) |>
     mutate(indicateur = {{ nom_indicateur }}, .after = "groupe_de_productions")
 
+  # return facultatif. Certains considèrent que l'ajouter permet de rendre le code plus lisible. 
   return(df)
 }
 
@@ -8500,6 +8512,7 @@ ajouter_ligne3_calcul_ligne1_sur_ligne2 <- function(tableau, var, valeur, modali
     arrange(annref, {{ var }}) |>
     relocate({{ valeur }}, .after = last_col())
 
+# return facultatif. Certains considèrent que l'ajouter permet de rendre le code plus lisible. 
 return(tableau_new)
 }
 
@@ -8565,6 +8578,7 @@ ajouter_ligne <- function(df, var, valeur, modalite_1, modalite_2, modalite_3) {
                           {{ var }} := modalite_3, 
                           {{ valeur }} := valeur_3)
   
+  # return facultatif. Certains considèrent que l'ajouter permet de rendre le code plus lisible. 
   return(nouvelle_ligne)
   }
   
@@ -8576,6 +8590,7 @@ ajouter_ligne <- function(df, var, valeur, modalite_1, modalite_2, modalite_3) {
   # Combiner avec le dataframe original
   df_new <- bind_rows(df, nouvelles_lignes)
 
+  # return facultatif. Certains considèrent que l'ajouter permet de rendre le code plus lisible. 
   return(df_new)  # On retourne le nouveau dataframe
 }
 
@@ -8590,7 +8605,7 @@ rica_2018_2021_vol_pdl_test <- ajouter_ligne(df = rica_2018_2021_vol_pdl_filtre_
                     modalite_3 = "n054_charges_approvisionnement_par_UTA")
 
 rica_2018_2021_vol_pdl_test2 <- rica_2018_2021_vol_pdl_test |> 
-  select(-c(rica_region_soc2013_lib_dim2,rica_region_soc2013_mod_dim4,rica_region_soc2013_lib_dim4)) |> 
+  select(-c(rica_region_soc2013_lib_dim2, rica_region_soc2013_mod_dim4, rica_region_soc2013_lib_dim4)) |> 
   filter(rica_reg_dim4 == "n054_charges_approvisionnement_par_UTA")
 ```
 
@@ -8622,6 +8637,7 @@ regrouper_especes <- function(data, colonne) {
                                     "2-lapins" = c("Lapins")
     ))
   
+  # return facultatif. Certains considèrent que l'ajouter permet de rendre le code plus lisible. 
   return(data)
 }
 
@@ -8696,6 +8712,7 @@ calculer_nb_beneficiaires_par_departement <- function(annee) {
       nb_beneficiaires_p1_p2_reg) |>
     arrange(dep)
   
+  # return facultatif. Certains considèrent que l'ajouter permet de rendre le code plus lisible. 
   return(nb_beneficiaires_pdl)
 }
 
@@ -10043,7 +10060,7 @@ nb_exploit_2020_dep_reg <- exploit_2020 |>
 
 # ajouter le total régional (sauf pour les variables avec %)
 bio_pdl_dep <- bio_pdl_dep |>
-  select(-c(contains("_pct"))) |> 
+  select(-contains("_pct")) |> 
   adorn_totals("row", name = "Pays de la Loire")
 
 ```
